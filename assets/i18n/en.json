@@ -1,0 +1,86 @@
+{
+  "app": {
+    "name": "SaiyaGym"
+  },
+  "common": {
+    "cancel": "Cancel"
+  },
+  "nav": {
+    "today": "Today",
+    "train": "Train",
+    "history": "History",
+    "progress": "Progress",
+    "profile": "Profile"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "name": "Name (optional)",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Sign in to log your workouts.",
+      "submit": "Sign in",
+      "toRegister": "No account? Create one"
+    },
+    "register": {
+      "title": "Create account",
+      "subtitle": "Start logging your workouts in seconds.",
+      "submit": "Create account",
+      "toLogin": "Already have an account? Sign in"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email",
+    "passwordMin": "At least {min} characters",
+    "passwordMax": "At most {max} characters"
+  },
+  "today": {
+    "title": "Today",
+    "emptyTitle": "Nothing planned for today",
+    "emptyMessage": "Once you activate a program, today's workout shows up here."
+  },
+  "train": {
+    "title": "Train",
+    "emptyTitle": "Ready to train",
+    "emptyMessage": "Soon you'll start a session from a routine or from scratch."
+  },
+  "history": {
+    "title": "History",
+    "emptyTitle": "No sessions yet",
+    "emptyMessage": "Your logged workouts will show up here."
+  },
+  "progress": {
+    "title": "Progress",
+    "emptyTitle": "Your progress, soon",
+    "emptyMessage": "Per-exercise charts, weekly volume and personal records."
+  },
+  "profile": {
+    "title": "Profile",
+    "plan": "{plan} plan",
+    "units": "Units",
+    "metric": "kg / cm",
+    "imperial": "lb / in",
+    "unitsExample": "Example: {weight} · {length}",
+    "theme": "Theme",
+    "themes": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "language": "Language",
+    "logout": "Sign out",
+    "logoutConfirm": {
+      "title": "Sign out?",
+      "message": "You'll need to sign in again on this device."
+    }
+  },
+  "errors": {
+    "NETWORK_ERROR": "You're offline. Check your connection and try again.",
+    "TIMEOUT": "The server took too long to respond. Try again.",
+    "CANCELLED": "The operation was cancelled.",
+    "UNKNOWN_ERROR": "Something went wrong. Try again."
+  }
+}

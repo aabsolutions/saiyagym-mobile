@@ -1,0 +1,15 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          # `dart run drift_dev make-migrations` exports each schema version
+          # to drift_schemas/ and generates step-by-step helpers + tests.
+          databases:
+            app_database: lib/core/database/app_database.dart
+          schema_dir: drift_schemas/
+          test_dir: test/drift/
+          store_date_time_values_as_text: true
+      json_serializable:
+        options:
+          explicit_to_json: true

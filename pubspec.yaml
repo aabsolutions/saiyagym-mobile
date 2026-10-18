@@ -1,0 +1,52 @@
+name: saiyagym_mobile
+description: "GymApp mobile: live session logging, offline-first"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.5
+
+dependencies:
+  dio: ^5.11.1
+  drift: ^2.35.2
+  drift_flutter: ^0.3.1
+  easy_localization: ^3.0.8
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  flutter_secure_storage: ^11.2.0
+  freezed_annotation: ^3.1.0
+  go_router: ^18.1.0
+  intl: ^0.20.3
+  json_annotation: ^4.12.0
+  riverpod_annotation: ^4.0.7
+  uuid: ^4.6.0
+
+dev_dependencies:
+  # 2.17.x is blocked by a transitive constraint of the generators.
+  build_runner: ^2.16.2
+  drift_dev: ^2.35.1
+  flutter_test:
+    sdk: flutter
+  freezed: ^4.0.3
+  json_serializable: ^6.14.1
+  mocktail: ^1.0.5
+  riverpod_generator: ^4.0.9
+  # Only to mock easy_localization's locale persistence in tests.
+  shared_preferences: ^2.5.6
+  very_good_analysis: ^11.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/i18n/
+
+  fonts:
+    # Variable font (wght 100–900), SIL OFL 1.1 — see assets/fonts/Outfit/OFL.txt.
+    - family: Outfit
+      fonts:
+        - asset: assets/fonts/Outfit/Outfit-Variable.ttf

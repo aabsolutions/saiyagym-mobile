@@ -1,0 +1,25 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "test/drift/**/generated/**"
+    - build/**
+    - android/**
+    - ios/**
+  errors:
+    # Generated-code friendly: freezed/json annotations live on constructors.
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    # Docs on every public member is noise in an app (not a library).
+    public_member_api_docs: false
+    # Dart 3.13 `const new(...)` syntax: not yet understood by the code
+    # generators (freezed, riverpod, json), so keep one classic style. Revisit
+    # with `dart fix` once they support it.
+    unnecessary_type_name_in_constructor: false
+
+plugins:
+  riverpod_lint: 3.1.9

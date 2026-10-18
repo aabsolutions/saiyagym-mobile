@@ -1,0 +1,86 @@
+{
+  "app": {
+    "name": "SaiyaGym"
+  },
+  "common": {
+    "cancel": "Cancelar"
+  },
+  "nav": {
+    "today": "Hoy",
+    "train": "Entrenar",
+    "history": "Historial",
+    "progress": "Progreso",
+    "profile": "Perfil"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Contraseña",
+    "name": "Nombre (opcional)",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "login": {
+      "title": "Iniciar sesión",
+      "subtitle": "Entra para registrar tus entrenos.",
+      "submit": "Entrar",
+      "toRegister": "¿No tienes cuenta? Crea una"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "subtitle": "Empieza a registrar tus entrenos en segundos.",
+      "submit": "Crear cuenta",
+      "toLogin": "¿Ya tienes cuenta? Inicia sesión"
+    }
+  },
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "email": "Introduce un email válido",
+    "passwordMin": "Mínimo {min} caracteres",
+    "passwordMax": "Máximo {max} caracteres"
+  },
+  "today": {
+    "title": "Hoy",
+    "emptyTitle": "Nada planificado para hoy",
+    "emptyMessage": "Cuando actives un programa, aquí verás el entreno del día."
+  },
+  "train": {
+    "title": "Entrenar",
+    "emptyTitle": "Listo para entrenar",
+    "emptyMessage": "Pronto podrás empezar una sesión desde una rutina o en vacío."
+  },
+  "history": {
+    "title": "Historial",
+    "emptyTitle": "Todavía no hay sesiones",
+    "emptyMessage": "Tus entrenos registrados aparecerán aquí."
+  },
+  "progress": {
+    "title": "Progreso",
+    "emptyTitle": "Tu progreso, pronto",
+    "emptyMessage": "Gráficas por ejercicio, volumen semanal y récords personales."
+  },
+  "profile": {
+    "title": "Perfil",
+    "plan": "Plan {plan}",
+    "units": "Unidades",
+    "metric": "kg / cm",
+    "imperial": "lb / in",
+    "unitsExample": "Ejemplo: {weight} · {length}",
+    "theme": "Tema",
+    "themes": {
+      "system": "Sistema",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "language": "Idioma",
+    "logout": "Cerrar sesión",
+    "logoutConfirm": {
+      "title": "¿Cerrar sesión?",
+      "message": "Tendrás que volver a iniciar sesión en este dispositivo."
+    }
+  },
+  "errors": {
+    "NETWORK_ERROR": "Sin conexión. Revisa tu internet e inténtalo de nuevo.",
+    "TIMEOUT": "El servidor tardó demasiado en responder. Inténtalo de nuevo.",
+    "CANCELLED": "La operación se canceló.",
+    "UNKNOWN_ERROR": "Algo salió mal. Inténtalo de nuevo."
+  }
+}

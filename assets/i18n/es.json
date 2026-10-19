@@ -139,9 +139,28 @@
   },
   "progress": {
     "title": "Progreso",
-    "emptyTitle": "Tu progreso, pronto",
-    "emptyMessage": "Gráficas por ejercicio, volumen semanal y récords personales.",
-    "window": "Tu plan muestra estadísticas de los últimos {days} días."
+    "window": "Tu plan muestra estadísticas de los últimos {days} días.",
+    "noData": "Aún no hay datos.",
+    "cachedAt": "Sin conexión · datos del {date}",
+    "bodyWeight": "Peso corporal",
+    "noWeight": "Registra tu peso para ver su evolución.",
+    "exercise": "Evolución por ejercicio",
+    "noTraining": "Entrena y registra series para ver tu progreso.",
+    "maxWeight": "Peso máximo",
+    "e1rm": "1RM estimado",
+    "muscleVolume": "Volumen semanal por músculo",
+    "sets": "Series",
+    "volume": "Volumen",
+    "setsValue": "{count} series",
+    "powerlifting": "Total de powerlifting",
+    "bestTotal": "Mejor total: {total}",
+    "noTotal": "El total aparece cuando registras sentadilla, press banca y peso muerto.",
+    "lifts": {
+      "squat": "Sentadilla",
+      "bench": "Banca",
+      "deadlift": "Peso muerto"
+    },
+    "liftValue": "{lift}: {value}"
   },
   "profile": {
     "title": "Perfil",
@@ -524,6 +543,109 @@
       "muscle": "Músculo principal",
       "equipment": "Equipo",
       "onlineHint": "Crear un ejercicio necesita conexión; después funciona sin red."
+    }
+  },
+  "records": {
+    "title": "Récords personales",
+    "emptyTitle": "Aún no hay récords",
+    "emptyMessage": "Completa series con peso para empezar a batir marcas.",
+    "repsAt": "{reps} reps con {weight}"
+  },
+  "body": {
+    "title": "Medidas corporales",
+    "add": "Nueva medición",
+    "emptyTitle": "Sin medidas todavía",
+    "emptyMessage": "Registra tu peso y tus medidas para seguir tu evolución.",
+    "deleteTitle": "¿Borrar esta medición?",
+    "quickTitle": "Peso de hoy",
+    "quick": "Registrar peso",
+    "full": "Todas las medidas",
+    "invalid": "Introduce un número válido.",
+    "range": "Entre {min} y {max}.",
+    "atLeastOne": "Rellena al menos una medida.",
+    "notFound": "Esta medición ya no existe.",
+    "newTitle": "Nueva medición",
+    "edit": "Editar medición",
+    "date": "Fecha",
+    "notes": "Notas",
+    "measures": {
+      "weightKg": "Peso",
+      "bodyFatPercent": "Grasa corporal",
+      "waistCm": "Cintura",
+      "chestCm": "Pecho",
+      "hipsCm": "Cadera",
+      "armCm": "Brazo",
+      "thighCm": "Muslo",
+      "calfCm": "Gemelo",
+      "neckCm": "Cuello"
+    },
+    "short": {
+      "weightKg": "Peso",
+      "bodyFatPercent": "Grasa",
+      "waistCm": "Cintura",
+      "chestCm": "Pecho",
+      "hipsCm": "Cadera",
+      "armCm": "Brazo",
+      "thighCm": "Muslo",
+      "calfCm": "Gemelo",
+      "neckCm": "Cuello"
+    }
+  },
+  "reminders": {
+    "title": "Recordatorios",
+    "entry": "Entrenos y pesaje semanal",
+    "channel": "Recordatorios",
+    "trainingTitle": "¡Hoy toca entrenar!",
+    "trainingBody": "Abre SaiyaGym y empieza tu sesión.",
+    "weighInTitle": "Hora de pesarte",
+    "weighInBody": "Registra tu peso semanal en SaiyaGym.",
+    "denied": "Las notificaciones están desactivadas. Actívalas en los ajustes del teléfono.",
+    "weighInOffer": "¿Te recordamos pesarte cada semana a esta hora?",
+    "enable": "Activar",
+    "training": "Recordatorio de entreno",
+    "trainingHint": "Los días y la hora que elijas.",
+    "time": "Hora",
+    "weighIn": "Pesaje semanal",
+    "weighInHint": "Un aviso por semana para registrar tu peso.",
+    "day": "Día"
+  },
+  "photos": {
+    "title": "Fotos de progreso",
+    "compare": "Comparar",
+    "add": "Nueva foto",
+    "queued": "Foto guardada. Se subirá en cuanto haya conexión.",
+    "unreadable": "No se pudo procesar la imagen.",
+    "empty": "Aún no hay fotos de esta vista.",
+    "deleteTitle": "¿Borrar esta foto?",
+    "pending": "Pendiente",
+    "failed": "No se pudo subir",
+    "failedTitle": "Esta foto no se pudo subir",
+    "failedMessage": "Puedes reintentarlo o descartarla.",
+    "needsPremium": "Las fotos de progreso son parte de Premium.",
+    "discard": "Descartar",
+    "camera": "Hacer foto",
+    "gallery": "Elegir de la galería",
+    "toggleGuide": "Mostrar u ocultar la guía",
+    "retake": "Repetir",
+    "use": "Usar foto",
+    "before": "Antes",
+    "after": "Después",
+    "needTwo": "Necesitas al menos dos fotos de esta vista para comparar.",
+    "views": {
+      "front": "Frontal",
+      "side": "Lateral",
+      "back": "Espalda"
+    },
+    "guide": {
+      "title": {
+        "front": "Foto frontal",
+        "side": "Foto lateral",
+        "back": "Foto de espalda"
+      },
+      "front": "De frente, brazos relajados a los lados y pies a la altura de los hombros.",
+      "side": "De perfil (lado derecho), brazos relajados y postura natural.",
+      "back": "De espaldas, brazos relajados y pies a la altura de los hombros.",
+      "same": "Usa siempre la misma luz, distancia y hora del día: así la comparación es justa."
     }
   }
 }

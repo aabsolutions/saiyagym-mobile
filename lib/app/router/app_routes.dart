@@ -1,3 +1,5 @@
+import 'package:saiyagym_mobile/features/progress_photos/domain/progress_photo.dart';
+
 abstract final class AppRoutes {
   static const splash = '/splash';
   static const welcome = '/welcome';
@@ -14,6 +16,16 @@ abstract final class AppRoutes {
   static const profile = '/profile';
 
   static const editProfile = '/profile/edit';
+  static const reminders = '/profile/reminders';
+
+  // Inside the Progress tab.
+  static const records = '/progress/records';
+  static const bodyMetrics = '/progress/body';
+  static const newBodyMetric = '/progress/body/new';
+  static String bodyMetric(String id) => '/progress/body/$id';
+  static const progressPhotos = '/progress/photos';
+  static String photoCompare(PhotoView view) =>
+      '/progress/photos/compare?view=${view.name}';
 
   // Inside the Train tab (keep the bottom bar).
   static String routine(String id) => '/train/routines/$id';

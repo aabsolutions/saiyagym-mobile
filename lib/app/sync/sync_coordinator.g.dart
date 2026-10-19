@@ -59,7 +59,8 @@ String _$backgroundSyncSchedulerHash() =>
 
 /// Decides WHEN to sync (the service decides how):
 /// sign-in / app open, network back, app resumed or sent to background,
-/// language change (catalog), periodic background work. Local edits and
+/// language change (catalog), periodic background work. Also uploads
+/// queued progress photos (sign-in, network back). Local edits and
 /// finished workouts request it themselves.
 
 @ProviderFor(SyncCoordinator)
@@ -67,13 +68,15 @@ final syncCoordinatorProvider = SyncCoordinatorProvider._();
 
 /// Decides WHEN to sync (the service decides how):
 /// sign-in / app open, network back, app resumed or sent to background,
-/// language change (catalog), periodic background work. Local edits and
+/// language change (catalog), periodic background work. Also uploads
+/// queued progress photos (sign-in, network back). Local edits and
 /// finished workouts request it themselves.
 final class SyncCoordinatorProvider
     extends $NotifierProvider<SyncCoordinator, void> {
   /// Decides WHEN to sync (the service decides how):
   /// sign-in / app open, network back, app resumed or sent to background,
-  /// language change (catalog), periodic background work. Local edits and
+  /// language change (catalog), periodic background work. Also uploads
+  /// queued progress photos (sign-in, network back). Local edits and
   /// finished workouts request it themselves.
   SyncCoordinatorProvider._()
     : super(
@@ -102,11 +105,12 @@ final class SyncCoordinatorProvider
   }
 }
 
-String _$syncCoordinatorHash() => r'ed92864a81c84212a9c95cedd01c4d6f09f53146';
+String _$syncCoordinatorHash() => r'ea25dfa1a4a632d8c116d562d5a02b20a6f521af';
 
 /// Decides WHEN to sync (the service decides how):
 /// sign-in / app open, network back, app resumed or sent to background,
-/// language change (catalog), periodic background work. Local edits and
+/// language change (catalog), periodic background work. Also uploads
+/// queued progress photos (sign-in, network back). Local edits and
 /// finished workouts request it themselves.
 
 abstract class _$SyncCoordinator extends $Notifier<void> {

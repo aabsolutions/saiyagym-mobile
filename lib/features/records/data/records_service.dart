@@ -13,21 +13,37 @@ class WorkoutRecord {
 
 enum RecordConfirmation { pending, confirmed, notConfirmed }
 
-RecordSession _sessionOf(Workout workout, String exerciseId) => RecordSession(
-  workoutId: workout.id,
-  startedAt: workout.startedAt,
-  sets: [
-    for (final exercise in workout.exercises)
-      if (exercise.exerciseId == exerciseId)
-        for (final set in exercise.sets)
-          RecordSet(
-            type: set.type,
-            completed: set.completed,
-            weightKg: set.weightKg,
-            reps: set.reps,
-          ),
-  ],
-);
+/// [exerciseId]'s sets in [workout], as the records calculation sees them.
+RecordSession recordSessionOf(Workout workout, String exerciseId) =>
+    RecordSession(
+      workoutId: workout.id,
+      startedAt: workout.startedAt,
+      sets: [
+        for (final exercise in workout.exercises)
+          if (exercise.exerciseId == exerciseId)
+            for (final set in exercise.sets)
+              RecordSet(
+                type: set.type,
+                completed: set.completed,
+                weightKg: set.weightKg,
+                reps: set.reps,
+              ),
+      ],
+    );
+
+/// Current records of every exercise in [history] (finished sessions).
+Map<String, ExerciseRecords> recordsByExercise(List<Workout> history) {
+  final byExercise = <String, List<Workout>>{};
+  for (final workout in history) {
+    for (final id in {for (final e in workout.exercises) e.exerciseId}) {
+      (byExercise[id] ??= []).add(workout);
+    }
+  }
+  return {
+    for (final MapEntry(key: id, value: workouts) in byExercise.entries)
+      id: computeRecords([for (final w in workouts) recordSessionOf(w, id)]),
+  };
+}
 
 /// Records [workout] broke against the user's local history — the same
 /// computation the API runs when the workout syncs.
@@ -39,13 +55,13 @@ List<WorkoutRecord> detectWorkoutRecords(
   return [
     for (final exerciseId in exerciseIds)
       for (final record in detectNewRecords(
-        current: _sessionOf(workout, exerciseId),
+        current: recordSessionOf(workout, exerciseId),
         history: [
           for (final past in history)
             if (past.id != workout.id &&
                 !past.inProgress &&
                 past.exercises.any((e) => e.exerciseId == exerciseId))
-              _sessionOf(past, exerciseId),
+              recordSessionOf(past, exerciseId),
         ],
       ))
         WorkoutRecord(exerciseId: exerciseId, record: record),

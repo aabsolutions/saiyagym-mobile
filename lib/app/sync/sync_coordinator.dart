@@ -7,6 +7,8 @@ import 'package:saiyagym_mobile/app/sync/background_sync.dart';
 import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
 import 'package:saiyagym_mobile/core/sync/sync_state.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
+import 'package:saiyagym_mobile/features/progress_photos/progress_photos_providers.dart';
+import 'package:saiyagym_mobile/features/reminders/reminders_providers.dart';
 
 part 'sync_coordinator.g.dart';
 
@@ -16,7 +18,8 @@ BackgroundSyncScheduler backgroundSyncScheduler(Ref ref) =>
 
 /// Decides WHEN to sync (the service decides how):
 /// sign-in / app open, network back, app resumed or sent to background,
-/// language change (catalog), periodic background work. Local edits and
+/// language change (catalog), periodic background work. Also uploads
+/// queued progress photos (sign-in, network back). Local edits and
 /// finished workouts request it themselves.
 @Riverpod(keepAlive: true)
 class SyncCoordinator extends _$SyncCoordinator {
@@ -44,6 +47,8 @@ class SyncCoordinator extends _$SyncCoordinator {
     ref.read(syncServiceProvider)
       ..start()
       ..requestSync(SyncReason.appOpen);
+    _uploadPhotos();
+    if (changed) _dropWipedReminders();
     _attach();
     unawaited(_guard(ref.read(backgroundSyncSchedulerProvider).schedule()));
   }
@@ -53,6 +58,7 @@ class SyncCoordinator extends _$SyncCoordinator {
     _active = false;
     _detach();
     unawaited(ref.read(syncServiceProvider).stop());
+    _dropWipedReminders();
     unawaited(_guard(ref.read(backgroundSyncSchedulerProvider).cancel()));
   }
 
@@ -69,6 +75,7 @@ class SyncCoordinator extends _$SyncCoordinator {
       _online = online;
       if (!regained) return;
       _request(SyncReason.connectivity);
+      _uploadPhotos();
       // Opened offline: refresh the profile too now that we can.
       if (ref.read(sessionControllerProvider).value?.isOffline ?? false) {
         unawaited(
@@ -87,6 +94,16 @@ class SyncCoordinator extends _$SyncCoordinator {
 
   /// The catalog is stored in the UI language.
   void languageChanged() => _request(SyncReason.languageChanged);
+
+  /// Logout (or another user signing in) wiped the reminder settings;
+  /// an expired session keeps them, and its reminders too.
+  void _dropWipedReminders() => unawaited(
+    _guard(ref.read(remindersControllerProvider.notifier).cancelIfWiped()),
+  );
+
+  /// Photos queued offline (their own outbox, not `sync_queue`).
+  void _uploadPhotos() =>
+      unawaited(_guard(ref.read(photoUploadQueueProvider).process()));
 
   void _request(SyncReason reason) {
     if (_active) ref.read(syncServiceProvider).requestSync(reason);

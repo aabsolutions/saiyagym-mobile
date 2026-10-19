@@ -176,6 +176,32 @@ Android needs core library desugaring and the notification receivers (already
 in `build.gradle.kts` / `AndroidManifest.xml`); exact alarms use
 `SCHEDULE_EXACT_ALARM` (asked at session start, inexact fallback).
 
+## Progress, measurements, photos and reminders
+
+- **Stats** (`features/progress`): `/stats/exercise/:id`, `/stats/muscle-volume`
+  and `/stats/powerlifting-total` with the device timezone (`tz`, from
+  `localTimezoneProvider`). Every answer is kept in `app_meta` (`JsonCache`):
+  when the API can't be reached the last one is shown with its date. The plan
+  window (Free: 90 days) is applied by the API. Charts: `fl_chart`.
+- **Body weight chart and personal records** are computed from local data
+  (offline, includes unsynced entries); records reuse the PR port.
+- **Body measurements**: quick weigh-in sheet + full form (offline, synced
+  collection `body_metrics`), validated with the API's ranges (`BodyMeasure`).
+- **Progress photos** (Premium, `features/progress_photos`): camera/gallery
+  (`image_picker`) → framing guide → JPEG compression without EXIF
+  (`flutter_image_compress`) → `PhotoUploadQueue` (file in app documents +
+  entry in `app_meta`, registered in `UnsyncedChanges`). Each upload asks for a
+  fresh `POST /media/upload-signature` (1 h TTL), posts the file to Cloudinary
+  with a plain `Dio` (no JWT) and registers it with `POST /progress-photos`.
+  Before/after comparison: `GET /progress-photos/compare`. iOS usage strings
+  (`NSCameraUsageDescription`, `NSPhotoLibraryUsageDescription`) are in
+  `Info.plist`.
+- **Reminders** (`features/reminders`): weekly local notifications
+  (`zonedSchedule` + `DateTimeComponents.dayOfWeekAndTime`, inexact) for
+  training days/time and the weigh-in. Settings are per device (`app_meta`).
+  The notification permission is asked only when a reminder is turned on (or
+  the weekly weigh-in is accepted right after a weigh-in).
+
 ## i18n
 
 `easy_localization`, files in `assets/i18n/{lang}.json` (`es` default and

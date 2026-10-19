@@ -10,6 +10,8 @@ import 'package:saiyagym_mobile/features/auth/presentation/pages/login_page.dart
 import 'package:saiyagym_mobile/features/auth/presentation/pages/register_page.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/pages/splash_page.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/pages/welcome_page.dart';
+import 'package:saiyagym_mobile/features/body_metrics/presentation/body_metric_form_page.dart';
+import 'package:saiyagym_mobile/features/body_metrics/presentation/body_metrics_page.dart';
 import 'package:saiyagym_mobile/features/exercises/presentation/custom_exercise_page.dart';
 import 'package:saiyagym_mobile/features/exercises/presentation/exercise_detail_page.dart';
 import 'package:saiyagym_mobile/features/exercises/presentation/exercises_page.dart';
@@ -24,6 +26,11 @@ import 'package:saiyagym_mobile/features/profile/presentation/edit_profile_page.
 import 'package:saiyagym_mobile/features/profile/presentation/profile_page.dart';
 import 'package:saiyagym_mobile/features/programs/presentation/program_detail_page.dart';
 import 'package:saiyagym_mobile/features/progress/presentation/progress_page.dart';
+import 'package:saiyagym_mobile/features/progress/presentation/records_page.dart';
+import 'package:saiyagym_mobile/features/progress_photos/domain/progress_photo.dart';
+import 'package:saiyagym_mobile/features/progress_photos/presentation/photo_compare_page.dart';
+import 'package:saiyagym_mobile/features/progress_photos/presentation/progress_photos_page.dart';
+import 'package:saiyagym_mobile/features/reminders/presentation/reminders_page.dart';
 import 'package:saiyagym_mobile/features/routines/presentation/routine_editor_page.dart';
 import 'package:saiyagym_mobile/features/today/presentation/today_page.dart';
 import 'package:saiyagym_mobile/features/train/presentation/train_page.dart';
@@ -173,7 +180,50 @@ GoRouter appRouter(Ref ref) {
               ),
             ],
           ),
-          _tab(AppRoutes.progress, const ProgressPage()),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.progress,
+                builder: (_, _) => const ProgressPage(),
+                routes: [
+                  GoRoute(
+                    path: 'records',
+                    builder: (_, _) => const RecordsPage(),
+                  ),
+                  GoRoute(
+                    path: 'body',
+                    builder: (_, _) => const BodyMetricsPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (_, state) => BodyMetricFormPage(
+                          metricId: state.pathParameters['id'] == 'new'
+                              ? null
+                              : state.pathParameters['id'],
+                        ),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'photos',
+                    builder: (_, _) => const ProgressPhotosPage(),
+                    routes: [
+                      GoRoute(
+                        path: 'compare',
+                        builder: (_, state) => PhotoComparePage(
+                          initialView:
+                              PhotoView.values.asNameMap()[state
+                                  .uri
+                                  .queryParameters['view']] ??
+                              PhotoView.front,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -183,6 +233,10 @@ GoRouter appRouter(Ref ref) {
                   GoRoute(
                     path: 'edit',
                     builder: (_, _) => const EditProfilePage(),
+                  ),
+                  GoRoute(
+                    path: 'reminders',
+                    builder: (_, _) => const RemindersPage(),
                   ),
                 ],
               ),

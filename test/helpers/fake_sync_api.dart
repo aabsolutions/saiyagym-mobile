@@ -8,7 +8,8 @@ typedef PushHandler = List<Map<String, Object?>> Function(
   List<Map<String, dynamic>> changes,
 );
 
-/// In-memory stand-in for `/sync/push`, `/sync/pull` and `/exercises`,
+/// In-memory stand-in for `/sync/push`, `/sync/pull` and `/exercises`
+/// (plus [other] for the rest),
 /// speaking the real wire format.
 class FakeSyncApi {
   FakeSyncApi() {
@@ -25,6 +26,9 @@ class FakeSyncApi {
   String serverTime = '2026-10-18T10:00:00.000Z';
 
   List<Map<String, Object?>> catalog = [];
+
+  /// Any other endpoint (stats, photos…); 404 when null or it returns null.
+  ResponseBody? Function(RequestOptions options)? other;
 
   /// Fails the whole request (status) or the transport (DioExceptionType).
   int? pushStatus;
@@ -81,7 +85,7 @@ class FakeSyncApi {
           'meta': {'page': page, 'limit': limit, 'total': catalog.length},
         }, 200);
     }
-    return apiError(404, 'NOT_FOUND');
+    return other?.call(options) ?? apiError(404, 'NOT_FOUND');
   }
 }
 

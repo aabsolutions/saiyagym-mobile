@@ -139,9 +139,28 @@
   },
   "progress": {
     "title": "Progress",
-    "emptyTitle": "Your progress, soon",
-    "emptyMessage": "Per-exercise charts, weekly volume and personal records.",
-    "window": "Your plan shows stats for the last {days} days."
+    "window": "Your plan shows stats for the last {days} days.",
+    "noData": "No data yet.",
+    "cachedAt": "Offline · data from {date}",
+    "bodyWeight": "Body weight",
+    "noWeight": "Log your weight to see how it changes.",
+    "exercise": "Progress by exercise",
+    "noTraining": "Train and log sets to see your progress.",
+    "maxWeight": "Max weight",
+    "e1rm": "Estimated 1RM",
+    "muscleVolume": "Weekly volume by muscle",
+    "sets": "Sets",
+    "volume": "Volume",
+    "setsValue": "{count} sets",
+    "powerlifting": "Powerlifting total",
+    "bestTotal": "Best total: {total}",
+    "noTotal": "The total shows up once you log squat, bench press and deadlift.",
+    "lifts": {
+      "squat": "Squat",
+      "bench": "Bench",
+      "deadlift": "Deadlift"
+    },
+    "liftValue": "{lift}: {value}"
   },
   "profile": {
     "title": "Profile",
@@ -524,6 +543,109 @@
       "muscle": "Primary muscle",
       "equipment": "Equipment",
       "onlineHint": "Creating an exercise needs a connection; afterwards it works offline."
+    }
+  },
+  "records": {
+    "title": "Personal records",
+    "emptyTitle": "No records yet",
+    "emptyMessage": "Complete weighted sets to start setting records.",
+    "repsAt": "{reps} reps at {weight}"
+  },
+  "body": {
+    "title": "Body measurements",
+    "add": "New measurement",
+    "emptyTitle": "No measurements yet",
+    "emptyMessage": "Log your weight and measurements to track your progress.",
+    "deleteTitle": "Delete this measurement?",
+    "quickTitle": "Today's weight",
+    "quick": "Log weight",
+    "full": "All measurements",
+    "invalid": "Enter a valid number.",
+    "range": "Between {min} and {max}.",
+    "atLeastOne": "Fill in at least one measurement.",
+    "notFound": "This measurement no longer exists.",
+    "newTitle": "New measurement",
+    "edit": "Edit measurement",
+    "date": "Date",
+    "notes": "Notes",
+    "measures": {
+      "weightKg": "Weight",
+      "bodyFatPercent": "Body fat",
+      "waistCm": "Waist",
+      "chestCm": "Chest",
+      "hipsCm": "Hips",
+      "armCm": "Arm",
+      "thighCm": "Thigh",
+      "calfCm": "Calf",
+      "neckCm": "Neck"
+    },
+    "short": {
+      "weightKg": "Weight",
+      "bodyFatPercent": "Fat",
+      "waistCm": "Waist",
+      "chestCm": "Chest",
+      "hipsCm": "Hips",
+      "armCm": "Arm",
+      "thighCm": "Thigh",
+      "calfCm": "Calf",
+      "neckCm": "Neck"
+    }
+  },
+  "reminders": {
+    "title": "Reminders",
+    "entry": "Workouts and weekly weigh-in",
+    "channel": "Reminders",
+    "trainingTitle": "Training day!",
+    "trainingBody": "Open SaiyaGym and start your session.",
+    "weighInTitle": "Time to weigh in",
+    "weighInBody": "Log your weekly weight in SaiyaGym.",
+    "denied": "Notifications are turned off. Enable them in your phone settings.",
+    "weighInOffer": "Remind you to weigh in every week at this time?",
+    "enable": "Turn on",
+    "training": "Workout reminder",
+    "trainingHint": "On the days and at the time you choose.",
+    "time": "Time",
+    "weighIn": "Weekly weigh-in",
+    "weighInHint": "One reminder a week to log your weight.",
+    "day": "Day"
+  },
+  "photos": {
+    "title": "Progress photos",
+    "compare": "Compare",
+    "add": "New photo",
+    "queued": "Photo saved. It will upload as soon as you're online.",
+    "unreadable": "The image couldn't be processed.",
+    "empty": "No photos of this view yet.",
+    "deleteTitle": "Delete this photo?",
+    "pending": "Pending",
+    "failed": "Upload failed",
+    "failedTitle": "This photo couldn't be uploaded",
+    "failedMessage": "You can retry or discard it.",
+    "needsPremium": "Progress photos are part of Premium.",
+    "discard": "Discard",
+    "camera": "Take photo",
+    "gallery": "Choose from gallery",
+    "toggleGuide": "Show or hide the guide",
+    "retake": "Retake",
+    "use": "Use photo",
+    "before": "Before",
+    "after": "After",
+    "needTwo": "You need at least two photos of this view to compare.",
+    "views": {
+      "front": "Front",
+      "side": "Side",
+      "back": "Back"
+    },
+    "guide": {
+      "title": {
+        "front": "Front photo",
+        "side": "Side photo",
+        "back": "Back photo"
+      },
+      "front": "Facing the camera, arms relaxed at your sides, feet shoulder-width apart.",
+      "side": "Side-on (right side), arms relaxed, natural posture.",
+      "back": "Back to the camera, arms relaxed, feet shoulder-width apart.",
+      "same": "Always use the same light, distance and time of day so the comparison is fair."
     }
   }
 }

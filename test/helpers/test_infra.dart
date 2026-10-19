@@ -13,8 +13,11 @@ import 'package:saiyagym_mobile/core/network/api_client.dart';
 import 'package:saiyagym_mobile/core/storage/token_storage.dart';
 import 'package:saiyagym_mobile/core/sync/connectivity_monitor.dart';
 import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
+import 'package:saiyagym_mobile/core/time/local_timezone.dart';
 import 'package:saiyagym_mobile/features/live_workout/data/device_services.dart';
 import 'package:saiyagym_mobile/features/live_workout/live_workout_providers.dart';
+import 'package:saiyagym_mobile/features/reminders/data/reminder_scheduler.dart';
+import 'package:saiyagym_mobile/features/reminders/reminders_providers.dart';
 
 import 'fake_sync_api.dart';
 import 'in_memory_token_storage.dart';
@@ -68,6 +71,7 @@ List<Override> testInfraOverrides({
   FakeSyncApi? api,
   AppDatabase? database,
   SilentDeviceServices? device,
+  ReminderScheduler? reminders,
 }) {
   final db = database ?? testDatabase();
   final services = device ?? SilentDeviceServices();
@@ -94,6 +98,10 @@ List<Override> testInfraOverrides({
       ),
     ),
     connectivityMonitorProvider.overrideWithValue(FakeConnectivity()),
+    localTimezoneProvider.overrideWith((ref) async => 'Europe/Madrid'),
+    reminderSchedulerProvider.overrideWithValue(
+      reminders ?? FakeReminderScheduler(),
+    ),
     backgroundSyncSchedulerProvider.overrideWithValue(FakeBackgroundSync()),
   ];
 }

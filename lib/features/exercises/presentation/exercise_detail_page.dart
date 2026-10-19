@@ -9,6 +9,7 @@ import 'package:saiyagym_mobile/features/exercises/domain/exercise.dart';
 import 'package:saiyagym_mobile/features/exercises/exercises_providers.dart';
 import 'package:saiyagym_mobile/features/exercises/presentation/exercises_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
+import 'package:saiyagym_mobile/features/records/data/records_service.dart';
 import 'package:saiyagym_mobile/features/records/domain/personal_records.dart';
 import 'package:saiyagym_mobile/features/workouts/domain/workout.dart';
 import 'package:saiyagym_mobile/features/workouts/workouts_providers.dart';
@@ -44,22 +45,7 @@ class ExerciseDetailPage extends ConsumerWidget {
     }
     final favorite = pref?.isFavorite ?? false;
     final records = computeRecords([
-      for (final workout in history)
-        RecordSession(
-          workoutId: workout.id,
-          startedAt: workout.startedAt,
-          sets: [
-            for (final e in workout.exercises)
-              if (e.exerciseId == exerciseId)
-                for (final s in e.sets)
-                  RecordSet(
-                    type: s.type,
-                    completed: s.completed,
-                    weightKg: s.weightKg,
-                    reps: s.reps,
-                  ),
-          ],
-        ),
+      for (final workout in history) recordSessionOf(workout, exerciseId),
     ]);
 
     return Scaffold(

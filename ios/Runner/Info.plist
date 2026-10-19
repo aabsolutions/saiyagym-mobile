@@ -71,5 +71,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Para tomar tus fotos de progreso.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Para elegir fotos de progreso de tu galería.</string>
 </dict>
 </plist>

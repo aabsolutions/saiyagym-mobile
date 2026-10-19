@@ -1,5 +1,32 @@
 # Progress — gymapp-mobile
 
+## 2026-10-19 — Progreso, medidas, fotos y recordatorios
+
+### Hecho
+- **Progreso** (`fl_chart`): evolución por ejercicio (peso máximo / 1RM estimado, selector con los ejercicios entrenados), volumen semanal por músculo (series o volumen, últimas 12 semanas), total de powerlifting (1RM estimado o peso máximo, mejor total y última marca por levantamiento) y peso corporal. Datos de `/stats/*` con el `tz` del dispositivo; **caché local** en `app_meta`: sin red (o con la API dormida) se muestra la última versión con "Sin conexión · datos del …". Free: aviso de la ventana de 90 días + `UpgradeCta` (la API aplica la ventana).
+- **Récords personales** por ejercicio (peso máximo, 1RM estimado, volumen por sesión y reps por peso), calculados en local con el port de la API.
+- **Medidas corporales**: registro rápido de peso (hoja con el último peso como pista) y formulario completo (fecha, peso, % graso, 7 perímetros, notas) con los rangos de la API; lista con editar/borrar. Offline (colección sincronizada).
+- **Fotos de progreso (Premium)**: vistas frontal/lateral/espalda; guía de encuadre (silueta + línea central, consejos antes de abrir la cámara y superpuesta en la vista previa); cámara o galería; compresión a JPEG ≤ 1280 px sin EXIF; **cola de subida** offline (archivo local + entrada en `app_meta`, cuenta en `UnsyncedChanges` → el logout avisa); firma pedida en el momento de subir, subida directa a Cloudinary y registro en la API; fallos permanentes con reintentar/descartar; borrar con pulsación larga; **comparador antes/después** con deslizador.
+- **Recordatorios locales**: entreno por días + hora y pesaje semanal (día + hora), en Perfil → Recordatorios. Notificaciones semanales en la zona horaria del dispositivo. **Permiso en el momento oportuno**: solo al activar un recordatorio, o al aceptar el recordatorio de pesaje que se ofrece (una vez) justo después de pesarse.
+
+### Verificación
+- `flutter analyze` ✅ sin issues.
+- `flutter test` ✅ 199/199, estable en 2 corridas. Nuevos: caché de stats (tz, fallback offline con fecha, sin copia → error, métricas separadas), modelo de volumen por músculo, récords por ejercicio, `nextWeekly` (incluye el cambio de hora del 25-oct), ids de notificaciones, controlador de recordatorios (permiso solo al activar; denegado = sin cambios), cola de fotos (offline → en cola; firma → Cloudinary SIN JWT → registro; el reintento solo registra si ya subió; rechazo permanente; descartar), coordinador (sube fotos al iniciar sesión y al volver la red; cancela recordatorios solo si el logout borró sus ajustes); widget: stats offline con fecha, pesaje rápido + oferta de recordatorio, validación del formulario, récords, recordatorios con permiso denegado/concedido, fotos Free → CTA Premium, foto offline en cola.
+- **No ejecutado**: en dispositivo (cámara, compresión, notificaciones reales) ni contra la API / Cloudinary reales.
+
+### Decisiones y gotchas
+- **Peso corporal y récords desde Drift**, no desde `/body-metrics/series` ni la API de récords: funcionan offline e incluyen lo no sincronizado; mismas reglas que la API (port).
+- **La firma de Cloudinary dura 1 h**: nunca se guarda; cada subida pide una nueva. Si Cloudinary aceptó pero el registro falló, se guarda el `public_id` y el reintento solo registra (no sube dos veces).
+- **Cloudinary con un `Dio` aparte** (`uploadClientProvider`): el JWT nunca sale hacia terceros.
+- Recordatorios: `inexactAllowWhileIdle` (sin permiso de alarma exacta; unos minutos tarde da igual). El logout borra sus ajustes → se cancelan las notificaciones; una **sesión expirada** conserva ajustes y recordatorios (por eso no se cancela en cualquier "signed out").
+- iOS: `DarwinInitializationSettings` con `request*Permission: false`, para que inicializar no pida permiso.
+- Tests: en 360 px un título largo + un toggle no entran en una fila (overflow detectado por test); `scrollUntilVisible` hace settle y las otras pestañas siguen montadas (IndexedStack) → helper propio que arrastra la lista de la página. IO de archivos en widget tests: síncrona.
+
+### Pendiente / próximo
+- Probar en dispositivo: cámara/galería, compresión, subida real a Cloudinary, notificaciones (Android 13+ / iOS).
+- Los textos de las notificaciones se fijan al guardar: si cambia el idioma, se actualizan al volver a guardar los recordatorios.
+- Duplicado posible si el registro de una foto llega al servidor pero se pierde la respuesta (la API no recibe id de cliente).
+
 ## 2026-10-19 — Pantallas de uso diario
 
 ### Hecho

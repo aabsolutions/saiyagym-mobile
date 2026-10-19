@@ -186,6 +186,13 @@ class ProfilePage extends ConsumerWidget {
             },
           ),
           const TrainingSettingsSection(),
+          _SectionTitle(context.tr('reminders.title')),
+          ListTile(
+            leading: const Icon(Icons.notifications_outlined),
+            title: Text(context.tr('reminders.entry')),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => unawaited(context.push(AppRoutes.reminders)),
+          ),
           const SizedBox(height: 40),
           const _LogoutButton(),
         ],

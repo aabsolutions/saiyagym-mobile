@@ -47,6 +47,11 @@ android {
         versionName = flutter.versionName
     }
 
+    // AGP 9 disables resValue() by default; the flavors set app_name with it.
+    buildFeatures {
+        resValues = true
+    }
+
     // `flutter run --flavor dev|prod`; Dart reads it through `appFlavor`.
     flavorDimensions += "env"
     productFlavors {

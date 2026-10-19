@@ -69,12 +69,10 @@ jobs:
         shell: bash
         run: |
           version=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')
+          # A release tag must match pubspec.yaml. API_BASE_URL is optional:
+          # the prod flavor has the Render URL built in.
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            # A release must point at the real API and match pubspec.yaml.
-            [[ -n "$API_BASE_URL" ]] || { echo "::error::Set the API_BASE_URL repository variable"; exit 1; }
             [[ "${GITHUB_REF_NAME#v}" == "$version" ]] || { echo "::error::Tag $GITHUB_REF_NAME != pubspec version $version"; exit 1; }
-          elif [[ -z "$API_BASE_URL" ]]; then
-            echo "::warning::API_BASE_URL not set: the build points at the placeholder URL"
           fi
 
       # Secrets: ANDROID_KEYSTORE_BASE64 (base64 of the .jks),

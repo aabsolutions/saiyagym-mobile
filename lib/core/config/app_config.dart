@@ -30,8 +30,9 @@ class AppConfig {
                 defaultTargetPlatform == TargetPlatform.iOS
                     ? 'http://localhost:3000/api/v1'
                     : 'http://10.0.2.2:3000/api/v1',
-              // TODO(prod): set the Render service URL once it is known.
-              Flavor.prod => 'https://CHANGE-ME.onrender.com/api/v1',
+              // Render (free plan: the first request after idling can
+              // take ~40 s; the app shows a "server waking up" banner).
+              Flavor.prod => 'https://saiyagym-api.onrender.com/api/v1',
             },
     );
   }

@@ -10,11 +10,11 @@ void main() {
     expect(AppConfig.resolve(flavorName: 'staging').flavor, Flavor.dev);
   });
 
-  test('prod always uses HTTPS', () {
+  test('prod: the Render API, over HTTPS, with the /api/v1 prefix', () {
     final config = AppConfig.resolve(flavorName: 'prod');
 
     expect(config.flavor, Flavor.prod);
-    expect(config.apiBaseUrl, startsWith('https://'));
+    expect(config.apiBaseUrl, 'https://saiyagym-api.onrender.com/api/v1');
   });
 
   test('dev targets the host machine from each simulator', () {

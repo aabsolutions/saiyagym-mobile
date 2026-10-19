@@ -21,7 +21,7 @@ flutter run --flavor dev         # Android emulator → http://10.0.2.2:3000/api
 | Flavor | App id | API |
 |--------|--------|-----|
 | `dev`  | `com.saiyagym.app.dev` ("SaiyaGym Dev") | Android emulator `10.0.2.2:3000`, iOS simulator `localhost:3000`. Cleartext HTTP allowed **only** in this flavor |
-| `prod` | `com.saiyagym.app` | `https://CHANGE-ME.onrender.com/api/v1` — **set the real Render URL** in `lib/core/config/app_config.dart` |
+| `prod` | `com.saiyagym.app` | `https://saiyagym-api.onrender.com/api/v1` (Render; `lib/core/config/app_config.dart`) |
 
 Physical device against your dev API (same Wi-Fi):
 
@@ -293,8 +293,9 @@ version (bump it by hand, semver); CI sets the build number `N` from the run
 number, so every upload is higher. A release is a git tag `vX.Y.Z` that must
 match `pubspec.yaml`.
 
-**Production API URL**: `--dart-define=API_BASE_URL=https://…/api/v1` (CI: the
-`API_BASE_URL` repository variable). Tag builds fail without it.
+**Production API URL**: `https://saiyagym-api.onrender.com/api/v1`, built into
+the `prod` flavor. `--dart-define=API_BASE_URL=…` (CI: the optional
+`API_BASE_URL` repository variable) overrides it, e.g. for a staging API.
 
 ### Android
 
@@ -307,7 +308,6 @@ match `pubspec.yaml`.
 
 ```bash
 flutter build appbundle --release --flavor prod \
-  --dart-define=API_BASE_URL=https://<render-service>.onrender.com/api/v1 \
   --obfuscate --split-debug-info=build/symbols
 ```
 
@@ -321,7 +321,7 @@ each release to symbolize crash stack traces.
    `com.saiyagym.app` (register it in App Store Connect).
 2. Optional native flavors: see [iOS flavors](#ios-flavors) (until then
    `--dart-define=FLAVOR=prod`).
-3. `flutter build ipa --release --dart-define=FLAVOR=prod --dart-define=API_BASE_URL=… --obfuscate --split-debug-info=build/symbols`
+3. `flutter build ipa --release --dart-define=FLAVOR=prod --obfuscate --split-debug-info=build/symbols`
    and upload with Transporter / Xcode Organizer.
 
 Before the first upload: privacy texts in `Info.plist` (camera, photo library)
@@ -337,7 +337,8 @@ fitness data) and the Play data-safety form accordingly.
 - **android** (main and `v*` tags): signed APK + AAB (prod, obfuscated) as
   artifacts. Secrets: `ANDROID_KEYSTORE_BASE64` (`base64 -w0 upload-keystore.jks`),
   `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`;
-  variable `API_BASE_URL`. Tags fail without them.
+  optional variable `API_BASE_URL` (overrides the built-in prod URL). Tags
+  fail without the signing secrets.
 - **ios** (main and tags): `flutter build ios --no-codesign` on macOS — proves it
   compiles; signing/upload needs the Apple certificates (manual or fastlane).
 

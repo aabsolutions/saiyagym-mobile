@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saiyagym_mobile/core/widgets/empty_state.dart';
+import 'package:saiyagym_mobile/core/widgets/sync_status_button.dart';
 import 'package:saiyagym_mobile/features/plans/domain/entitlements.dart';
 import 'package:saiyagym_mobile/features/plans/plans_providers.dart';
 import 'package:saiyagym_mobile/features/plans/presentation/upgrade_cta.dart';
@@ -15,7 +16,10 @@ class ProgressPage extends ConsumerWidget {
     final days = plan.statsHistoryDays;
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.tr('progress.title'))),
+      appBar: AppBar(
+        title: Text(context.tr('progress.title')),
+        actions: const [SyncStatusButton()],
+      ),
       body: Column(
         children: [
           Expanded(

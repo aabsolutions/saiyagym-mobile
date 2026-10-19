@@ -13,8 +13,8 @@ void main() {
 
   tearDown(() => database.close());
 
-  test('is at schema version 1 (drift_schemas/ must match)', () {
-    expect(database.schemaVersion, 1);
+  test('is at schema version 2 (drift_schemas/ must match)', () {
+    expect(database.schemaVersion, 2);
   });
 
   test('meta entries are written, overwritten and deleted by key', () async {

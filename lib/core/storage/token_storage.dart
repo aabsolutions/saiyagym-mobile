@@ -70,10 +70,11 @@ class SecureTokenStorage implements TokenStorage {
   }
 }
 
-@Riverpod(keepAlive: true)
-TokenStorage tokenStorage(Ref ref) => SecureTokenStorage(
-  const FlutterSecureStorage(
-    // Readable after the first unlock: background sync must reach the tokens.
-    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-  ),
+/// Same options in the app and in the background sync isolate.
+const secureStorage = FlutterSecureStorage(
+  // Readable after the first unlock: background sync must reach the tokens.
+  iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
 );
+
+@Riverpod(keepAlive: true)
+TokenStorage tokenStorage(Ref ref) => SecureTokenStorage(secureStorage);

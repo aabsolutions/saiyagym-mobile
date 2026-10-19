@@ -10,7 +10,11 @@ part 'unsynced_changes.g.dart';
 class UnsyncedChanges {
   final _counters = <Future<int> Function()>[];
 
-  void register(Future<int> Function() counter) => _counters.add(counter);
+  /// Returns the unregister callback (call it when the owner is disposed).
+  void Function() register(Future<int> Function() counter) {
+    _counters.add(counter);
+    return () => _counters.remove(counter);
+  }
 
   Future<int> count() async {
     var total = 0;

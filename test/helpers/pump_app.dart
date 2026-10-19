@@ -10,6 +10,8 @@ import 'package:saiyagym_mobile/core/i18n/app_locales.dart';
 import 'package:saiyagym_mobile/core/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'test_infra.dart';
+
 /// Pumps [child] under the real translations (assets/i18n, Spanish).
 /// [child] is either a full app or, via [LocalizedTestApp], a single page.
 Future<void> pumpLocalized(
@@ -39,7 +41,7 @@ Future<void> pumpLocalized(
       // A new key per pump: a mounted ProviderScope ignores new overrides.
       child: ProviderScope(
         key: UniqueKey(),
-        overrides: overrides,
+        overrides: [...testInfraOverrides(), ...overrides],
         child: child,
       ),
     ),

@@ -1,5 +1,38 @@
 # Progress — gymapp-mobile
 
+## 2026-10-18 — Offline-first: base local + sincronización
+
+### Hecho
+- **Drift v2** (migración versionada v1→v2 con `make-migrations`, schemas en `drift_schemas/`): tablas `exercises`, `user_exercise_prefs`, `routines`, `programs`, `workouts`, `body_metrics` (columnas tipadas para filtrar/ordenar + el documento completo en JSON) y `sync_queue` (operación, colección, id, payload, intentos, estado, error, próximo intento).
+- **Repositorios** (ejercicios + prefs, rutinas, programas, workouts, medidas): leen SIEMPRE de local; escriben local + encolan en una sola transacción (`SyncWriter`). Una entrada de cola por documento (la última edición reemplaza el payload y conserva el orden). `FinishWorkoutUseCase` pide sync al terminar.
+- **SyncService**: push por lotes de 100 → pull desde el último `serverTime` → catálogo si está vencido. Single-flight (una llamada concurrente agenda una pasada más). Last-write-wins por `updatedAt` (UTC, ms, estrictamente creciente por doc aunque el reloj retroceda); borrado lógico con `deletedAt`. Codecs de push con whitelist por colección (el pull trae campos calculados que el push rechaza). Prefs adoptan el id que devuelve el servidor (clave natural = ejercicio).
+- **Errores y reintentos**: sin conexión → offline sin gastar intentos; 5xx/CONFLICT/429 → backoff exponencial (30 s·2ⁿ, tope 1 h, ±20 %); el resto → `failed`, visible en la hoja de sync con "Reintentar" / "Descartar" (descarta y vuelve a bajar la versión del servidor). Re-editar un cambio rechazado le da otra oportunidad.
+- **Disparadores** (`SyncCoordinator`): inicio de sesión/apertura, volver a primer plano, pasar a segundo plano, recuperar conexión (`connectivity_plus`; si la sesión abrió offline también refresca el perfil), cambio de idioma, cada edición local (debounce 2 s), workout terminado, pull-to-refresh (Historial, Entrenar) y periódico en segundo plano (`workmanager`, 30 min con red, Android).
+- **Catálogo offline**: descarga completa de `GET /exercises` (todas las páginas) si falta, tiene > 24 h o está en otro idioma; los que desaparecen se ocultan (no se borran: el historial necesita sus nombres).
+- **Indicador global**: `SyncStatusButton` en el AppBar de todas las tabs (sincronizado / pendiente n / sincronizando / sin conexión / error) + hoja de detalle. Historial y Entrenar listan datos locales.
+- Logout cuenta los cambios sin sincronizar a través de `UnsyncedChanges` (la cola se registra ahí).
+- Fechas de dominio con converters UTC (`…Z` siempre).
+
+### Verificación
+- `flutter analyze` ✅ sin issues.
+- `flutter test` ✅ 99/99, estable en 3 corridas. Nuevos: `SyncService` con API simulada (push con whitelist, edición múltiple → un cambio, delete lógico, reloj que retrocede, id de prefs, pull de todas las colecciones + cursor, borrado remoto, adoptar la propia escritura, conflictos local-más-nuevo / servidor-más-nuevo / `ignored_older`, backoff exponencial + tope, offline sin intentos, rechazo permanente + re-edición, reintentar, descartar, single-flight, catálogo paginado + vencimiento + idioma), codecs de push, `SyncCoordinator` (login, logout, conectividad, idioma), migración v1→v2 (esquema + datos de `app_meta`).
+- **No ejecutado**: contra la API real, en dispositivo, ni la tarea de `workmanager` real (iOS sin configurar).
+
+### Decisiones y gotchas
+- **Background nunca refresca tokens** (`buildApiClient(refreshTokens: false)`): los refresh tokens rotan y dos isolates refrescando a la vez dispararían `REFRESH_TOKEN_REUSED` → sesión revocada. Si el access token venció, la corrida de fondo se saltea; por eso también se sincroniza al pasar a segundo plano.
+- Mongo guarda milisegundos: las versiones locales se truncan a ms, si no nuestra propia escritura, al volver en el pull, parecería más vieja que la local.
+- `sync_queue` conserva la posición al re-encolar: una rutina creada antes que el workout que la usa llega antes al servidor.
+- `riverpod_generator` corre antes que `drift_dev`: un provider no puede exponer tipos generados por Drift (`InvalidTypeException`). La UI usa `FailedChange` (core) en vez de filas de la cola — mejor separación de todos modos.
+- `requestSync` nunca sincroniza en el mismo frame (microtask): los disparadores vienen de listeners durante builds y Riverpod prohíbe actualizar estado ahí.
+- Tests: Drift cierra streams cancelados con un timer de 0 ms → en widget tests `DatabaseConnection(..., closeStreamsSynchronously: true)`. `pumpLocalized` monta infraestructura falsa (`testInfraOverrides`). En una cascada, `..x = (a) => [...]..y = …` asigna `y` a la lista: paréntesis.
+- Entidades de dominio con `fromJson/toJson` (freezed): el formato del sync ES la forma del dominio; lo que se puede enviar lo decide el codec de la capa de sync, no la entidad.
+
+### Pendiente / próximo
+- Configurar `workmanager` en iOS (Info.plist + AppDelegate, en Mac).
+- Probar contra la API real (Render) y en dispositivo; medir el tamaño del pull completo inicial.
+- Registro de sesiones en vivo (≤ 2 toques por serie) usando `WorkoutsRepository` + `FinishWorkoutUseCase`.
+- URL de producción real; schemes de iOS.
+
 ## 2026-10-18 — Auth completo, onboarding, perfil y planes
 
 ### Hecho

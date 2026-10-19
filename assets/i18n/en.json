@@ -90,13 +90,17 @@
   },
   "train": {
     "title": "Train",
-    "emptyTitle": "Ready to train",
-    "emptyMessage": "Soon you'll start a session from a routine or from scratch."
+    "emptyTitle": "No routines yet",
+    "emptyMessage": "Create routines on the web and they show up here, offline too. Pull down to sync.",
+    "routines": "Your routines",
+    "exercises": "{count} exercises"
   },
   "history": {
     "title": "History",
     "emptyTitle": "No sessions yet",
-    "emptyMessage": "Your logged workouts will show up here."
+    "emptyMessage": "Your logged workouts will show up here.",
+    "untitled": "Workout",
+    "sets": "{count} sets"
   },
   "progress": {
     "title": "Progress",
@@ -228,5 +232,32 @@
     "TIMEOUT": "The server took too long to respond. Try again.",
     "CANCELLED": "The operation was cancelled.",
     "UNKNOWN_ERROR": "Something went wrong. Try again."
+  },
+  "sync": {
+    "title": "Sync",
+    "now": "Sync now",
+    "lastSynced": "Last synced: {time}",
+    "status": {
+      "synced": "Everything is synced",
+      "syncing": "Syncing…",
+      "pending": "{count} changes waiting to upload",
+      "offline": "Offline. Your data is saved on this device.",
+      "offlinePending": "Offline: {count} changes will upload when you are back online.",
+      "error": "Some changes could not be synced"
+    },
+    "failedTitle": "Rejected changes",
+    "failedHelp": "The server did not accept these changes. Retry them, or discard them to get the server version back.",
+    "discard": {
+      "action": "Discard",
+      "title": "Discard the change?",
+      "message": "This device's version is lost and the server's version (if any) comes back.",
+      "confirm": "Discard"
+    },
+    "collections": {
+      "workouts": "Workout",
+      "routines": "Routine",
+      "body_metrics": "Body measurement",
+      "user_exercise_prefs": "Exercise preference"
+    }
   }
 }

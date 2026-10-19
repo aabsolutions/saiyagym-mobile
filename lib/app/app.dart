@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saiyagym_mobile/app/router/app_router.dart';
+import 'package:saiyagym_mobile/app/sync/sync_coordinator.dart';
 import 'package:saiyagym_mobile/core/i18n/app_locales.dart';
 import 'package:saiyagym_mobile/core/network/api_client.dart';
 import 'package:saiyagym_mobile/core/theme/app_theme.dart';
@@ -23,7 +24,12 @@ class _SaiyaGymAppState extends ConsumerState<SaiyaGymApp> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Runs on every locale change (EasyLocalization is an inherited widget).
-    ref.read(requestLanguageProvider).code = context.locale.languageCode;
+    final language = ref.read(requestLanguageProvider);
+    final code = context.locale.languageCode;
+    if (language.code == code) return;
+    language.code = code;
+    // The offline catalog is stored per language.
+    ref.read(syncCoordinatorProvider.notifier).languageChanged();
   }
 
   @override
@@ -36,6 +42,9 @@ class _SaiyaGymAppState extends ConsumerState<SaiyaGymApp> {
         unawaited(context.setLocale(Locale(language!)));
       }
     });
+
+    // Starts/stops sync with the session and owns its triggers.
+    ref.watch(syncCoordinatorProvider);
 
     return MaterialApp.router(
       onGenerateTitle: (context) => context.tr('app.name'),

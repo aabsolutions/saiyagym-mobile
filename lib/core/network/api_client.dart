@@ -13,12 +13,17 @@ part 'api_client.g.dart';
 
 /// Builds the API client. Separate from the provider so tests can plug in
 /// fake [adapter]s and assert on the real interceptor chain.
+///
+/// [refreshTokens] `false` (background isolate): a 401 is returned as is.
+/// Refresh tokens rotate, so two isolates refreshing at once would trip
+/// REFRESH_TOKEN_REUSED and revoke the session; only the app refreshes.
 Dio buildApiClient({
   required String baseUrl,
   required TokenStorage storage,
   required String Function() languageCode,
   required void Function() onSessionExpired,
   SlowRequestMonitor? monitor,
+  bool refreshTokens = true,
   HttpClientAdapter? adapter,
   HttpClientAdapter? refreshAdapter,
 }) {
@@ -42,11 +47,13 @@ Dio buildApiClient({
     language,
     AuthInterceptor(
       storage: storage,
-      refresher: TokenRefresher(
-        dio: refreshDio,
-        storage: storage,
-        onSessionExpired: onSessionExpired,
-      ),
+      refresher: refreshTokens
+          ? TokenRefresher(
+              dio: refreshDio,
+              storage: storage,
+              onSessionExpired: onSessionExpired,
+            )
+          : null,
       retry: dio.fetch,
     ),
     // Must stay last: onError runs in insertion order.

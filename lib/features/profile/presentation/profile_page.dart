@@ -9,6 +9,7 @@ import 'package:saiyagym_mobile/core/i18n/app_locales.dart';
 import 'package:saiyagym_mobile/core/sync/unsynced_changes.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
 import 'package:saiyagym_mobile/core/widgets/error_banner.dart';
+import 'package:saiyagym_mobile/core/widgets/sync_status_button.dart';
 import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
 import 'package:saiyagym_mobile/features/plans/domain/entitlements.dart';
@@ -43,6 +44,7 @@ class ProfilePage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(context.tr('profile.title')),
+        actions: const [SyncStatusButton()],
         bottom: saving
             ? const PreferredSize(
                 preferredSize: Size.fromHeight(4),

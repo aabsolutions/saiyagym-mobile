@@ -35,7 +35,9 @@ class AuthInterceptor extends Interceptor {
   static const Map<String, Object> publicEndpoint = {skipAuth: true};
 
   final TokenStorage _storage;
-  final TokenRefresher _refresher;
+
+  /// `null`: never refresh (see `buildApiClient(refreshTokens:)`).
+  final TokenRefresher? _refresher;
   final Future<Response<dynamic>> Function(RequestOptions) _retry;
 
   @override
@@ -59,7 +61,9 @@ class AuthInterceptor extends Interceptor {
     ErrorInterceptorHandler handler,
   ) async {
     final options = err.requestOptions;
+    final refresher = _refresher;
     final canRefresh =
+        refresher != null &&
         err.response?.statusCode == 401 &&
         options.extra[skipAuth] != true &&
         options.extra[_retried] != true;
@@ -71,7 +75,7 @@ class AuthInterceptor extends Interceptor {
         current != null && current.accessToken != options.extra[_sentToken];
     final outcome = alreadyRefreshed
         ? RefreshOutcome.refreshed
-        : await _refresher.refresh();
+        : await refresher.refresh();
 
     if (outcome != RefreshOutcome.refreshed) return handler.next(err);
 

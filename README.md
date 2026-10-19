@@ -102,6 +102,57 @@ lib/
 - **Cold starts:** `SlowRequestMonitor` shows "waking up the server" when a
   request takes > 3 s (Render free plan).
 
+## Offline-first sync
+
+Repositories (`features/*/data`) **always read from Drift** and write through
+`SyncWriter`: local row + `sync_queue` entry in one transaction. Nothing in the
+UI waits for the network.
+
+- **Tables:** `exercises`, `user_exercise_prefs`, `routines`, `programs`,
+  `workouts`, `body_metrics` (typed columns for queries + the full doc as JSON in
+  `data`) and `sync_queue` (op, collection, doc id, payload, attempts, error,
+  next attempt). One queue entry per document: re-editing replaces the payload
+  and keeps its position.
+- **`SyncService.sync()`** (single-flight): push due entries in batches of 100 to
+  `POST /sync/push`, then `GET /sync/pull?since=<serverTime>`, then refresh the
+  exercise catalog if stale. The cursor is saved in the same transaction as the
+  pulled docs.
+- **Conflicts:** last write wins on `updatedAt` (client clock, UTC, millisecond
+  precision, strictly increasing per doc). A pulled doc newer than the local one
+  replaces it and drops its queued change; an older one is ignored (ours gets
+  pushed). Deletions are logical (`deletedAt`).
+- **Push whitelist:** `push_codecs.dart`. Pulled docs carry server-computed fields
+  (`volumeKg`, …) that the API rejects on push (`forbidNonWhitelisted`).
+- **Errors:** connectivity → offline, no attempt counted. 5xx / `CONFLICT` /
+  `TOO_MANY_REQUESTS` → exponential backoff (30 s · 2ⁿ, max 1 h, ±20 % jitter).
+  Anything else (validation, plan limits, …) → `failed`, shown in the sync sheet
+  with retry / discard (discard drops the change and re-pulls the server copy).
+- **Triggers** (`app/sync/sync_coordinator.dart`): sign-in / app open, app
+  resumed or paused, network back (`connectivity_plus`), language change
+  (catalog), every local edit (debounced 2 s), a finished workout, pull-to-refresh
+  (History, Train) and **periodic background work** (`workmanager`, every 30 min
+  with network, Android).
+- **Background isolate never refreshes tokens**: refresh tokens rotate, so two
+  isolates refreshing at once would trip `REFRESH_TOKEN_REUSED` and revoke the
+  session. With an expired access token the background run just skips; the app
+  syncs on resume/pause.
+- **Exercise catalog:** pull only returns custom exercises; the global catalog is
+  downloaded from `GET /exercises` (all pages) when missing, older than 24 h or
+  in another UI language. Removed exercises are hidden, not deleted (old workouts
+  still show their names).
+- **Indicator:** `SyncStatusButton` in every tab's app bar — synced, pending (n),
+  syncing, offline, error — opening the sync sheet.
+- Logout counts unsynced changes through `UnsyncedChanges` (the queue registers
+  there) before wiping local data.
+
+### iOS background sync (pending, needs a Mac)
+
+Android needs no setup. On iOS `WorkmanagerBackgroundSync` is skipped until:
+add `BGTaskSchedulerPermittedIdentifiers` (`saiyagym.sync`) and
+`UIBackgroundModes` (`fetch`, `processing`) to `Info.plist`, register the task in
+`AppDelegate.swift` (see the `workmanager_apple` docs) and remove the platform
+check in `background_sync.dart`.
+
 ## i18n
 
 `easy_localization`, files in `assets/i18n/{lang}.json` (`es` default and

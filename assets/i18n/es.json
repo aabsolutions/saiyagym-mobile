@@ -90,13 +90,17 @@
   },
   "train": {
     "title": "Entrenar",
-    "emptyTitle": "Listo para entrenar",
-    "emptyMessage": "Pronto podrás empezar una sesión desde una rutina o en vacío."
+    "emptyTitle": "Todavía no tienes rutinas",
+    "emptyMessage": "Crea rutinas en la web y aparecerán aquí, también sin conexión. Desliza hacia abajo para sincronizar.",
+    "routines": "Tus rutinas",
+    "exercises": "{count} ejercicios"
   },
   "history": {
     "title": "Historial",
     "emptyTitle": "Todavía no hay sesiones",
-    "emptyMessage": "Tus entrenos registrados aparecerán aquí."
+    "emptyMessage": "Tus entrenos registrados aparecerán aquí.",
+    "untitled": "Entreno",
+    "sets": "{count} series"
   },
   "progress": {
     "title": "Progreso",
@@ -228,5 +232,32 @@
     "TIMEOUT": "El servidor tardó demasiado en responder. Inténtalo de nuevo.",
     "CANCELLED": "La operación se canceló.",
     "UNKNOWN_ERROR": "Algo salió mal. Inténtalo de nuevo."
+  },
+  "sync": {
+    "title": "Sincronización",
+    "now": "Sincronizar ahora",
+    "lastSynced": "Última sincronización: {time}",
+    "status": {
+      "synced": "Todo sincronizado",
+      "syncing": "Sincronizando…",
+      "pending": "{count} cambios pendientes de subir",
+      "offline": "Sin conexión. Tus datos se guardan en el dispositivo.",
+      "offlinePending": "Sin conexión: {count} cambios se subirán al volver la red.",
+      "error": "Algunos cambios no se pudieron sincronizar"
+    },
+    "failedTitle": "Cambios rechazados",
+    "failedHelp": "El servidor no aceptó estos cambios. Puedes reintentar o descartarlos y recuperar la versión del servidor.",
+    "discard": {
+      "action": "Descartar",
+      "title": "¿Descartar el cambio?",
+      "message": "Se perderá la versión de este dispositivo y se recuperará la del servidor (si existe).",
+      "confirm": "Descartar"
+    },
+    "collections": {
+      "workouts": "Sesión de entrenamiento",
+      "routines": "Rutina",
+      "body_metrics": "Medida corporal",
+      "user_exercise_prefs": "Preferencia de ejercicio"
+    }
   }
 }

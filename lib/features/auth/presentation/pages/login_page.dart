@@ -43,6 +43,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return AuthScaffold(
       title: context.tr('auth.login.title'),
       subtitle: context.tr('auth.login.subtitle'),
+      onBack: () => context.go(AppRoutes.welcome),
       children: [
         Form(
           key: _formKey,
@@ -70,6 +71,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ],
             ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () => context.go(AppRoutes.forgotPassword),
+            child: Text(context.tr('auth.login.forgot')),
           ),
         ),
         if (submission case AsyncError(:final error)) ...[

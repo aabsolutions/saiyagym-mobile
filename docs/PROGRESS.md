@@ -1,5 +1,38 @@
 # Progress — gymapp-mobile
 
+## 2026-10-18 — Auth completo, onboarding, perfil y planes
+
+### Hecho
+- **Pantallas de auth:** bienvenida (selector de idioma, CTA siempre visibles), login (link a recuperar contraseña), registro y "olvidé mi contraseña" (`POST /auth/password/forgot`; el reset se completa desde el link, que abre la web). Atrás del sistema = flecha atrás en todas.
+- **Email sin verificar:** banner en el shell con "Reenviar" (`POST /auth/verify-email/resend`; `EMAIL_ALREADY_VERIFIED` → refresca) y "Ya lo confirmé" (re-fetch de `/users/me`); se puede ocultar por sesión de la app.
+- **Sesión persistente / offline:** `SessionController` expone `Session(user, isOffline)`. Sin red al abrir, entra con el último usuario guardado en Drift y muestra un banner con "Reintentar".
+- **Datos locales:** logout borra TODAS las tablas (`AppDatabase.wipe`) tras confirmar; si `UnsyncedChanges.count() > 0` el diálogo avisa que se pierden. Sesión expirada → solo se borran los tokens (los datos sobreviven al re-login del mismo usuario); si entra **otro** usuario, se borra todo antes.
+- **Onboarding (5 pasos):** idioma + unidades, datos físicos (fecha de nacimiento, sexo, altura, peso — opcionales, en las unidades elegidas), nivel, objetivo, descanso por defecto. Guarda perfil + preferencias en un solo `PATCH /users/me` y el peso en `POST /body-metrics` (UUID de cliente; si falla no bloquea). El router obliga a completarlo mientras falten `level`/`goal`.
+- **Perfil:** resumen de datos + "Editar perfil" (nombre, nacimiento, sexo, altura, nivel, objetivo), preferencias (unidades, tema, idioma, descanso) y cierre de sesión.
+- **Planes:** `entitlementsProvider` (desde `/users/me`), `UpgradeCta` (feature / límite / desde un error `PLAN_FEATURE_REQUIRED` · `PLAN_LIMIT_REACHED` vía `UpgradeReason.fromError`), `PlanGate`, hoja de planes (`GET /plans`) e interfaz `PaymentProvider` (manual: lo asigna el admin). Uso real en Progreso (ventana de 90 días de Free) y Perfil.
+- **Servidor dormido:** `SlowRequestMonitor` + interceptor; si una request tarda > 3 s aparece "Despertando el servidor…" arriba de toda la app hasta que termine.
+- Helper `submissionOf()` para el patrón loading/error de formularios.
+
+### Verificación
+- `flutter analyze` ✅ sin issues.
+- `flutter test` ✅ 68/68 (estable en corridas repetidas). Nuevos: entitlements (mapeo, desconocidos, `UpgradeReason`), monitor de requests lentas (rápida, lenta, error, varias), repositorio de auth (offline marcado, 401 conserva datos, otro usuario borra, logout borra), repositorio de perfil (PATCH parcial, fecha `YYYY-MM-DD`, UUID del peso), caso de uso de onboarding, guard (bienvenida/onboarding), widget: bienvenida, onboarding completo en imperial, validación de rango, banners offline/email, diálogo de logout, `UpgradeCta`/`PlanGate`/hoja de planes, olvidé contraseña, banner de servidor.
+- **No ejecutado**: la app en emulador ni contra la API real.
+
+### Decisiones y gotchas
+- La API no tiene flag de onboarding: "pendiente" = `level` o `goal` nulos.
+- `OnboardingDraft` observa solo el **id** del usuario: se reinicia si cambia la cuenta (o termina de cargar la sesión) pero no pisa respuestas por actualizaciones del mismo usuario. Con `ref.read` puro el draft quedaba vacío si se construía antes de que cargara la sesión (lo detectó un test).
+- La bienvenida no entraba en un teléfono de 360×780: los botones quedaban bajo el fold. Ahora van fijos abajo. Los widget tests corren en tamaño teléfono (antes 800×600 apaisado ocultaba esto).
+- Tests: un `ProviderScope` montado ignora overrides nuevos → `pumpLocalized` le da un `UniqueKey` por pump. `ensureVisible` necesita un `pump` antes del `tap`.
+- En Riverpod 3, `.select` sobre un provider viene de `flutter_riverpod`; un archivo que solo importa `riverpod_annotation` no lo ve.
+- Strings con recurso variable: "Sin límite de {resource}" en vez de "{resource} ilimitados" (género).
+- `UnsyncedChanges` hoy suma 0: todavía no hay outbox de sync. Cada feature offline debe registrar su contador.
+
+### Pendiente / próximo
+- URL de producción real (Render) en `lib/core/config/app_config.dart`.
+- Schemes de iOS para `--flavor` (en Mac) y prueba en simulador/dispositivo.
+- Deep links (abrir verify/reset en la app en vez de la web).
+- Sincronización offline (outbox en Drift + `/sync/push`/`/sync/pull`) registrando su contador en `UnsyncedChanges`, y registro de sesiones en vivo.
+
 ## 2026-10-18 — Base de la app (arquitectura, auth, navegación)
 
 ### Hecho
@@ -37,6 +70,6 @@
 ### Pendiente / próximo
 - URL de producción real (Render) en `lib/core/config/app_config.dart` (hoy placeholder `CHANGE-ME`).
 - Schemes de iOS para `--flavor` (en Mac) y prueba en simulador/dispositivo.
-- Recuperar contraseña y verificación de email en la UI.
+- ~~Recuperar contraseña y verificación de email en la UI.~~ Hecho (ver arriba).
 - Sincronización offline (`/sync/push`, `/sync/pull`, outbox en Drift) y registro de sesiones en vivo.
-- Al cerrar sesión, borrar también las tablas sincronizadas del usuario (cuando existan).
+- ~~Al cerrar sesión, borrar también las tablas sincronizadas del usuario.~~ Hecho: `AppDatabase.wipe` cubre todas las tablas.

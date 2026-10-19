@@ -9,6 +9,53 @@ part of 'preferences_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(profileRepository)
+final profileRepositoryProvider = ProfileRepositoryProvider._();
+
+final class ProfileRepositoryProvider
+    extends
+        $FunctionalProvider<
+          ProfileRepository,
+          ProfileRepository,
+          ProfileRepository
+        >
+    with $Provider<ProfileRepository> {
+  ProfileRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'profileRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$profileRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<ProfileRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ProfileRepository create(Ref ref) {
+    return profileRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ProfileRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ProfileRepository>(value),
+    );
+  }
+}
+
+String _$profileRepositoryHash() => r'd3b4ed6520aca61f4d1a1e3f262814e5a77d5d7e';
+
 @ProviderFor(updatePreferencesUseCase)
 final updatePreferencesUseCaseProvider = UpdatePreferencesUseCaseProvider._();
 
@@ -55,7 +102,55 @@ final class UpdatePreferencesUseCaseProvider
 }
 
 String _$updatePreferencesUseCaseHash() =>
-    r'e16e0ec19715a8c082cf1e3ffbbdac9206c32fd2';
+    r'c7d889cb08aed72e77d2d4aaa9b47362889bb5f0';
+
+@ProviderFor(updateProfileUseCase)
+final updateProfileUseCaseProvider = UpdateProfileUseCaseProvider._();
+
+final class UpdateProfileUseCaseProvider
+    extends
+        $FunctionalProvider<
+          UpdateProfileUseCase,
+          UpdateProfileUseCase,
+          UpdateProfileUseCase
+        >
+    with $Provider<UpdateProfileUseCase> {
+  UpdateProfileUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updateProfileUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updateProfileUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<UpdateProfileUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  UpdateProfileUseCase create(Ref ref) {
+    return updateProfileUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UpdateProfileUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UpdateProfileUseCase>(value),
+    );
+  }
+}
+
+String _$updateProfileUseCaseHash() =>
+    r'1d9baca8efbdc0053489383ccfa1d0a2bc62a446';
 
 /// Units of the signed-in user (metric before sign-in).
 
@@ -101,7 +196,7 @@ final class UnitSystemProvider
   }
 }
 
-String _$unitSystemHash() => r'70bef802ca95d842326169138b929dc98e08819f';
+String _$unitSystemHash() => r'ab9ea067f555c385e21e773772ec10e3bf77a582';
 
 @ProviderFor(themeMode)
 final themeModeProvider = ThemeModeProvider._();
@@ -142,42 +237,42 @@ final class ThemeModeProvider
   }
 }
 
-String _$themeModeHash() => r'185a93e7aee3ff3bb8cf2d4b2678092adb815064';
+String _$themeModeHash() => r'5ab9069f901b52c4ae0f665262e85576e6d80b45';
 
-/// Saving state of a preference change.
+/// Saving state of profile / preference changes.
 
-@ProviderFor(PreferencesController)
-final preferencesControllerProvider = PreferencesControllerProvider._();
+@ProviderFor(ProfileSaveController)
+final profileSaveControllerProvider = ProfileSaveControllerProvider._();
 
-/// Saving state of a preference change.
-final class PreferencesControllerProvider
-    extends $AsyncNotifierProvider<PreferencesController, void> {
-  /// Saving state of a preference change.
-  PreferencesControllerProvider._()
+/// Saving state of profile / preference changes.
+final class ProfileSaveControllerProvider
+    extends $AsyncNotifierProvider<ProfileSaveController, void> {
+  /// Saving state of profile / preference changes.
+  ProfileSaveControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'preferencesControllerProvider',
+        name: r'profileSaveControllerProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$preferencesControllerHash();
+  String debugGetCreateSourceHash() => _$profileSaveControllerHash();
 
   @$internal
   @override
-  PreferencesController create() => PreferencesController();
+  ProfileSaveController create() => ProfileSaveController();
 }
 
-String _$preferencesControllerHash() =>
-    r'e0e6feb0b1dae78e9b60d149bd543aeffc65dc81';
+String _$profileSaveControllerHash() =>
+    r'8ef52e3fe4f6bb3fc0ce905e38e458ad944af294';
 
-/// Saving state of a preference change.
+/// Saving state of profile / preference changes.
 
-abstract class _$PreferencesController extends $AsyncNotifier<void> {
+abstract class _$ProfileSaveController extends $AsyncNotifier<void> {
   FutureOr<void> build();
   @$mustCallSuper
   @override

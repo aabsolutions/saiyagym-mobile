@@ -51,6 +51,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     return AuthScaffold(
       title: context.tr('auth.register.title'),
       subtitle: context.tr('auth.register.subtitle'),
+      onBack: () => context.go(AppRoutes.welcome),
       children: [
         Form(
           key: _formKey,

@@ -49,6 +49,14 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
 
+  /// Empties every table (logout, or a different user signing in). New
+  /// tables are covered automatically through [allTables].
+  Future<void> wipe() => transaction(() async {
+    for (final table in allTables) {
+      await delete(table).go();
+    }
+  });
+
   Future<void> deleteMeta(String key) =>
       (delete(appMeta)..where((t) => t.key.equals(key))).go();
 }

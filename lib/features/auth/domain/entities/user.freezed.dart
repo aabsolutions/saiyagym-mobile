@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$User {
 
- String get id; String get email; UserRole get role; bool get emailVerified; UserPreferences get preferences; UserPlan get plan; String? get name;
+ String get id; String get email; UserRole get role; bool get emailVerified; UserProfile get profile; UserPreferences get preferences; UserPlan get plan;
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $UserCopyWith<User> get copyWith => _$UserCopyWithImpl<User>(this as User, _$ide
 @override
 bool operator ==(Object other) {
   final _this = this as User;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is User&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.emailVerified, _this.emailVerified) || other.emailVerified == _this.emailVerified)&&(identical(other.preferences, _this.preferences) || other.preferences == _this.preferences)&&(identical(other.plan, _this.plan) || other.plan == _this.plan)&&(identical(other.name, _this.name) || other.name == _this.name));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is User&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.emailVerified, _this.emailVerified) || other.emailVerified == _this.emailVerified)&&(identical(other.profile, _this.profile) || other.profile == _this.profile)&&(identical(other.preferences, _this.preferences) || other.preferences == _this.preferences)&&(identical(other.plan, _this.plan) || other.plan == _this.plan));
 }
 
 
 @override
 int get hashCode {
   final _this = this as User;
-  return Object.hash(runtimeType,_this.id,_this.email,_this.role,_this.emailVerified,_this.preferences,_this.plan,_this.name);
+  return Object.hash(runtimeType,_this.id,_this.email,_this.role,_this.emailVerified,_this.profile,_this.preferences,_this.plan);
 }
 
 @override
 String toString() {
   final _this = this as User;
-  return 'User(id: ${_this.id}, email: ${_this.email}, role: ${_this.role}, emailVerified: ${_this.emailVerified}, preferences: ${_this.preferences}, plan: ${_this.plan}, name: ${_this.name})';
+  return 'User(id: ${_this.id}, email: ${_this.email}, role: ${_this.role}, emailVerified: ${_this.emailVerified}, profile: ${_this.profile}, preferences: ${_this.preferences}, plan: ${_this.plan})';
 }
 
 
@@ -51,11 +51,11 @@ abstract mixin class $UserCopyWith<$Res>  {
   factory $UserCopyWith(User value, $Res Function(User) _then) = _$UserCopyWithImpl;
 @useResult
 $Res call({
- String id, String email, UserRole role, bool emailVerified, UserPreferences preferences, UserPlan plan, String? name
+ String id, String email, UserRole role, bool emailVerified, UserProfile profile, UserPreferences preferences, UserPlan plan
 });
 
 
-$UserPreferencesCopyWith<$Res> get preferences;$UserPlanCopyWith<$Res> get plan;
+$UserProfileCopyWith<$Res> get profile;$UserPreferencesCopyWith<$Res> get preferences;$UserPlanCopyWith<$Res> get plan;
 
 }
 /// @nodoc
@@ -68,19 +68,28 @@ class _$UserCopyWithImpl<$Res>
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? role = null,Object? emailVerified = null,Object? preferences = null,Object? plan = null,Object? name = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? role = null,Object? emailVerified = null,Object? profile = null,Object? preferences = null,Object? plan = null,}) {
   return _then(User(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as UserRole,emailVerified: null == emailVerified ? _self.emailVerified : emailVerified // ignore: cast_nullable_to_non_nullable
-as bool,preferences: null == preferences ? _self.preferences : preferences // ignore: cast_nullable_to_non_nullable
+as bool,profile: null == profile ? _self.profile : profile // ignore: cast_nullable_to_non_nullable
+as UserProfile,preferences: null == preferences ? _self.preferences : preferences // ignore: cast_nullable_to_non_nullable
 as UserPreferences,plan: null == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
-as UserPlan,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String?,
+as UserPlan,
   ));
 }
 /// Create a copy of User
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$UserProfileCopyWith<$Res> get profile {
+  
+  return $UserProfileCopyWith<$Res>(_self.profile, (value) {
+    return _then(_self.copyWith(profile: value));
+  });
+}/// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -180,10 +189,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  UserRole role,  bool emailVerified,  UserPreferences preferences,  UserPlan plan,  String? name)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  UserRole role,  bool emailVerified,  UserProfile profile,  UserPreferences preferences,  UserPlan plan)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
-return $default(_that.id,_that.email,_that.role,_that.emailVerified,_that.preferences,_that.plan,_that.name);case _:
+return $default(_that.id,_that.email,_that.role,_that.emailVerified,_that.profile,_that.preferences,_that.plan);case _:
   return orElse();
 
 }
@@ -201,10 +210,10 @@ return $default(_that.id,_that.email,_that.role,_that.emailVerified,_that.prefer
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  UserRole role,  bool emailVerified,  UserPreferences preferences,  UserPlan plan,  String? name)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  UserRole role,  bool emailVerified,  UserProfile profile,  UserPreferences preferences,  UserPlan plan)  $default,) {final _that = this;
 switch (_that) {
 case _User():
-return $default(_that.id,_that.email,_that.role,_that.emailVerified,_that.preferences,_that.plan,_that.name);case _:
+return $default(_that.id,_that.email,_that.role,_that.emailVerified,_that.profile,_that.preferences,_that.plan);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -221,10 +230,10 @@ return $default(_that.id,_that.email,_that.role,_that.emailVerified,_that.prefer
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  UserRole role,  bool emailVerified,  UserPreferences preferences,  UserPlan plan,  String? name)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  UserRole role,  bool emailVerified,  UserProfile profile,  UserPreferences preferences,  UserPlan plan)?  $default,) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
-return $default(_that.id,_that.email,_that.role,_that.emailVerified,_that.preferences,_that.plan,_that.name);case _:
+return $default(_that.id,_that.email,_that.role,_that.emailVerified,_that.profile,_that.preferences,_that.plan);case _:
   return null;
 
 }
@@ -235,17 +244,17 @@ return $default(_that.id,_that.email,_that.role,_that.emailVerified,_that.prefer
 /// @nodoc
 
 
-class _User implements User {
-  const _User({required this.id, required this.email, required this.role, required this.emailVerified, required this.preferences, required this.plan, this.name});
+class _User extends User {
+  const _User({required this.id, required this.email, required this.role, required this.emailVerified, required this.profile, required this.preferences, required this.plan}): super._();
   
 
 @override final  String id;
 @override final  String email;
 @override final  UserRole role;
 @override final  bool emailVerified;
+@override final  UserProfile profile;
 @override final  UserPreferences preferences;
 @override final  UserPlan plan;
-@override final  String? name;
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
@@ -257,18 +266,18 @@ _$UserCopyWith<_User> get copyWith => __$UserCopyWithImpl<_User>(this, _$identit
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _User&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.emailVerified, emailVerified) || other.emailVerified == emailVerified)&&(identical(other.preferences, preferences) || other.preferences == preferences)&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.name, name) || other.name == name));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _User&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.emailVerified, emailVerified) || other.emailVerified == emailVerified)&&(identical(other.profile, profile) || other.profile == profile)&&(identical(other.preferences, preferences) || other.preferences == preferences)&&(identical(other.plan, plan) || other.plan == plan));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,email,role,emailVerified,preferences,plan,name);
+    return Object.hash(runtimeType,id,email,role,emailVerified,profile,preferences,plan);
 }
 
 @override
 String toString() {
-    return 'User(id: $id, email: $email, role: $role, emailVerified: $emailVerified, preferences: $preferences, plan: $plan, name: $name)';
+    return 'User(id: $id, email: $email, role: $role, emailVerified: $emailVerified, profile: $profile, preferences: $preferences, plan: $plan)';
 }
 
 
@@ -279,11 +288,11 @@ abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   factory _$UserCopyWith(_User value, $Res Function(_User) _then) = __$UserCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String email, UserRole role, bool emailVerified, UserPreferences preferences, UserPlan plan, String? name
+ String id, String email, UserRole role, bool emailVerified, UserProfile profile, UserPreferences preferences, UserPlan plan
 });
 
 
-@override $UserPreferencesCopyWith<$Res> get preferences;@override $UserPlanCopyWith<$Res> get plan;
+@override $UserProfileCopyWith<$Res> get profile;@override $UserPreferencesCopyWith<$Res> get preferences;@override $UserPlanCopyWith<$Res> get plan;
 
 }
 /// @nodoc
@@ -296,20 +305,29 @@ class __$UserCopyWithImpl<$Res>
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? role = null,Object? emailVerified = null,Object? preferences = null,Object? plan = null,Object? name = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? role = null,Object? emailVerified = null,Object? profile = null,Object? preferences = null,Object? plan = null,}) {
   return _then(_User(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as UserRole,emailVerified: null == emailVerified ? _self.emailVerified : emailVerified // ignore: cast_nullable_to_non_nullable
-as bool,preferences: null == preferences ? _self.preferences : preferences // ignore: cast_nullable_to_non_nullable
+as bool,profile: null == profile ? _self.profile : profile // ignore: cast_nullable_to_non_nullable
+as UserProfile,preferences: null == preferences ? _self.preferences : preferences // ignore: cast_nullable_to_non_nullable
 as UserPreferences,plan: null == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
-as UserPlan,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String?,
+as UserPlan,
   ));
 }
 
 /// Create a copy of User
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$UserProfileCopyWith<$Res> get profile {
+  
+  return $UserProfileCopyWith<$Res>(_self.profile, (value) {
+    return _then(_self.copyWith(profile: value));
+  });
+}/// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -328,6 +346,287 @@ $UserPlanCopyWith<$Res> get plan {
     return _then(_self.copyWith(plan: value));
   });
 }
+}
+
+/// @nodoc
+mixin _$UserProfile {
+
+ String? get name;/// Calendar date (no time zone meaning).
+ DateTime? get birthDate; Sex? get sex; double? get heightCm; TrainingLevel? get level; TrainingGoal? get goal;
+/// Create a copy of UserProfile
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserProfileCopyWith<UserProfile> get copyWith => _$UserProfileCopyWithImpl<UserProfile>(this as UserProfile, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as UserProfile;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfile&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.sex, _this.sex) || other.sex == _this.sex)&&(identical(other.heightCm, _this.heightCm) || other.heightCm == _this.heightCm)&&(identical(other.level, _this.level) || other.level == _this.level)&&(identical(other.goal, _this.goal) || other.goal == _this.goal));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as UserProfile;
+  return Object.hash(runtimeType,_this.name,_this.birthDate,_this.sex,_this.heightCm,_this.level,_this.goal);
+}
+
+@override
+String toString() {
+  final _this = this as UserProfile;
+  return 'UserProfile(name: ${_this.name}, birthDate: ${_this.birthDate}, sex: ${_this.sex}, heightCm: ${_this.heightCm}, level: ${_this.level}, goal: ${_this.goal})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $UserProfileCopyWith<$Res>  {
+  factory $UserProfileCopyWith(UserProfile value, $Res Function(UserProfile) _then) = _$UserProfileCopyWithImpl;
+@useResult
+$Res call({
+ String? name, DateTime? birthDate, Sex? sex, double? heightCm, TrainingLevel? level, TrainingGoal? goal
+});
+
+
+
+
+}
+/// @nodoc
+class _$UserProfileCopyWithImpl<$Res>
+    implements $UserProfileCopyWith<$Res> {
+  _$UserProfileCopyWithImpl(this._self, this._then);
+
+  final UserProfile _self;
+  final $Res Function(UserProfile) _then;
+
+/// Create a copy of UserProfile
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? birthDate = freezed,Object? sex = freezed,Object? heightCm = freezed,Object? level = freezed,Object? goal = freezed,}) {
+  return _then(UserProfile(
+name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,sex: freezed == sex ? _self.sex : sex // ignore: cast_nullable_to_non_nullable
+as Sex?,heightCm: freezed == heightCm ? _self.heightCm : heightCm // ignore: cast_nullable_to_non_nullable
+as double?,level: freezed == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as TrainingLevel?,goal: freezed == goal ? _self.goal : goal // ignore: cast_nullable_to_non_nullable
+as TrainingGoal?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [UserProfile].
+extension UserProfilePatterns on UserProfile {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _UserProfile value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _UserProfile() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _UserProfile value)  $default,){
+final _that = this;
+switch (_that) {
+case _UserProfile():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _UserProfile value)?  $default,){
+final _that = this;
+switch (_that) {
+case _UserProfile() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name,  DateTime? birthDate,  Sex? sex,  double? heightCm,  TrainingLevel? level,  TrainingGoal? goal)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _UserProfile() when $default != null:
+return $default(_that.name,_that.birthDate,_that.sex,_that.heightCm,_that.level,_that.goal);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name,  DateTime? birthDate,  Sex? sex,  double? heightCm,  TrainingLevel? level,  TrainingGoal? goal)  $default,) {final _that = this;
+switch (_that) {
+case _UserProfile():
+return $default(_that.name,_that.birthDate,_that.sex,_that.heightCm,_that.level,_that.goal);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name,  DateTime? birthDate,  Sex? sex,  double? heightCm,  TrainingLevel? level,  TrainingGoal? goal)?  $default,) {final _that = this;
+switch (_that) {
+case _UserProfile() when $default != null:
+return $default(_that.name,_that.birthDate,_that.sex,_that.heightCm,_that.level,_that.goal);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _UserProfile implements UserProfile {
+  const _UserProfile({this.name, this.birthDate, this.sex, this.heightCm, this.level, this.goal});
+  
+
+@override final  String? name;
+/// Calendar date (no time zone meaning).
+@override final  DateTime? birthDate;
+@override final  Sex? sex;
+@override final  double? heightCm;
+@override final  TrainingLevel? level;
+@override final  TrainingGoal? goal;
+
+/// Create a copy of UserProfile
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$UserProfileCopyWith<_UserProfile> get copyWith => __$UserProfileCopyWithImpl<_UserProfile>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfile&&(identical(other.name, name) || other.name == name)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.sex, sex) || other.sex == sex)&&(identical(other.heightCm, heightCm) || other.heightCm == heightCm)&&(identical(other.level, level) || other.level == level)&&(identical(other.goal, goal) || other.goal == goal));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,name,birthDate,sex,heightCm,level,goal);
+}
+
+@override
+String toString() {
+    return 'UserProfile(name: $name, birthDate: $birthDate, sex: $sex, heightCm: $heightCm, level: $level, goal: $goal)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$UserProfileCopyWith<$Res> implements $UserProfileCopyWith<$Res> {
+  factory _$UserProfileCopyWith(_UserProfile value, $Res Function(_UserProfile) _then) = __$UserProfileCopyWithImpl;
+@override @useResult
+$Res call({
+ String? name, DateTime? birthDate, Sex? sex, double? heightCm, TrainingLevel? level, TrainingGoal? goal
+});
+
+
+
+
+}
+/// @nodoc
+class __$UserProfileCopyWithImpl<$Res>
+    implements _$UserProfileCopyWith<$Res> {
+  __$UserProfileCopyWithImpl(this._self, this._then);
+
+  final _UserProfile _self;
+  final $Res Function(_UserProfile) _then;
+
+/// Create a copy of UserProfile
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? birthDate = freezed,Object? sex = freezed,Object? heightCm = freezed,Object? level = freezed,Object? goal = freezed,}) {
+  return _then(_UserProfile(
+name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,sex: freezed == sex ? _self.sex : sex // ignore: cast_nullable_to_non_nullable
+as Sex?,heightCm: freezed == heightCm ? _self.heightCm : heightCm // ignore: cast_nullable_to_non_nullable
+as double?,level: freezed == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as TrainingLevel?,goal: freezed == goal ? _self.goal : goal // ignore: cast_nullable_to_non_nullable
+as TrainingGoal?,
+  ));
+}
+
+
 }
 
 /// @nodoc
@@ -611,7 +910,7 @@ as int,
 /// @nodoc
 mixin _$UserPlan {
 
- String get code; String get name;
+ String get code; String get name; Entitlements get entitlements;
 /// Create a copy of UserPlan
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -623,20 +922,20 @@ $UserPlanCopyWith<UserPlan> get copyWith => _$UserPlanCopyWithImpl<UserPlan>(thi
 @override
 bool operator ==(Object other) {
   final _this = this as UserPlan;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserPlan&&(identical(other.code, _this.code) || other.code == _this.code)&&(identical(other.name, _this.name) || other.name == _this.name));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserPlan&&(identical(other.code, _this.code) || other.code == _this.code)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.entitlements, _this.entitlements) || other.entitlements == _this.entitlements));
 }
 
 
 @override
 int get hashCode {
   final _this = this as UserPlan;
-  return Object.hash(runtimeType,_this.code,_this.name);
+  return Object.hash(runtimeType,_this.code,_this.name,_this.entitlements);
 }
 
 @override
 String toString() {
   final _this = this as UserPlan;
-  return 'UserPlan(code: ${_this.code}, name: ${_this.name})';
+  return 'UserPlan(code: ${_this.code}, name: ${_this.name}, entitlements: ${_this.entitlements})';
 }
 
 
@@ -647,11 +946,11 @@ abstract mixin class $UserPlanCopyWith<$Res>  {
   factory $UserPlanCopyWith(UserPlan value, $Res Function(UserPlan) _then) = _$UserPlanCopyWithImpl;
 @useResult
 $Res call({
- String code, String name
+ String code, String name, Entitlements entitlements
 });
 
 
-
+$EntitlementsCopyWith<$Res> get entitlements;
 
 }
 /// @nodoc
@@ -664,14 +963,24 @@ class _$UserPlanCopyWithImpl<$Res>
 
 /// Create a copy of UserPlan
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? name = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? name = null,Object? entitlements = null,}) {
   return _then(UserPlan(
 code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,
+as String,entitlements: null == entitlements ? _self.entitlements : entitlements // ignore: cast_nullable_to_non_nullable
+as Entitlements,
   ));
 }
-
+/// Create a copy of UserPlan
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EntitlementsCopyWith<$Res> get entitlements {
+  
+  return $EntitlementsCopyWith<$Res>(_self.entitlements, (value) {
+    return _then(_self.copyWith(entitlements: value));
+  });
+}
 }
 
 
@@ -753,10 +1062,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  String name)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String code,  String name,  Entitlements entitlements)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserPlan() when $default != null:
-return $default(_that.code,_that.name);case _:
+return $default(_that.code,_that.name,_that.entitlements);case _:
   return orElse();
 
 }
@@ -774,10 +1083,10 @@ return $default(_that.code,_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  String name)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String code,  String name,  Entitlements entitlements)  $default,) {final _that = this;
 switch (_that) {
 case _UserPlan():
-return $default(_that.code,_that.name);case _:
+return $default(_that.code,_that.name,_that.entitlements);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -794,10 +1103,10 @@ return $default(_that.code,_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  String name)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String code,  String name,  Entitlements entitlements)?  $default,) {final _that = this;
 switch (_that) {
 case _UserPlan() when $default != null:
-return $default(_that.code,_that.name);case _:
+return $default(_that.code,_that.name,_that.entitlements);case _:
   return null;
 
 }
@@ -809,11 +1118,12 @@ return $default(_that.code,_that.name);case _:
 
 
 class _UserPlan implements UserPlan {
-  const _UserPlan({required this.code, required this.name});
+  const _UserPlan({required this.code, required this.name, this.entitlements = Entitlements.none});
   
 
 @override final  String code;
 @override final  String name;
+@override@JsonKey() final  Entitlements entitlements;
 
 /// Create a copy of UserPlan
 /// with the given fields replaced by the non-null parameter values.
@@ -825,18 +1135,18 @@ _$UserPlanCopyWith<_UserPlan> get copyWith => __$UserPlanCopyWithImpl<_UserPlan>
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserPlan&&(identical(other.code, code) || other.code == code)&&(identical(other.name, name) || other.name == name));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserPlan&&(identical(other.code, code) || other.code == code)&&(identical(other.name, name) || other.name == name)&&(identical(other.entitlements, entitlements) || other.entitlements == entitlements));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,code,name);
+    return Object.hash(runtimeType,code,name,entitlements);
 }
 
 @override
 String toString() {
-    return 'UserPlan(code: $code, name: $name)';
+    return 'UserPlan(code: $code, name: $name, entitlements: $entitlements)';
 }
 
 
@@ -847,11 +1157,11 @@ abstract mixin class _$UserPlanCopyWith<$Res> implements $UserPlanCopyWith<$Res>
   factory _$UserPlanCopyWith(_UserPlan value, $Res Function(_UserPlan) _then) = __$UserPlanCopyWithImpl;
 @override @useResult
 $Res call({
- String code, String name
+ String code, String name, Entitlements entitlements
 });
 
 
-
+@override $EntitlementsCopyWith<$Res> get entitlements;
 
 }
 /// @nodoc
@@ -864,15 +1174,25 @@ class __$UserPlanCopyWithImpl<$Res>
 
 /// Create a copy of UserPlan
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? code = null,Object? name = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? code = null,Object? name = null,Object? entitlements = null,}) {
   return _then(_UserPlan(
 code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,
+as String,entitlements: null == entitlements ? _self.entitlements : entitlements // ignore: cast_nullable_to_non_nullable
+as Entitlements,
   ));
 }
 
-
+/// Create a copy of UserPlan
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EntitlementsCopyWith<$Res> get entitlements {
+  
+  return $EntitlementsCopyWith<$Res>(_self.entitlements, (value) {
+    return _then(_self.copyWith(entitlements: value));
+  });
+}
 }
 
 // dart format on

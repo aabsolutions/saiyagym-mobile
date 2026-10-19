@@ -7,9 +7,12 @@ class AuthScaffold extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.children,
+    this.onBack,
     super.key,
   });
 
+  /// Shows a back arrow (auth screens replace each other, no stack to pop).
+  final VoidCallback? onBack;
   final String title;
   final String subtitle;
   final List<Widget> children;
@@ -17,46 +20,64 @@ class AuthScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(24),
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: CircleAvatar(
-                    radius: 32,
-                    backgroundColor: theme.colorScheme.primary,
-                    child: Icon(
-                      Icons.fitness_center,
-                      size: 32,
-                      color: theme.colorScheme.onPrimary,
+    return PopScope(
+      // System back follows the same path as the arrow.
+      canPop: onBack == null,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) onBack?.call();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(24),
+                children: [
+                  if (onBack != null)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        iconSize: 28,
+                        tooltip: MaterialLocalizations.of(context)
+                            .backButtonTooltip,
+                        icon: const BackButtonIcon(),
+                        onPressed: onBack,
+                      ),
+                    ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: CircleAvatar(
+                      radius: 32,
+                      backgroundColor: theme.colorScheme.primary,
+                      child: Icon(
+                        Icons.fitness_center,
+                        size: 32,
+                        color: theme.colorScheme.onPrimary,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.tr('app.name'),
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.primary,
+                  const SizedBox(height: 16),
+                  Text(
+                    context.tr('app.name'),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(title, style: theme.textTheme.headlineMedium),
-                const SizedBox(height: 8),
-                Text(
-                  subtitle,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                  const SizedBox(height: 4),
+                  Text(title, style: theme.textTheme.headlineMedium),
+                  const SizedBox(height: 8),
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 32),
-                ...children,
-              ],
+                  const SizedBox(height: 32),
+                  ...children,
+                ],
+              ),
             ),
           ),
         ),

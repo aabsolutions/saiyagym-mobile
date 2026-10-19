@@ -181,6 +181,55 @@ final class RegisterUseCaseProvider
 
 String _$registerUseCaseHash() => r'18669430c22e1c7844c19dd3dcbe2285a2250a73';
 
+@ProviderFor(requestPasswordResetUseCase)
+final requestPasswordResetUseCaseProvider =
+    RequestPasswordResetUseCaseProvider._();
+
+final class RequestPasswordResetUseCaseProvider
+    extends
+        $FunctionalProvider<
+          RequestPasswordResetUseCase,
+          RequestPasswordResetUseCase,
+          RequestPasswordResetUseCase
+        >
+    with $Provider<RequestPasswordResetUseCase> {
+  RequestPasswordResetUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'requestPasswordResetUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$requestPasswordResetUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<RequestPasswordResetUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  RequestPasswordResetUseCase create(Ref ref) {
+    return requestPasswordResetUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RequestPasswordResetUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RequestPasswordResetUseCase>(value),
+    );
+  }
+}
+
+String _$requestPasswordResetUseCaseHash() =>
+    r'e7f4f5edac15c152a5b069169b8d8ba8a9840eaa';
+
 @ProviderFor(restoreSessionUseCase)
 final restoreSessionUseCaseProvider = RestoreSessionUseCaseProvider._();
 

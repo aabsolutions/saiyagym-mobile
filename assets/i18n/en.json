@@ -3,7 +3,8 @@
     "name": "SaiyaGym"
   },
   "common": {
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "retry": "Retry"
   },
   "nav": {
     "today": "Today",
@@ -11,6 +12,16 @@
     "history": "History",
     "progress": "Progress",
     "profile": "Profile"
+  },
+  "welcome": {
+    "tagline": "Plan, log and track your hypertrophy and powerlifting training.",
+    "highlights": {
+      "log": "Log every set in two taps",
+      "offline": "Works offline at the gym",
+      "progress": "Personal records and automatic progression"
+    },
+    "createAccount": "Create account",
+    "haveAccount": "I already have an account"
   },
   "auth": {
     "email": "Email",
@@ -22,6 +33,7 @@
       "title": "Sign in",
       "subtitle": "Sign in to log your workouts.",
       "submit": "Sign in",
+      "forgot": "Forgot your password?",
       "toRegister": "No account? Create one"
     },
     "register": {
@@ -29,13 +41,47 @@
       "subtitle": "Start logging your workouts in seconds.",
       "submit": "Create account",
       "toLogin": "Already have an account? Sign in"
+    },
+    "forgot": {
+      "title": "Reset password",
+      "subtitle": "Enter your email and we'll send you a link to choose a new password.",
+      "submit": "Send link",
+      "sent": "If there's an account with that email, a link is on its way. Open it to choose your new password, then sign in here.",
+      "backToLogin": "Back to sign in"
     }
   },
   "validation": {
     "required": "This field is required",
     "email": "Enter a valid email",
     "passwordMin": "At least {min} characters",
-    "passwordMax": "At most {max} characters"
+    "passwordMax": "At most {max} characters",
+    "number": "Enter a number",
+    "range": "Must be between {min} and {max}"
+  },
+  "onboarding": {
+    "stepOf": "Step {current} of {total}",
+    "next": "Next",
+    "finish": "Start training",
+    "preferences": {
+      "title": "Before we start",
+      "subtitle": "Pick your language and how to show weights and measurements. You can change it anytime."
+    },
+    "body": {
+      "title": "About your body",
+      "subtitle": "Optional. Used by the calorie calculator and to track your progress."
+    },
+    "level": {
+      "title": "What's your level?",
+      "subtitle": "Tunes routine and progression suggestions."
+    },
+    "goal": {
+      "title": "What's your goal?",
+      "subtitle": "Ranks exercises by what you're after."
+    },
+    "rest": {
+      "title": "Rest between sets",
+      "subtitle": "The timer starts with this. You can tweak it per exercise."
+    }
   },
   "today": {
     "title": "Today",
@@ -55,14 +101,58 @@
   "progress": {
     "title": "Progress",
     "emptyTitle": "Your progress, soon",
-    "emptyMessage": "Per-exercise charts, weekly volume and personal records."
+    "emptyMessage": "Per-exercise charts, weekly volume and personal records.",
+    "window": "Your plan shows stats for the last {days} days."
   },
   "profile": {
     "title": "Profile",
     "plan": "{plan} plan",
+    "data": "About you",
+    "notSet": "Not set",
+    "level": "Level",
+    "goal": "Goal",
+    "height": "Height",
+    "weight": "Current weight",
+    "birthDate": "Date of birth",
+    "sex": "Sex",
+    "sexes": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "levels": {
+      "beginner": {
+        "title": "Beginner",
+        "description": "Less than a year of consistent training."
+      },
+      "intermediate": {
+        "title": "Intermediate",
+        "description": "1–3 years; solid technique on the big lifts."
+      },
+      "advanced": {
+        "title": "Advanced",
+        "description": "3+ years; progress now needs planning."
+      }
+    },
+    "goals": {
+      "hypertrophy": {
+        "title": "Hypertrophy",
+        "description": "Build muscle."
+      },
+      "powerlifting": {
+        "title": "Powerlifting",
+        "description": "Raise your squat, bench and deadlift."
+      },
+      "both": {
+        "title": "Both",
+        "description": "Strength and size together (powerbuilding)."
+      }
+    },
     "units": "Units",
-    "metric": "kg / cm",
-    "imperial": "lb / in",
+    "unitSystems": {
+      "metric": "kg / cm",
+      "imperial": "lb / in"
+    },
     "unitsExample": "Example: {weight} · {length}",
     "theme": "Theme",
     "themes": {
@@ -71,10 +161,66 @@
       "dark": "Dark"
     },
     "language": "Language",
+    "rest": "Default rest",
+    "edit": {
+      "title": "Edit profile",
+      "save": "Save",
+      "saved": "Profile updated"
+    },
     "logout": "Sign out",
     "logoutConfirm": {
       "title": "Sign out?",
-      "message": "You'll need to sign in again on this device."
+      "message": "Data stored on this device will be deleted. Your synced data stays in your account.",
+      "unsynced": "You have {count} unsynced changes. Signing out now deletes them for good. Go online and wait for them to sync first.",
+      "discard": "Sign out and lose changes"
+    }
+  },
+  "plans": {
+    "cta": {
+      "featureTitle": "Available on Premium",
+      "featureMessage": "{feature} is part of the Premium plan.",
+      "limitTitle": "You've hit your plan's limit",
+      "limitMessage": "Your plan doesn't allow more {resource}.",
+      "limitMessageMax": "Your plan allows up to {max} {resource}.",
+      "action": "See plans"
+    },
+    "features": {
+      "progressPhotos": "Progress photos",
+      "autoProgression": "Automatic progression",
+      "fullStats": "Full statistics",
+      "fullNutrition": "All meal suggestions",
+      "dataExport": "Export your data (CSV/JSON)"
+    },
+    "limits": {
+      "routines": "custom routines",
+      "activePrograms": "active programs",
+      "customExercises": "custom exercises"
+    },
+    "sheet": {
+      "title": "Plans",
+      "current": "Your plan",
+      "unlimited": "Unlimited {resource}",
+      "upTo": "Up to {max} {resource}",
+      "statsFull": "Full statistics history",
+      "statsDays": "Statistics for the last {days} days",
+      "manual": "For now plan changes are handled by an administrator. In-app subscriptions are coming soon."
+    }
+  },
+  "verification": {
+    "banner": "Confirm your email ({email}) with the link we sent you.",
+    "resend": "Resend",
+    "check": "I've confirmed it",
+    "sent": "We sent a new email to {email}.",
+    "done": "Email confirmed!",
+    "pending": "Not confirmed yet. Check your inbox or spam folder."
+  },
+  "session": {
+    "offline": "Offline: you're using the data stored on this device."
+  },
+  "server": {
+    "waking": {
+      "title": "Waking up the server…",
+      "message": "The first connection can take up to a minute."
     }
   },
   "errors": {

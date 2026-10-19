@@ -1,3 +1,4 @@
+import 'package:saiyagym_mobile/features/auth/domain/entities/session.dart';
 import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
 import 'package:saiyagym_mobile/features/auth/domain/repositories/auth_repository.dart';
 
@@ -36,7 +37,16 @@ class RestoreSessionUseCase {
 
   final AuthRepository _repository;
 
-  Future<User?> call() => _repository.restoreSession();
+  Future<Session?> call() => _repository.restoreSession();
+}
+
+class RequestPasswordResetUseCase {
+  const RequestPasswordResetUseCase(this._repository);
+
+  final AuthRepository _repository;
+
+  Future<void> call(String email) =>
+      _repository.requestPasswordReset(email.trim());
 }
 
 class LogoutUseCase {

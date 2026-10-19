@@ -358,7 +358,8 @@ $PlanModelCopyWith<$Res> get plan {
 /// @nodoc
 mixin _$ProfileModel {
 
- String? get name;
+ String? get name;/// ISO date-time at UTC midnight (`ProfileDto.birthDate`).
+ String? get birthDate; String? get sex; double? get heightCm; String? get level; String? get goal;
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -372,20 +373,20 @@ $ProfileModelCopyWith<ProfileModel> get copyWith => _$ProfileModelCopyWithImpl<P
 @override
 bool operator ==(Object other) {
   final _this = this as ProfileModel;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileModel&&(identical(other.name, _this.name) || other.name == _this.name));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileModel&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.sex, _this.sex) || other.sex == _this.sex)&&(identical(other.heightCm, _this.heightCm) || other.heightCm == _this.heightCm)&&(identical(other.level, _this.level) || other.level == _this.level)&&(identical(other.goal, _this.goal) || other.goal == _this.goal));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as ProfileModel;
-  return Object.hash(runtimeType,_this.name);
+  return Object.hash(runtimeType,_this.name,_this.birthDate,_this.sex,_this.heightCm,_this.level,_this.goal);
 }
 
 @override
 String toString() {
   final _this = this as ProfileModel;
-  return 'ProfileModel(name: ${_this.name})';
+  return 'ProfileModel(name: ${_this.name}, birthDate: ${_this.birthDate}, sex: ${_this.sex}, heightCm: ${_this.heightCm}, level: ${_this.level}, goal: ${_this.goal})';
 }
 
 
@@ -396,7 +397,7 @@ abstract mixin class $ProfileModelCopyWith<$Res>  {
   factory $ProfileModelCopyWith(ProfileModel value, $Res Function(ProfileModel) _then) = _$ProfileModelCopyWithImpl;
 @useResult
 $Res call({
- String? name
+ String? name, String? birthDate, String? sex, double? heightCm, String? level, String? goal
 });
 
 
@@ -413,9 +414,14 @@ class _$ProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? birthDate = freezed,Object? sex = freezed,Object? heightCm = freezed,Object? level = freezed,Object? goal = freezed,}) {
   return _then(ProfileModel(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as String?,sex: freezed == sex ? _self.sex : sex // ignore: cast_nullable_to_non_nullable
+as String?,heightCm: freezed == heightCm ? _self.heightCm : heightCm // ignore: cast_nullable_to_non_nullable
+as double?,level: freezed == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as String?,goal: freezed == goal ? _self.goal : goal // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -501,10 +507,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name,  String? birthDate,  String? sex,  double? heightCm,  String? level,  String? goal)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileModel() when $default != null:
-return $default(_that.name);case _:
+return $default(_that.name,_that.birthDate,_that.sex,_that.heightCm,_that.level,_that.goal);case _:
   return orElse();
 
 }
@@ -522,10 +528,10 @@ return $default(_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name,  String? birthDate,  String? sex,  double? heightCm,  String? level,  String? goal)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileModel():
-return $default(_that.name);case _:
+return $default(_that.name,_that.birthDate,_that.sex,_that.heightCm,_that.level,_that.goal);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -542,10 +548,10 @@ return $default(_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name,  String? birthDate,  String? sex,  double? heightCm,  String? level,  String? goal)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileModel() when $default != null:
-return $default(_that.name);case _:
+return $default(_that.name,_that.birthDate,_that.sex,_that.heightCm,_that.level,_that.goal);case _:
   return null;
 
 }
@@ -556,11 +562,17 @@ return $default(_that.name);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _ProfileModel implements ProfileModel {
-  const _ProfileModel({this.name});
+class _ProfileModel extends ProfileModel {
+  const _ProfileModel({this.name, this.birthDate, this.sex, this.heightCm, this.level, this.goal}): super._();
   factory _ProfileModel.fromJson(Map<String, dynamic> json) => _$ProfileModelFromJson(json);
 
 @override final  String? name;
+/// ISO date-time at UTC midnight (`ProfileDto.birthDate`).
+@override final  String? birthDate;
+@override final  String? sex;
+@override final  double? heightCm;
+@override final  String? level;
+@override final  String? goal;
 
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
@@ -575,18 +587,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileModel&&(identical(other.name, name) || other.name == name));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileModel&&(identical(other.name, name) || other.name == name)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.sex, sex) || other.sex == sex)&&(identical(other.heightCm, heightCm) || other.heightCm == heightCm)&&(identical(other.level, level) || other.level == level)&&(identical(other.goal, goal) || other.goal == goal));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,name);
+    return Object.hash(runtimeType,name,birthDate,sex,heightCm,level,goal);
 }
 
 @override
 String toString() {
-    return 'ProfileModel(name: $name)';
+    return 'ProfileModel(name: $name, birthDate: $birthDate, sex: $sex, heightCm: $heightCm, level: $level, goal: $goal)';
 }
 
 
@@ -597,7 +609,7 @@ abstract mixin class _$ProfileModelCopyWith<$Res> implements $ProfileModelCopyWi
   factory _$ProfileModelCopyWith(_ProfileModel value, $Res Function(_ProfileModel) _then) = __$ProfileModelCopyWithImpl;
 @override @useResult
 $Res call({
- String? name
+ String? name, String? birthDate, String? sex, double? heightCm, String? level, String? goal
 });
 
 
@@ -614,9 +626,14 @@ class __$ProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of ProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? birthDate = freezed,Object? sex = freezed,Object? heightCm = freezed,Object? level = freezed,Object? goal = freezed,}) {
   return _then(_ProfileModel(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as String?,sex: freezed == sex ? _self.sex : sex // ignore: cast_nullable_to_non_nullable
+as String?,heightCm: freezed == heightCm ? _self.heightCm : heightCm // ignore: cast_nullable_to_non_nullable
+as double?,level: freezed == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as String?,goal: freezed == goal ? _self.goal : goal // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -910,7 +927,7 @@ as int,
 /// @nodoc
 mixin _$PlanModel {
 
- String get id; String get code; String get name;
+ String get id; String get code; String get name; EntitlementsModel get entitlements;
 /// Create a copy of PlanModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -924,20 +941,20 @@ $PlanModelCopyWith<PlanModel> get copyWith => _$PlanModelCopyWithImpl<PlanModel>
 @override
 bool operator ==(Object other) {
   final _this = this as PlanModel;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlanModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.code, _this.code) || other.code == _this.code)&&(identical(other.name, _this.name) || other.name == _this.name));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlanModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.code, _this.code) || other.code == _this.code)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.entitlements, _this.entitlements) || other.entitlements == _this.entitlements));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as PlanModel;
-  return Object.hash(runtimeType,_this.id,_this.code,_this.name);
+  return Object.hash(runtimeType,_this.id,_this.code,_this.name,_this.entitlements);
 }
 
 @override
 String toString() {
   final _this = this as PlanModel;
-  return 'PlanModel(id: ${_this.id}, code: ${_this.code}, name: ${_this.name})';
+  return 'PlanModel(id: ${_this.id}, code: ${_this.code}, name: ${_this.name}, entitlements: ${_this.entitlements})';
 }
 
 
@@ -948,11 +965,11 @@ abstract mixin class $PlanModelCopyWith<$Res>  {
   factory $PlanModelCopyWith(PlanModel value, $Res Function(PlanModel) _then) = _$PlanModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String code, String name
+ String id, String code, String name, EntitlementsModel entitlements
 });
 
 
-
+$EntitlementsModelCopyWith<$Res> get entitlements;
 
 }
 /// @nodoc
@@ -965,15 +982,25 @@ class _$PlanModelCopyWithImpl<$Res>
 
 /// Create a copy of PlanModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? code = null,Object? name = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? code = null,Object? name = null,Object? entitlements = null,}) {
   return _then(PlanModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,
+as String,entitlements: null == entitlements ? _self.entitlements : entitlements // ignore: cast_nullable_to_non_nullable
+as EntitlementsModel,
   ));
 }
-
+/// Create a copy of PlanModel
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EntitlementsModelCopyWith<$Res> get entitlements {
+  
+  return $EntitlementsModelCopyWith<$Res>(_self.entitlements, (value) {
+    return _then(_self.copyWith(entitlements: value));
+  });
+}
 }
 
 
@@ -1055,10 +1082,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String code,  String name)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String code,  String name,  EntitlementsModel entitlements)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PlanModel() when $default != null:
-return $default(_that.id,_that.code,_that.name);case _:
+return $default(_that.id,_that.code,_that.name,_that.entitlements);case _:
   return orElse();
 
 }
@@ -1076,10 +1103,10 @@ return $default(_that.id,_that.code,_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String code,  String name)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String code,  String name,  EntitlementsModel entitlements)  $default,) {final _that = this;
 switch (_that) {
 case _PlanModel():
-return $default(_that.id,_that.code,_that.name);case _:
+return $default(_that.id,_that.code,_that.name,_that.entitlements);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1096,10 +1123,10 @@ return $default(_that.id,_that.code,_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String code,  String name)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String code,  String name,  EntitlementsModel entitlements)?  $default,) {final _that = this;
 switch (_that) {
 case _PlanModel() when $default != null:
-return $default(_that.id,_that.code,_that.name);case _:
+return $default(_that.id,_that.code,_that.name,_that.entitlements);case _:
   return null;
 
 }
@@ -1111,12 +1138,13 @@ return $default(_that.id,_that.code,_that.name);case _:
 @JsonSerializable()
 
 class _PlanModel implements PlanModel {
-  const _PlanModel({required this.id, required this.code, required this.name});
+  const _PlanModel({required this.id, required this.code, required this.name, this.entitlements = const EntitlementsModel()});
   factory _PlanModel.fromJson(Map<String, dynamic> json) => _$PlanModelFromJson(json);
 
 @override final  String id;
 @override final  String code;
 @override final  String name;
+@override@JsonKey() final  EntitlementsModel entitlements;
 
 /// Create a copy of PlanModel
 /// with the given fields replaced by the non-null parameter values.
@@ -1131,18 +1159,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlanModel&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&(identical(other.name, name) || other.name == name));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlanModel&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&(identical(other.name, name) || other.name == name)&&(identical(other.entitlements, entitlements) || other.entitlements == entitlements));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,code,name);
+    return Object.hash(runtimeType,id,code,name,entitlements);
 }
 
 @override
 String toString() {
-    return 'PlanModel(id: $id, code: $code, name: $name)';
+    return 'PlanModel(id: $id, code: $code, name: $name, entitlements: $entitlements)';
 }
 
 
@@ -1153,11 +1181,11 @@ abstract mixin class _$PlanModelCopyWith<$Res> implements $PlanModelCopyWith<$Re
   factory _$PlanModelCopyWith(_PlanModel value, $Res Function(_PlanModel) _then) = __$PlanModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String code, String name
+ String id, String code, String name, EntitlementsModel entitlements
 });
 
 
-
+@override $EntitlementsModelCopyWith<$Res> get entitlements;
 
 }
 /// @nodoc
@@ -1170,16 +1198,26 @@ class __$PlanModelCopyWithImpl<$Res>
 
 /// Create a copy of PlanModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? code = null,Object? name = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? code = null,Object? name = null,Object? entitlements = null,}) {
   return _then(_PlanModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,
+as String,entitlements: null == entitlements ? _self.entitlements : entitlements // ignore: cast_nullable_to_non_nullable
+as EntitlementsModel,
   ));
 }
 
-
+/// Create a copy of PlanModel
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EntitlementsModelCopyWith<$Res> get entitlements {
+  
+  return $EntitlementsModelCopyWith<$Res>(_self.entitlements, (value) {
+    return _then(_self.copyWith(entitlements: value));
+  });
+}
 }
 
 

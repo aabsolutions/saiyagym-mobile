@@ -4,24 +4,22 @@ import 'package:saiyagym_mobile/app/app.dart';
 import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
 
+import '../helpers/fake_session.dart';
 import '../helpers/fixtures.dart';
 import '../helpers/pump_app.dart';
 
-class _FakeSession extends SessionController {
-  _FakeSession(this._user);
-
-  final User? _user;
-
-  @override
-  Future<User?> build() async => _user;
-}
-
 void main() {
-  Future<void> pumpApp(WidgetTester tester, {User? user}) => pumpLocalized(
+  Future<void> pumpApp(
+    WidgetTester tester, {
+    User? user,
+    bool offline = false,
+  }) => pumpLocalized(
     tester,
     const SaiyaGymApp(),
     overrides: [
-      sessionControllerProvider.overrideWith(() => _FakeSession(user)),
+      sessionControllerProvider.overrideWith(
+        () => FakeSession.user(user, offline: offline),
+      ),
     ],
   );
 
@@ -58,10 +56,43 @@ void main() {
     expect(find.text('Plan Free'), findsOneWidget);
   });
 
-  testWidgets('signed out: the router sends you to login', (tester) async {
+  testWidgets('signed out: starts on the welcome screen', (tester) async {
     await pumpApp(tester);
 
     expect(find.byType(NavigationBar), findsNothing);
-    expect(find.text('Iniciar sesión'), findsOneWidget);
+    expect(find.text('Crear cuenta'), findsOneWidget);
+    expect(find.text('Ya tengo cuenta'), findsOneWidget);
+  });
+
+  testWidgets('without level and goal: onboarding first', (tester) async {
+    await pumpApp(tester, user: testUser(onboarded: false));
+
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.text('Paso 1 de 5'), findsOneWidget);
+  });
+
+  testWidgets('offline session: opens and says so', (tester) async {
+    await pumpApp(tester, user: testUser(), offline: true);
+
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(
+      find.textContaining('Sin conexión: estás usando los datos guardados'),
+      findsOneWidget,
+    );
+    expect(find.text('Reintentar'), findsOneWidget);
+  });
+
+  testWidgets('unverified email: banner with resend, dismissible', (
+    tester,
+  ) async {
+    await pumpApp(tester, user: testUser(emailVerified: false));
+
+    expect(find.textContaining('Confirma tu email'), findsOneWidget);
+    expect(find.text('Reenviar'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Cerrar'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Confirma tu email'), findsNothing);
   });
 }

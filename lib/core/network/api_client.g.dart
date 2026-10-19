@@ -92,6 +92,54 @@ final class SessionEventsProvider
 
 String _$sessionEventsHash() => r'e11d40f19d2b43c3e06c460fc54ac3882ba22132';
 
+@ProviderFor(slowRequestMonitor)
+final slowRequestMonitorProvider = SlowRequestMonitorProvider._();
+
+final class SlowRequestMonitorProvider
+    extends
+        $FunctionalProvider<
+          SlowRequestMonitor,
+          SlowRequestMonitor,
+          SlowRequestMonitor
+        >
+    with $Provider<SlowRequestMonitor> {
+  SlowRequestMonitorProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'slowRequestMonitorProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$slowRequestMonitorHash();
+
+  @$internal
+  @override
+  $ProviderElement<SlowRequestMonitor> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SlowRequestMonitor create(Ref ref) {
+    return slowRequestMonitor(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SlowRequestMonitor value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SlowRequestMonitor>(value),
+    );
+  }
+}
+
+String _$slowRequestMonitorHash() =>
+    r'88a335d4f9e099686c347d0e3abad36adb677922';
+
 @ProviderFor(apiClient)
 final apiClientProvider = ApiClientProvider._();
 
@@ -130,4 +178,4 @@ final class ApiClientProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$apiClientHash() => r'94d200ece2b6775c01b4c74026fc1ef9b63420d4';
+String _$apiClientHash() => r'f4cc05366d7d9424fe1cf1ef864fe7451093fdaf';

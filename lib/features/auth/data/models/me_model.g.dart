@@ -29,10 +29,24 @@ Map<String, dynamic> _$MeModelToJson(_MeModel instance) => <String, dynamic>{
 };
 
 _ProfileModel _$ProfileModelFromJson(Map<String, dynamic> json) =>
-    _ProfileModel(name: json['name'] as String?);
+    _ProfileModel(
+      name: json['name'] as String?,
+      birthDate: json['birthDate'] as String?,
+      sex: json['sex'] as String?,
+      heightCm: (json['heightCm'] as num?)?.toDouble(),
+      level: json['level'] as String?,
+      goal: json['goal'] as String?,
+    );
 
 Map<String, dynamic> _$ProfileModelToJson(_ProfileModel instance) =>
-    <String, dynamic>{'name': instance.name};
+    <String, dynamic>{
+      'name': instance.name,
+      'birthDate': instance.birthDate,
+      'sex': instance.sex,
+      'heightCm': instance.heightCm,
+      'level': instance.level,
+      'goal': instance.goal,
+    };
 
 _PreferencesModel _$PreferencesModelFromJson(Map<String, dynamic> json) =>
     _PreferencesModel(
@@ -56,6 +70,11 @@ _PlanModel _$PlanModelFromJson(Map<String, dynamic> json) => _PlanModel(
   id: json['id'] as String,
   code: json['code'] as String,
   name: json['name'] as String,
+  entitlements: json['entitlements'] == null
+      ? const EntitlementsModel()
+      : EntitlementsModel.fromJson(
+          json['entitlements'] as Map<String, dynamic>,
+        ),
 );
 
 Map<String, dynamic> _$PlanModelToJson(_PlanModel instance) =>
@@ -63,6 +82,7 @@ Map<String, dynamic> _$PlanModelToJson(_PlanModel instance) =>
       'id': instance.id,
       'code': instance.code,
       'name': instance.name,
+      'entitlements': instance.entitlements.toJson(),
     };
 
 _AuthResponseModel _$AuthResponseModelFromJson(Map<String, dynamic> json) =>

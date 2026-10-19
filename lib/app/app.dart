@@ -7,6 +7,7 @@ import 'package:saiyagym_mobile/app/router/app_router.dart';
 import 'package:saiyagym_mobile/core/i18n/app_locales.dart';
 import 'package:saiyagym_mobile/core/network/api_client.dart';
 import 'package:saiyagym_mobile/core/theme/app_theme.dart';
+import 'package:saiyagym_mobile/core/widgets/server_waking_banner.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
 
@@ -29,7 +30,7 @@ class _SaiyaGymAppState extends ConsumerState<SaiyaGymApp> {
   Widget build(BuildContext context) {
     // The account's language wins after sign-in (set on another device).
     ref.listen(sessionControllerProvider, (_, next) {
-      final language = next.value?.preferences.language;
+      final language = next.value?.user.preferences.language;
       if (AppLocales.isSupported(language) &&
           language != context.locale.languageCode) {
         unawaited(context.setLocale(Locale(language!)));
@@ -46,6 +47,10 @@ class _SaiyaGymAppState extends ConsumerState<SaiyaGymApp> {
       locale: context.locale,
       supportedLocales: context.supportedLocales,
       localizationsDelegates: context.localizationDelegates,
+      builder: (context, child) => ServerWakingBanner(
+        slow: ref.watch(slowRequestMonitorProvider),
+        child: child ?? const SizedBox.shrink(),
+      ),
     );
   }
 }

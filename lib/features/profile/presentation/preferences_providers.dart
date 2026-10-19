@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saiyagym_mobile/core/network/api_client.dart';
+import 'package:saiyagym_mobile/core/state/submission.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
 import 'package:saiyagym_mobile/features/auth/auth_providers.dart';
 import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
@@ -13,24 +14,29 @@ import 'package:saiyagym_mobile/features/profile/domain/profile_repository.dart'
 part 'preferences_providers.g.dart';
 
 @riverpod
-UpdatePreferencesUseCase updatePreferencesUseCase(Ref ref) =>
-    UpdatePreferencesUseCase(
-      ProfileRepositoryImpl(
-        remote: ProfileRemoteDataSource(ref.watch(apiClientProvider)),
-        local: ref.watch(authLocalDataSourceProvider),
-      ),
-    );
-
-UserPreferences? _preferences(Ref ref) => ref.watch(
-  sessionControllerProvider.select((session) => session.value?.preferences),
+ProfileRepository profileRepository(Ref ref) => ProfileRepositoryImpl(
+  remote: ProfileRemoteDataSource(ref.watch(apiClientProvider)),
+  local: ref.watch(authLocalDataSourceProvider),
 );
+
+@riverpod
+UpdatePreferencesUseCase updatePreferencesUseCase(Ref ref) =>
+    UpdatePreferencesUseCase(ref.watch(profileRepositoryProvider));
+
+@riverpod
+UpdateProfileUseCase updateProfileUseCase(Ref ref) =>
+    UpdateProfileUseCase(ref.watch(profileRepositoryProvider));
 
 /// Units of the signed-in user (metric before sign-in).
 @riverpod
-UnitSystem unitSystem(Ref ref) => _preferences(ref)?.units ?? UnitSystem.metric;
+UnitSystem unitSystem(Ref ref) => ref.watch(
+  currentUserProvider.select((u) => u?.preferences.units ?? UnitSystem.metric),
+);
 
 @riverpod
-ThemeMode themeMode(Ref ref) => switch (_preferences(ref)?.theme) {
+ThemeMode themeMode(Ref ref) => switch (ref.watch(
+  currentUserProvider.select((u) => u?.preferences.theme),
+)) {
   ThemePreference.light => ThemeMode.light,
   ThemePreference.dark => ThemeMode.dark,
   ThemePreference.system || null => ThemeMode.system,
@@ -44,34 +50,25 @@ extension UnitFormatterRef on WidgetRef {
   );
 }
 
-/// Saving state of a preference change.
+/// Saving state of profile / preference changes.
 @riverpod
-class PreferencesController extends _$PreferencesController {
+class ProfileSaveController extends _$ProfileSaveController {
   @override
   FutureOr<void> build() {}
 
-  Future<void> save({
-    UnitSystem? units,
-    ThemePreference? theme,
-    String? language,
-  }) async {
+  Future<void> savePreferences(PreferencesUpdate preferences) =>
+      _save(() => ref.read(updatePreferencesUseCaseProvider)(preferences));
+
+  Future<void> saveProfile(ProfileUpdate profile) =>
+      _save(() => ref.read(updateProfileUseCaseProvider)(profile));
+
+  Future<void> _save(Future<User> Function() action) async {
     state = const AsyncLoading();
-    final result = await AsyncValue.guard(
-      () => ref.read(updatePreferencesUseCaseProvider)(
-        units: units,
-        theme: theme,
-        language: language,
-      ),
-    );
+    final result = await AsyncValue.guard(action);
     if (!ref.mounted) return;
-    switch (result) {
-      case AsyncData(:final value):
-        state = const AsyncData(null);
-        ref.read(sessionControllerProvider.notifier).userUpdated(value);
-      case AsyncError(:final error, :final stackTrace):
-        state = AsyncError(error, stackTrace);
-      case AsyncLoading():
-        break;
+    state = submissionOf(result);
+    if (result case AsyncData(:final value)) {
+      ref.read(sessionControllerProvider.notifier).userUpdated(value);
     }
   }
 }

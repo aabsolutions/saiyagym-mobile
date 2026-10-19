@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saiyagym_mobile/core/config/app_config.dart';
 import 'package:saiyagym_mobile/core/i18n/app_locales.dart';
 import 'package:saiyagym_mobile/core/network/interceptors.dart';
+import 'package:saiyagym_mobile/core/network/slow_request_monitor.dart';
 import 'package:saiyagym_mobile/core/network/token_refresher.dart';
 import 'package:saiyagym_mobile/core/storage/token_storage.dart';
 
@@ -17,6 +18,7 @@ Dio buildApiClient({
   required TokenStorage storage,
   required String Function() languageCode,
   required void Function() onSessionExpired,
+  SlowRequestMonitor? monitor,
   HttpClientAdapter? adapter,
   HttpClientAdapter? refreshAdapter,
 }) {
@@ -28,13 +30,15 @@ Dio buildApiClient({
     contentType: Headers.jsonContentType,
   );
   final language = AcceptLanguageInterceptor(languageCode);
+  final slow = monitor == null ? null : SlowRequestInterceptor(monitor);
 
-  final refreshDio = Dio(options())..interceptors.add(language);
+  final refreshDio = Dio(options())..interceptors.addAll([?slow, language]);
   if (refreshAdapter != null) refreshDio.httpClientAdapter = refreshAdapter;
 
   final dio = Dio(options());
   if (adapter != null) dio.httpClientAdapter = adapter;
   dio.interceptors.addAll([
+    ?slow,
     language,
     AuthInterceptor(
       storage: storage,
@@ -80,6 +84,13 @@ SessionEvents sessionEvents(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
+SlowRequestMonitor slowRequestMonitor(Ref ref) {
+  final monitor = SlowRequestMonitor();
+  ref.onDispose(monitor.dispose);
+  return monitor;
+}
+
+@Riverpod(keepAlive: true)
 Dio apiClient(Ref ref) {
   final language = ref.watch(requestLanguageProvider);
   final events = ref.watch(sessionEventsProvider);
@@ -88,6 +99,7 @@ Dio apiClient(Ref ref) {
     storage: ref.watch(tokenStorageProvider),
     languageCode: () => language.code,
     onSessionExpired: events.notifyExpired,
+    monitor: ref.watch(slowRequestMonitorProvider),
   );
   ref.onDispose(dio.close);
   return dio;

@@ -17,6 +17,12 @@ Future<void> pumpLocalized(
   Widget child, {
   List<Override> overrides = const [],
 }) async {
+  // A phone, not the default 800×600 landscape test surface.
+  tester.view
+    ..physicalSize = const Size(1080, 2340)
+    ..devicePixelRatio = 3;
+  addTearDown(tester.view.reset);
+
   SharedPreferences.setMockInitialValues({});
   EasyLocalization.logger.enableBuildModes = [];
   await EasyLocalization.ensureInitialized();
@@ -30,7 +36,12 @@ Future<void> pumpLocalized(
       useOnlyLangCode: true,
       saveLocale: false,
       assetLoader: const _SyncFileAssetLoader(),
-      child: ProviderScope(overrides: overrides, child: child),
+      // A new key per pump: a mounted ProviderScope ignores new overrides.
+      child: ProviderScope(
+        key: UniqueKey(),
+        overrides: overrides,
+        child: child,
+      ),
     ),
   );
   await tester.pumpAndSettle();

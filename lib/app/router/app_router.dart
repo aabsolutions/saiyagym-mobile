@@ -3,12 +3,16 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:saiyagym_mobile/app/router/app_routes.dart';
 import 'package:saiyagym_mobile/app/shell/home_shell.dart';
-import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
+import 'package:saiyagym_mobile/features/auth/domain/entities/session.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
+import 'package:saiyagym_mobile/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/pages/login_page.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/pages/register_page.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/pages/splash_page.dart';
+import 'package:saiyagym_mobile/features/auth/presentation/pages/welcome_page.dart';
 import 'package:saiyagym_mobile/features/history/presentation/history_page.dart';
+import 'package:saiyagym_mobile/features/onboarding/presentation/onboarding_page.dart';
+import 'package:saiyagym_mobile/features/profile/presentation/edit_profile_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/profile_page.dart';
 import 'package:saiyagym_mobile/features/progress/presentation/progress_page.dart';
 import 'package:saiyagym_mobile/features/today/presentation/today_page.dart';
@@ -19,26 +23,34 @@ part 'app_router.g.dart';
 /// Route guard, pure so it can be unit-tested.
 ///
 /// - Restoring the session → splash.
-/// - Signed out → only public routes (login, register).
-/// - Signed in → never on splash or public routes.
+/// - Signed out → only public routes (welcome by default).
+/// - Signed in without level/goal → onboarding, and nothing else.
+/// - Signed in → never on splash, public routes or a finished onboarding.
 String? authRedirect({
-  required AsyncValue<User?> session,
+  required AsyncValue<Session?> session,
   required String location,
 }) {
   final isPublic = AppRoutes.public.contains(location);
   if (session.isLoading && !session.hasValue) {
     return location == AppRoutes.splash ? null : AppRoutes.splash;
   }
-  final signedIn = session.value != null;
-  if (!signedIn) return isPublic ? null : AppRoutes.login;
-  if (isPublic || location == AppRoutes.splash) return AppRoutes.today;
+  final user = session.value?.user;
+  if (user == null) return isPublic ? null : AppRoutes.welcome;
+  if (user.needsOnboarding) {
+    return location == AppRoutes.onboarding ? null : AppRoutes.onboarding;
+  }
+  if (isPublic ||
+      location == AppRoutes.splash ||
+      location == AppRoutes.onboarding) {
+    return AppRoutes.today;
+  }
   return null;
 }
 
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
   // One router for the app's lifetime; session changes re-run the redirect.
-  final session = ValueNotifier<AsyncValue<User?>>(const AsyncLoading());
+  final session = ValueNotifier<AsyncValue<Session?>>(const AsyncLoading());
   ref
     ..listen(
       sessionControllerProvider,
@@ -54,10 +66,19 @@ GoRouter appRouter(Ref ref) {
         authRedirect(session: session.value, location: state.matchedLocation),
     routes: [
       GoRoute(path: AppRoutes.splash, builder: (_, _) => const SplashPage()),
+      GoRoute(path: AppRoutes.welcome, builder: (_, _) => const WelcomePage()),
       GoRoute(path: AppRoutes.login, builder: (_, _) => const LoginPage()),
       GoRoute(
         path: AppRoutes.register,
         builder: (_, _) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (_, _) => const ForgotPasswordPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.onboarding,
+        builder: (_, _) => const OnboardingPage(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => HomeShell(navigationShell: shell),
@@ -66,7 +87,20 @@ GoRouter appRouter(Ref ref) {
           _tab(AppRoutes.train, const TrainPage()),
           _tab(AppRoutes.history, const HistoryPage()),
           _tab(AppRoutes.progress, const ProgressPage()),
-          _tab(AppRoutes.profile, const ProfilePage()),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.profile,
+                builder: (_, _) => const ProfilePage(),
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    builder: (_, _) => const EditProfilePage(),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     ],

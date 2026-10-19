@@ -33,6 +33,14 @@ class UnitFormatter {
   double displayLength(double cm) => _imperial ? cm / cmPerInch : cm;
   double lengthToCm(double value) => _imperial ? value * cmPerInch : value;
 
+  /// A value already in display units, without the unit (`102,5`).
+  String formatNumber(double value) => _number.format(value);
+
+  /// Parses user input in display units; accepts `,` or `.` as decimal
+  /// separator (tired thumbs type either). `null` when not a number.
+  static double? parseNumber(String input) =>
+      double.tryParse(input.trim().replaceAll(',', '.'));
+
   /// `102.5 kg` / `225.97 lb` (locale-aware decimal separator).
   String formatWeight(double kg) =>
       '${_number.format(displayWeight(kg))} $weightUnit';

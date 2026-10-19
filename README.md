@@ -85,7 +85,22 @@ lib/
   `dart run drift_dev make-migrations` (exports `drift_schemas/`, generates
   step-by-step helpers and migration tests in `test/drift/`), add the step.
 - **Offline session:** the last `/users/me` is cached in Drift; the app opens
-  with it when the API is unreachable.
+  with it when the API is unreachable (`Session.isOffline`, banner + retry).
+- **Local data ownership:** logout wipes every table (`AppDatabase.wipe`),
+  confirming harder when `UnsyncedChanges.count() > 0`. An expired session
+  only drops the tokens — data survives a re-login of the same user; a
+  *different* user signing in wipes it first. Offline features must register
+  their outbox counter in `UnsyncedChanges`.
+- **Onboarding:** required while `profile.level` or `profile.goal` is null
+  (the router enforces it). Password reset and email verification links open
+  the **web** app; the mobile app requests the email and re-fetches
+  `/users/me`.
+- **Plans:** `entitlementsProvider` (from `/users/me`) hides/explains UI;
+  `UpgradeCta` / `PlanGate` / `UpgradeReason.fromError(apiError)` for blocked
+  features or limits. The API always decides. Store purchases plug into
+  `PaymentProvider` (manual for now).
+- **Cold starts:** `SlowRequestMonitor` shows "waking up the server" when a
+  request takes > 3 s (Render free plan).
 
 ## i18n
 

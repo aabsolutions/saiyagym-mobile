@@ -3,7 +3,8 @@
     "name": "SaiyaGym"
   },
   "common": {
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "retry": "Reintentar"
   },
   "nav": {
     "today": "Hoy",
@@ -11,6 +12,16 @@
     "history": "Historial",
     "progress": "Progreso",
     "profile": "Perfil"
+  },
+  "welcome": {
+    "tagline": "Planifica, registra y mide tus entrenos de hipertrofia y powerlifting.",
+    "highlights": {
+      "log": "Registra cada serie en dos toques",
+      "offline": "Funciona sin conexión en el gimnasio",
+      "progress": "Récords personales y progreso automático"
+    },
+    "createAccount": "Crear cuenta",
+    "haveAccount": "Ya tengo cuenta"
   },
   "auth": {
     "email": "Email",
@@ -22,6 +33,7 @@
       "title": "Iniciar sesión",
       "subtitle": "Entra para registrar tus entrenos.",
       "submit": "Entrar",
+      "forgot": "¿Olvidaste tu contraseña?",
       "toRegister": "¿No tienes cuenta? Crea una"
     },
     "register": {
@@ -29,13 +41,47 @@
       "subtitle": "Empieza a registrar tus entrenos en segundos.",
       "submit": "Crear cuenta",
       "toLogin": "¿Ya tienes cuenta? Inicia sesión"
+    },
+    "forgot": {
+      "title": "Recuperar contraseña",
+      "subtitle": "Escribe tu email y te enviaremos un enlace para crear una contraseña nueva.",
+      "submit": "Enviar enlace",
+      "sent": "Si hay una cuenta con ese email, te llegará un enlace en unos minutos. Ábrelo para elegir tu nueva contraseña y luego inicia sesión aquí.",
+      "backToLogin": "Volver a iniciar sesión"
     }
   },
   "validation": {
     "required": "Este campo es obligatorio",
     "email": "Introduce un email válido",
     "passwordMin": "Mínimo {min} caracteres",
-    "passwordMax": "Máximo {max} caracteres"
+    "passwordMax": "Máximo {max} caracteres",
+    "number": "Introduce un número",
+    "range": "Debe estar entre {min} y {max}"
+  },
+  "onboarding": {
+    "stepOf": "Paso {current} de {total}",
+    "next": "Siguiente",
+    "finish": "Empezar a entrenar",
+    "preferences": {
+      "title": "Antes de empezar",
+      "subtitle": "Elige tu idioma y cómo quieres ver pesos y medidas. Puedes cambiarlo cuando quieras."
+    },
+    "body": {
+      "title": "Tus datos físicos",
+      "subtitle": "Opcional. Sirven para la calculadora de calorías y para seguir tu progreso."
+    },
+    "level": {
+      "title": "¿Cuál es tu nivel?",
+      "subtitle": "Ajusta las sugerencias de rutinas y progresión."
+    },
+    "goal": {
+      "title": "¿Cuál es tu objetivo?",
+      "subtitle": "Ordena los ejercicios según lo que buscas."
+    },
+    "rest": {
+      "title": "Descanso entre series",
+      "subtitle": "El temporizador arrancará con este tiempo. Puedes ajustarlo en cada ejercicio."
+    }
   },
   "today": {
     "title": "Hoy",
@@ -55,14 +101,58 @@
   "progress": {
     "title": "Progreso",
     "emptyTitle": "Tu progreso, pronto",
-    "emptyMessage": "Gráficas por ejercicio, volumen semanal y récords personales."
+    "emptyMessage": "Gráficas por ejercicio, volumen semanal y récords personales.",
+    "window": "Tu plan muestra estadísticas de los últimos {days} días."
   },
   "profile": {
     "title": "Perfil",
     "plan": "Plan {plan}",
+    "data": "Tus datos",
+    "notSet": "Sin indicar",
+    "level": "Nivel",
+    "goal": "Objetivo",
+    "height": "Altura",
+    "weight": "Peso actual",
+    "birthDate": "Fecha de nacimiento",
+    "sex": "Sexo",
+    "sexes": {
+      "male": "Hombre",
+      "female": "Mujer",
+      "other": "Otro"
+    },
+    "levels": {
+      "beginner": {
+        "title": "Principiante",
+        "description": "Menos de 1 año entrenando con constancia."
+      },
+      "intermediate": {
+        "title": "Intermedio",
+        "description": "1 a 3 años; dominas la técnica de los básicos."
+      },
+      "advanced": {
+        "title": "Avanzado",
+        "description": "Más de 3 años; el progreso ya requiere planificación."
+      }
+    },
+    "goals": {
+      "hypertrophy": {
+        "title": "Hipertrofia",
+        "description": "Ganar masa muscular."
+      },
+      "powerlifting": {
+        "title": "Powerlifting",
+        "description": "Subir tu sentadilla, banca y peso muerto."
+      },
+      "both": {
+        "title": "Ambos",
+        "description": "Fuerza y músculo a la vez (powerbuilding)."
+      }
+    },
     "units": "Unidades",
-    "metric": "kg / cm",
-    "imperial": "lb / in",
+    "unitSystems": {
+      "metric": "kg / cm",
+      "imperial": "lb / in"
+    },
     "unitsExample": "Ejemplo: {weight} · {length}",
     "theme": "Tema",
     "themes": {
@@ -71,10 +161,66 @@
       "dark": "Oscuro"
     },
     "language": "Idioma",
+    "rest": "Descanso por defecto",
+    "edit": {
+      "title": "Editar perfil",
+      "save": "Guardar",
+      "saved": "Perfil actualizado"
+    },
     "logout": "Cerrar sesión",
     "logoutConfirm": {
       "title": "¿Cerrar sesión?",
-      "message": "Tendrás que volver a iniciar sesión en este dispositivo."
+      "message": "Se borrarán los datos guardados en este dispositivo. Tus datos sincronizados siguen en tu cuenta.",
+      "unsynced": "Tienes {count} cambios sin sincronizar. Si cierras sesión ahora se perderán para siempre. Conéctate a internet y espera a que se sincronicen.",
+      "discard": "Cerrar y perder cambios"
+    }
+  },
+  "plans": {
+    "cta": {
+      "featureTitle": "Disponible en Premium",
+      "featureMessage": "{feature} es parte del plan Premium.",
+      "limitTitle": "Llegaste al límite de tu plan",
+      "limitMessage": "Tu plan no permite más {resource}.",
+      "limitMessageMax": "Tu plan permite hasta {max} {resource}.",
+      "action": "Ver planes"
+    },
+    "features": {
+      "progressPhotos": "Fotos de progreso",
+      "autoProgression": "Progresión automática",
+      "fullStats": "Estadísticas completas",
+      "fullNutrition": "Todas las sugerencias de comidas",
+      "dataExport": "Exportar tus datos (CSV/JSON)"
+    },
+    "limits": {
+      "routines": "rutinas propias",
+      "activePrograms": "programas activos",
+      "customExercises": "ejercicios personalizados"
+    },
+    "sheet": {
+      "title": "Planes",
+      "current": "Tu plan",
+      "unlimited": "Sin límite de {resource}",
+      "upTo": "Hasta {max} {resource}",
+      "statsFull": "Historial de estadísticas completo",
+      "statsDays": "Estadísticas de los últimos {days} días",
+      "manual": "Por ahora el cambio de plan lo gestiona el administrador. Pronto podrás suscribirte desde la app."
+    }
+  },
+  "verification": {
+    "banner": "Confirma tu email ({email}) con el enlace que te enviamos.",
+    "resend": "Reenviar",
+    "check": "Ya lo confirmé",
+    "sent": "Te enviamos un email nuevo a {email}.",
+    "done": "¡Email confirmado!",
+    "pending": "Aún no está confirmado. Revisa tu bandeja de entrada o spam."
+  },
+  "session": {
+    "offline": "Sin conexión: estás usando los datos guardados en este dispositivo."
+  },
+  "server": {
+    "waking": {
+      "title": "Despertando el servidor…",
+      "message": "La primera conexión puede tardar hasta un minuto."
     }
   },
   "errors": {

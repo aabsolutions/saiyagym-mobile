@@ -32,6 +32,10 @@ LoginUseCase loginUseCase(Ref ref) =>
 RegisterUseCase registerUseCase(Ref ref) =>
     RegisterUseCase(ref.watch(authRepositoryProvider));
 
+@riverpod
+RequestPasswordResetUseCase requestPasswordResetUseCase(Ref ref) =>
+    RequestPasswordResetUseCase(ref.watch(authRepositoryProvider));
+
 @Riverpod(keepAlive: true)
 RestoreSessionUseCase restoreSessionUseCase(Ref ref) =>
     RestoreSessionUseCase(ref.watch(authRepositoryProvider));

@@ -1,31 +1,44 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:saiyagym_mobile/app/router/app_routes.dart';
 import 'package:saiyagym_mobile/core/i18n/app_locales.dart';
+import 'package:saiyagym_mobile/core/sync/unsynced_changes.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
 import 'package:saiyagym_mobile/core/widgets/error_banner.dart';
 import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
+import 'package:saiyagym_mobile/features/plans/domain/entitlements.dart';
+import 'package:saiyagym_mobile/features/plans/plans_providers.dart';
+import 'package:saiyagym_mobile/features/plans/presentation/upgrade_cta.dart';
+import 'package:saiyagym_mobile/features/profile/domain/profile_repository.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
+import 'package:saiyagym_mobile/features/profile/presentation/widgets/profile_fields.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(sessionControllerProvider).value;
+    final user = ref.watch(currentUserProvider);
     if (user == null) return const SizedBox.shrink();
 
-    ref.listen(preferencesControllerProvider, (_, next) {
+    ref.listen(profileSaveControllerProvider, (_, next) {
       if (next case AsyncError(:final error)) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(errorText(context, error))));
       }
     });
-    final saving = ref.watch(preferencesControllerProvider).isLoading;
-    final preferences = ref.read(preferencesControllerProvider.notifier);
+    final saving = ref.watch(profileSaveControllerProvider).isLoading;
+    final save = ref.read(profileSaveControllerProvider.notifier);
+    final premium = ref.watch(
+      entitlementsProvider.select((plan) => plan.has(PlanFeature.fullStats)),
+    );
     final formatter = ref.unitFormatter(context);
-    final theme = Theme.of(context);
+    final preferences = user.preferences;
 
     return Scaffold(
       appBar: AppBar(
@@ -41,23 +54,73 @@ class ProfilePage extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         children: [
           _UserCard(user: user),
-          const SizedBox(height: 24),
+          if (!premium) ...[
+            const SizedBox(height: 12),
+            UpgradeCta.feature(PlanFeature.fullStats, compact: true),
+          ],
+          _SectionTitle(context.tr('profile.data')),
+          Card(
+            child: Column(
+              children: [
+                _InfoTile(
+                  icon: Icons.signal_cellular_alt,
+                  label: context.tr('profile.level'),
+                  value: _name(
+                    context,
+                    'profile.levels',
+                    user.profile.level?.name,
+                    suffix: '.title',
+                  ),
+                ),
+                _InfoTile(
+                  icon: Icons.flag_outlined,
+                  label: context.tr('profile.goal'),
+                  value: _name(
+                    context,
+                    'profile.goals',
+                    user.profile.goal?.name,
+                    suffix: '.title',
+                  ),
+                ),
+                _InfoTile(
+                  icon: Icons.height,
+                  label: context.tr('profile.height'),
+                  value: user.profile.heightCm == null
+                      ? null
+                      : formatter.formatLength(user.profile.heightCm!),
+                ),
+                _InfoTile(
+                  icon: Icons.cake_outlined,
+                  label: context.tr('profile.birthDate'),
+                  value: user.profile.birthDate == null
+                      ? null
+                      : DateFormat.yMMMd(context.locale.languageCode)
+                            .format(user.profile.birthDate!),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.edit_outlined),
+                  title: Text(context.tr('profile.edit.title')),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.go(AppRoutes.editProfile),
+                ),
+              ],
+            ),
+          ),
           _SectionTitle(context.tr('profile.units')),
           SegmentedButton<UnitSystem>(
             segments: [
-              ButtonSegment(
-                value: UnitSystem.metric,
-                label: Text(context.tr('profile.metric')),
-              ),
-              ButtonSegment(
-                value: UnitSystem.imperial,
-                label: Text(context.tr('profile.imperial')),
-              ),
+              for (final units in UnitSystem.values)
+                ButtonSegment(
+                  value: units,
+                  label: Text(context.tr('profile.unitSystems.${units.name}')),
+                ),
             ],
-            selected: {user.preferences.units},
+            selected: {preferences.units},
             onSelectionChanged: saving
                 ? null
-                : (value) => preferences.save(units: value.single),
+                : (value) => save.savePreferences(
+                    PreferencesUpdate(units: value.single),
+                  ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -68,11 +131,10 @@ class ProfilePage extends ConsumerWidget {
                 'length': formatter.formatLength(180),
               },
             ),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 24),
           _SectionTitle(context.tr('profile.theme')),
           SegmentedButton<ThemePreference>(
             segments: [
@@ -82,12 +144,13 @@ class ProfilePage extends ConsumerWidget {
                   label: Text(context.tr('profile.themes.${option.name}')),
                 ),
             ],
-            selected: {user.preferences.theme},
+            selected: {preferences.theme},
             onSelectionChanged: saving
                 ? null
-                : (value) => preferences.save(theme: value.single),
+                : (value) => save.savePreferences(
+                    PreferencesUpdate(theme: value.single),
+                  ),
           ),
-          const SizedBox(height: 24),
           _SectionTitle(context.tr('profile.language')),
           DropdownMenu<String>(
             expandedInsets: EdgeInsets.zero,
@@ -104,45 +167,108 @@ class ProfilePage extends ConsumerWidget {
               if (code == null || code == context.locale.languageCode) return;
               // UI switches immediately; the API keeps it for other devices.
               await context.setLocale(Locale(code));
-              await preferences.save(language: code);
+              await save.savePreferences(PreferencesUpdate(language: code));
+            },
+          ),
+          _SectionTitle(context.tr('profile.rest')),
+          RestSelector(
+            seconds: preferences.defaultRestSeconds,
+            onSelected: (seconds) {
+              if (saving) return;
+              unawaited(
+                save.savePreferences(
+                  PreferencesUpdate(defaultRestSeconds: seconds),
+                ),
+              );
             },
           ),
           const SizedBox(height: 40),
-          OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-              foregroundColor: theme.colorScheme.error,
-              side: BorderSide(color: theme.colorScheme.error),
-            ),
-            icon: const Icon(Icons.logout),
-            label: Text(context.tr('profile.logout')),
-            onPressed: () => _confirmLogout(context, ref),
-          ),
+          const _LogoutButton(),
         ],
       ),
     );
   }
 
-  Future<void> _confirmLogout(BuildContext context, WidgetRef ref) async {
+  static String? _name(
+    BuildContext context,
+    String prefix,
+    String? value, {
+    String suffix = '',
+  }) => value == null ? null : context.tr('$prefix.$value$suffix');
+}
+
+class _LogoutButton extends ConsumerWidget {
+  const _LogoutButton();
+
+  Future<void> _logout(BuildContext context, WidgetRef ref) async {
+    final pending = await ref.read(unsyncedChangesProvider).count();
+    if (!context.mounted) return;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(dialogContext.tr('profile.logoutConfirm.title')),
-        content: Text(dialogContext.tr('profile.logoutConfirm.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: Text(dialogContext.tr('common.cancel')),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: Text(dialogContext.tr('profile.logout')),
-          ),
-        ],
-      ),
+      builder: (dialogContext) => LogoutDialog(unsyncedChanges: pending),
     );
     if (confirmed ?? false) {
       await ref.read(sessionControllerProvider.notifier).logout();
     }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scheme = Theme.of(context).colorScheme;
+    return OutlinedButton.icon(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: scheme.error,
+        side: BorderSide(color: scheme.error),
+      ),
+      icon: const Icon(Icons.logout),
+      label: Text(context.tr('profile.logout')),
+      onPressed: () => _logout(context, ref),
+    );
+  }
+}
+
+/// Logout wipes this device's data: say so, louder when work would be lost.
+class LogoutDialog extends StatelessWidget {
+  const LogoutDialog({required this.unsyncedChanges, super.key});
+
+  final int unsyncedChanges;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final risky = unsyncedChanges > 0;
+    return AlertDialog(
+      icon: risky ? Icon(Icons.warning_amber, color: scheme.error) : null,
+      title: Text(context.tr('profile.logoutConfirm.title')),
+      content: Text(
+        risky
+            ? context.tr(
+                'profile.logoutConfirm.unsynced',
+                namedArgs: {'count': '$unsyncedChanges'},
+              )
+            : context.tr('profile.logoutConfirm.message'),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(context.tr('common.cancel')),
+        ),
+        FilledButton(
+          style: risky
+              ? FilledButton.styleFrom(
+                  backgroundColor: scheme.error,
+                  foregroundColor: scheme.onError,
+                )
+              : null,
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(
+            context.tr(
+              risky ? 'profile.logoutConfirm.discard' : 'profile.logout',
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -154,7 +280,7 @@ class _UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final name = user.name;
+    final name = user.profile.name;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -197,6 +323,28 @@ class _UserCard extends StatelessWidget {
   }
 }
 
+class _InfoTile extends StatelessWidget {
+  const _InfoTile({required this.icon, required this.label, this.value});
+
+  final IconData icon;
+  final String label;
+  final String? value;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(label),
+      trailing: Text(
+        value ?? context.tr('profile.notSet'),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: value == null ? Theme.of(context).colorScheme.outline : null,
+        ),
+      ),
+    );
+  }
+}
+
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle(this.text);
 
@@ -205,7 +353,7 @@ class _SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(top: 24, bottom: 12),
       child: Text(text, style: Theme.of(context).textTheme.titleMedium),
     );
   }

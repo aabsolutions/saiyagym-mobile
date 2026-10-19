@@ -3,6 +3,7 @@ import 'package:saiyagym_mobile/core/storage/token_storage.dart';
 import 'package:saiyagym_mobile/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:saiyagym_mobile/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:saiyagym_mobile/features/auth/data/models/me_model.dart';
+import 'package:saiyagym_mobile/features/auth/domain/entities/session.dart';
 import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
 import 'package:saiyagym_mobile/features/auth/domain/repositories/auth_repository.dart';
 
@@ -40,32 +41,48 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   Future<User> _startSession(AuthResponseModel response) async {
+    // Local data left by an expired session belongs to its owner only.
+    final previous = await _local.readUser();
+    if (previous != null && previous.id != response.user.id) {
+      await _local.wipeAll();
+    }
     await _tokens.write(response.tokens);
     await _local.cacheUser(response.user);
     return response.user.toEntity();
   }
 
   @override
-  Future<User?> restoreSession() async {
-    if (await _tokens.read() == null) {
-      await _local.clear();
-      return null;
-    }
+  Future<Session?> restoreSession() async {
+    if (await _tokens.read() == null) return null;
     try {
-      final me = await _remote.me();
-      await _local.cacheUser(me);
-      return me.toEntity();
+      return Session(user: await refreshUser());
     } on ApiException catch (error) {
       if (error.code == ApiException.unauthorized) {
         await clearSession();
         return null;
       }
-      // Offline / API down: open with what we had.
+      // Offline / API down: open with the last known user.
       final cached = await _local.readUser();
-      if (cached != null) return cached.toEntity();
+      if (cached != null) {
+        return Session(user: cached.toEntity(), isOffline: true);
+      }
       rethrow;
     }
   }
+
+  @override
+  Future<User> refreshUser() async {
+    final me = await _remote.me();
+    await _local.cacheUser(me);
+    return me.toEntity();
+  }
+
+  @override
+  Future<void> requestPasswordReset(String email) =>
+      _remote.forgotPassword(email);
+
+  @override
+  Future<void> resendVerificationEmail() => _remote.resendVerification();
 
   @override
   Future<void> logout() async {
@@ -77,13 +94,10 @@ class AuthRepositoryImpl implements AuthRepository {
         // Offline logout still signs out locally; the refresh token expires.
       }
     }
-    await clearSession();
+    await _tokens.clear();
+    await _local.wipeAll();
   }
 
   @override
-  Future<void> clearSession() async {
-    await _tokens.clear();
-    // TODO(sync): also wipe the user's synced tables once they exist.
-    await _local.clear();
-  }
+  Future<void> clearSession() => _tokens.clear();
 }

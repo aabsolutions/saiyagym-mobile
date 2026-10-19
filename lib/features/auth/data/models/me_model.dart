@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:saiyagym_mobile/core/storage/token_storage.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
 import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
+import 'package:saiyagym_mobile/features/plans/data/plan_models.dart';
 
 part 'me_model.freezed.dart';
 part 'me_model.g.dart';
@@ -28,10 +29,14 @@ abstract class MeModel with _$MeModel {
   User toEntity() => User(
     id: id,
     email: email,
-    name: profile.name,
     role: UserRole.values.asNameMap()[role] ?? UserRole.user,
     emailVerified: emailVerified,
-    plan: UserPlan(code: plan.code, name: plan.name),
+    profile: profile.toEntity(),
+    plan: UserPlan(
+      code: plan.code,
+      name: plan.name,
+      entitlements: plan.entitlements.toEntity(),
+    ),
     preferences: UserPreferences(
       units: UnitSystem.fromApi(preferences.units),
       theme:
@@ -46,10 +51,39 @@ abstract class MeModel with _$MeModel {
 
 @freezed
 abstract class ProfileModel with _$ProfileModel {
-  const factory ProfileModel({String? name}) = _ProfileModel;
+  const factory ProfileModel({
+    String? name,
+
+    /// ISO date-time at UTC midnight (`ProfileDto.birthDate`).
+    String? birthDate,
+    String? sex,
+    double? heightCm,
+    String? level,
+    String? goal,
+  }) = _ProfileModel;
+
+  const ProfileModel._();
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) =>
       _$ProfileModelFromJson(json);
+
+  UserProfile toEntity() => UserProfile(
+    name: name,
+    birthDate: _calendarDate(birthDate),
+    sex: Sex.values.asNameMap()[sex],
+    heightCm: heightCm,
+    level: TrainingLevel.values.asNameMap()[level],
+    goal: TrainingGoal.values.asNameMap()[goal],
+  );
+
+  /// The API keeps the date at UTC midnight: read the UTC parts, so a user
+  /// west of Greenwich doesn't see the day before.
+  static DateTime? _calendarDate(String? value) {
+    final parsed = value == null ? null : DateTime.tryParse(value)?.toUtc();
+    return parsed == null
+        ? null
+        : DateTime(parsed.year, parsed.month, parsed.day);
+  }
 }
 
 @freezed
@@ -66,12 +100,14 @@ abstract class PreferencesModel with _$PreferencesModel {
       _$PreferencesModelFromJson(json);
 }
 
+/// `EffectivePlanDto`.
 @freezed
 abstract class PlanModel with _$PlanModel {
   const factory PlanModel({
     required String id,
     required String code,
     required String name,
+    @Default(EntitlementsModel()) EntitlementsModel entitlements,
   }) = _PlanModel;
 
   factory PlanModel.fromJson(Map<String, dynamic> json) =>

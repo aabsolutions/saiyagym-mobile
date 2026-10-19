@@ -49,6 +49,18 @@ class AuthRemoteDataSource {
     ),
   );
 
+  /// 202 whether or not the email exists (no account enumeration).
+  Future<void> forgotPassword(String email) => guardApi(
+    () => _dio.post<void>(
+      '/auth/password/forgot',
+      data: {'email': email},
+      options: _public,
+    ),
+  );
+
+  Future<void> resendVerification() =>
+      guardApi(() => _dio.post<void>('/auth/verify-email/resend'));
+
   Future<MeModel> me() => guardApi(() async {
     final response = await _dio.get<Map<String, dynamic>>('/users/me');
     return MeModel.fromJson(response.data!);

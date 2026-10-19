@@ -1,5 +1,31 @@
 # Progress — gymapp-mobile
 
+## 2026-10-19 — Pantallas de uso diario
+
+### Hecho
+- **Hoy**: entreno del día del programa con "Empezar" (de la entrega anterior) + tarjeta "Esta semana": **racha semanal**, sesiones y volumen de la semana, y **último récord** (ejercicio, fecha y valor). Calculado en local con las mismas reglas que `/stats/summary` (semanas desde el `firstDayOfWeek` del usuario, fecha local del `startedAt`, la semana actual vacía no corta la racha).
+- **Entrenar**: programas (estado; detalle con semanas → días → rutina; **activar/desactivar** con `POST /programs/:id/activate|deactivate`, requiere conexión; `PLAN_LIMIT_REACHED` → `UpgradeCta`), rutinas (tocar = empezar; lápiz = editar) y acceso a Ejercicios. Los programas se editan en la web.
+- **Editor de rutinas** simplificado (offline, sincroniza): nombre, añadir ejercicio (catálogo local), reordenar arrastrando, quitar, series objetivo (tipo, reps mín–máx, peso en las unidades del usuario, descanso), añadir/quitar series, borrar rutina. Valida como la API (reps ≥ 1, mín ≤ máx, peso y %1RM excluyentes, descanso 0–1800). **Límite de rutinas del plan** comprobado antes de crear (la API lo vuelve a validar).
+- **Ejercicios**: lista con buscador (sin tildes, palabras en cualquier orden) y filtros (músculo, equipo, favoritos, míos), favoritos con un toque; **tier list** S/A/B/C por objetivo (hipertrofia/powerlifting), por músculo y con fuente global o personal (vacío = global, como la API); **detalle** con tiers (y tier personal por objetivo), récords (cálculo local) e historial de series; **crear ejercicio personalizado** (`POST /exercises`, requiere conexión; se guarda en local al instante y el pull lo reemplaza; límite del plan → `UpgradeCta`).
+- **Historial**: lista y **calendario** mensual (respeta el primer día de la semana; tocar un día filtra), **detalle de sesión** (totales, valoración, notas, series), **editar** sesiones pasadas (peso/reps/tipo/completada, añadir/quitar series, valoración, notas) y **borrar** con confirmación (borrado lógico → la API recalcula récords).
+- Todo lee de Drift: funciona sin conexión salvo crear ejercicio y (des)activar programa, que la API exige por contrato (colecciones solo-pull).
+
+### Verificación
+- `flutter analyze` ✅ sin issues.
+- `flutter test` ✅ 173/173, estable en 3 corridas. Nuevos: racha semanal y totales (casos borde de la API), último récord, filtros y tier list, edición de rutinas y validación, grilla del calendario, crear ejercicio / activar programa contra API simulada, catálogo vacío no oculta nada; widget: crear rutina offline (+ en cola), límite Free de rutinas, favoritos + filtro + tier list + detalle, historial (calendario, detalle, borrado), Hoy (racha y último récord).
+- **No ejecutado**: contra la API real ni en dispositivo.
+
+### Decisiones y gotchas
+- **Bug evitado (lo destapó un test):** si `GET /exercises` respondía vacío, la descarga del catálogo ocultaba TODOS los ejercicios globales. Ahora una respuesta vacía nunca oculta nada (regresión cubierta).
+- El ejercicio recién creado se guarda con versión 0: el documento crudo del próximo pull lo reemplaza sin conflicto. El programa activado se guarda con la respuesta (`ProgramDto`), así la pantalla no espera al sync.
+- Nombres de ejercicio por id en un único `exerciseNamesProvider` (antes repetido en 4 pantallas).
+- Tests: el catálogo y los filtros se recorren en Dart (~150 filas; búsqueda sin tildes más simple que en SQL). Chips en filas horizontales fuera de pantalla en 360 px → `ensureVisible` antes de tocar.
+
+### Pendiente / próximo
+- Progreso: gráficas por ejercicio, volumen semanal por músculo, total powerlifting (online vía `/stats/*`, con ventana del plan).
+- Medidas corporales y fotos (Premium).
+- Probar en dispositivo y contra la API real.
+
 ## 2026-10-18 — Entrenamiento en vivo
 
 ### Hecho

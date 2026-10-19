@@ -5,7 +5,8 @@
   "common": {
     "cancel": "Cancel",
     "retry": "Retry",
-    "save": "Save"
+    "save": "Save",
+    "delete": "Delete"
   },
   "nav": {
     "today": "Today",
@@ -100,7 +101,13 @@
     "restTitle": "Rest day",
     "restMessage": "{program} has no workout today. Recover!",
     "programFinished": "The program is over.",
-    "programStarts": "Starts in {days} days."
+    "programStarts": "Starts in {days} days.",
+    "week": {
+      "title": "This week",
+      "streak": "week streak",
+      "sessions": "sessions",
+      "lastRecord": "Latest record"
+    }
   },
   "train": {
     "title": "Train",
@@ -114,7 +121,21 @@
     "emptyTitle": "No sessions yet",
     "emptyMessage": "Your logged workouts will show up here.",
     "untitled": "Workout",
-    "sets": "{count} sets"
+    "sets": "{count} sets",
+    "views": {
+      "list": "List",
+      "calendar": "Calendar"
+    },
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "delete": {
+      "title": "Delete the session?",
+      "message": "It is deleted on all your devices and your records are recalculated."
+    },
+    "notFound": "This session no longer exists.",
+    "edit": "Edit session",
+    "notDone": "not done",
+    "repsOnly": "{reps} reps"
   },
   "progress": {
     "title": "Progress",
@@ -426,6 +447,83 @@
       "bestE1RM": "Estimated 1RM: {value} (was {previous})",
       "maxVolume": "Single-session volume: {value} (was {previous})",
       "repsAtWeight": "{reps} reps at {weight} (was {previous})"
+    }
+  },
+  "routines": {
+    "new": "New routine",
+    "edit": "Edit routine",
+    "name": "Routine name",
+    "empty": "No routines yet. Create one here or on the web.",
+    "delete": {
+      "title": "Delete the routine?",
+      "message": "Sessions you already did with it are kept."
+    },
+    "columns": {
+      "type": "Type",
+      "reps": "Reps",
+      "weight": "Weight",
+      "rest": "Rest (s)"
+    },
+    "repsMin": "Minimum reps",
+    "repsMax": "Maximum reps",
+    "removeSet": "Remove set"
+  },
+  "programs": {
+    "title": "Programs",
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "weeks": "{count} weeks",
+    "week": "Week {n}",
+    "noDays": "No workouts this week.",
+    "activate": "Activate program",
+    "deactivate": "Deactivate program",
+    "editOnWeb": "Programs are created and edited on the web. Activating or deactivating needs a connection."
+  },
+  "exercises": {
+    "title": "Exercises",
+    "tabs": {
+      "list": "List",
+      "tiers": "Tier list"
+    },
+    "create": "Create exercise",
+    "filters": {
+      "muscle": "Muscle",
+      "equipment": "Equipment",
+      "favorites": "Favorites",
+      "custom": "Mine",
+      "all": "All",
+      "allMuscles": "All muscles"
+    },
+    "noResults": "No exercise matches the filters.",
+    "customTag": "Custom",
+    "favorite": "Add to favorites",
+    "unfavorite": "Remove from favorites",
+    "tiers": {
+      "title": "Tier",
+      "global": "Global",
+      "personal": "Mine",
+      "forGoal": "{goal}: global tier {tier}. Your tier (empty = the global one):"
+    },
+    "mechanics": {
+      "compound": "Compound",
+      "isolation": "Isolation"
+    },
+    "noRecords": "No records with this exercise yet.",
+    "records": {
+      "maxWeight": "Heaviest weight",
+      "bestE1RM": "Estimated 1RM",
+      "maxVolume": "Single-session volume"
+    },
+    "history": "History",
+    "noHistory": "You haven't trained it yet.",
+    "form": {
+      "name": "Name",
+      "muscle": "Primary muscle",
+      "equipment": "Equipment",
+      "onlineHint": "Creating an exercise needs a connection; afterwards it works offline."
     }
   }
 }

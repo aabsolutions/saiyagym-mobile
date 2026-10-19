@@ -10,14 +10,21 @@ import 'package:saiyagym_mobile/features/auth/presentation/pages/login_page.dart
 import 'package:saiyagym_mobile/features/auth/presentation/pages/register_page.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/pages/splash_page.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/pages/welcome_page.dart';
+import 'package:saiyagym_mobile/features/exercises/presentation/custom_exercise_page.dart';
+import 'package:saiyagym_mobile/features/exercises/presentation/exercise_detail_page.dart';
+import 'package:saiyagym_mobile/features/exercises/presentation/exercises_page.dart';
 import 'package:saiyagym_mobile/features/history/presentation/history_page.dart';
+import 'package:saiyagym_mobile/features/history/presentation/workout_detail_page.dart';
+import 'package:saiyagym_mobile/features/history/presentation/workout_edit_page.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_controller.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_page.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/workout_summary_page.dart';
 import 'package:saiyagym_mobile/features/onboarding/presentation/onboarding_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/edit_profile_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/profile_page.dart';
+import 'package:saiyagym_mobile/features/programs/presentation/program_detail_page.dart';
 import 'package:saiyagym_mobile/features/progress/presentation/progress_page.dart';
+import 'package:saiyagym_mobile/features/routines/presentation/routine_editor_page.dart';
 import 'package:saiyagym_mobile/features/today/presentation/today_page.dart';
 import 'package:saiyagym_mobile/features/train/presentation/train_page.dart';
 
@@ -101,8 +108,71 @@ GoRouter appRouter(Ref ref) {
         builder: (_, _, shell) => HomeShell(navigationShell: shell),
         branches: [
           _tab(AppRoutes.today, const TodayPage()),
-          _tab(AppRoutes.train, const TrainPage()),
-          _tab(AppRoutes.history, const HistoryPage()),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.train,
+                builder: (_, _) => const TrainPage(),
+                routes: [
+                  GoRoute(
+                    path: 'routines/:id',
+                    builder: (_, state) => RoutineEditorPage(
+                      routineId: state.pathParameters['id'] == 'new'
+                          ? null
+                          : state.pathParameters['id'],
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'programs/:id',
+                    builder: (_, state) => ProgramDetailPage(
+                      programId: state.pathParameters['id']!,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'exercises',
+                    builder: (_, _) => const ExercisesPage(),
+                    routes: [
+                      // Before ':id', or 'new' would be read as an id.
+                      GoRoute(
+                        path: 'new',
+                        builder: (_, _) => const CustomExercisePage(),
+                      ),
+                      GoRoute(
+                        path: ':id',
+                        builder: (_, state) => ExerciseDetailPage(
+                          exerciseId: state.pathParameters['id']!,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.history,
+                builder: (_, _) => const HistoryPage(),
+                routes: [
+                  GoRoute(
+                    path: 'workouts/:id',
+                    builder: (_, state) => WorkoutDetailPage(
+                      workoutId: state.pathParameters['id']!,
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        builder: (_, state) => WorkoutEditPage(
+                          workoutId: state.pathParameters['id']!,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
           _tab(AppRoutes.progress, const ProgressPage()),
           StatefulShellBranch(
             routes: [

@@ -13,5 +13,24 @@ ExercisesRepository exercisesRepository(Ref ref) {
     stores: ref.watch(syncStoresProvider),
     writer: ref.watch(syncWriterProvider),
     languageCode: () => language.code,
+    dio: ref.watch(apiClientProvider),
   );
 }
+
+/// Every exercise (global + custom), by name. Filtering is done in Dart:
+/// ~150 rows, and accent-insensitive search is easier there than in SQL.
+@riverpod
+Stream<List<Exercise>> exerciseCatalog(Ref ref) =>
+    ref.watch(exercisesRepositoryProvider).watchCatalog();
+
+@riverpod
+Stream<Map<String, ExercisePref>> exercisePrefs(Ref ref) =>
+    ref.watch(exercisesRepositoryProvider).watchPrefs();
+
+/// Exercise names by id (sessions and routines store only the id).
+@riverpod
+Map<String, String> exerciseNames(Ref ref) => {
+  for (final exercise
+      in ref.watch(exerciseCatalogProvider).value ?? const <Exercise>[])
+    exercise.id: exercise.name,
+};

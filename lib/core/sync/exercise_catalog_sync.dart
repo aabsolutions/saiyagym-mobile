@@ -56,14 +56,17 @@ class ExerciseCatalogSync {
         await _store.put(item, id: id, updatedAt: now, deletedAt: null);
       }
       // Gone from the catalog: keep the row (old workouts still need the
-      // name) but hide it.
-      await (_db.update(_db.exercises)..where(
-            (e) =>
-                e.isGlobal.equals(true) &
-                e.id.isNotIn(ids) &
-                e.deletedAt.isNull(),
-          ))
-          .write(ExercisesCompanion(deletedAt: Value(now)));
+      // name) but hide it. An EMPTY answer never hides anything: it would
+      // wipe the whole offline catalog on an API hiccup.
+      if (ids.isNotEmpty) {
+        await (_db.update(_db.exercises)..where(
+              (e) =>
+                  e.isGlobal.equals(true) &
+                  e.id.isNotIn(ids) &
+                  e.deletedAt.isNull(),
+            ))
+            .write(ExercisesCompanion(deletedAt: Value(now)));
+      }
       await _db.writeMeta(languageKey, language);
       await _db.writeMeta(syncedAtKey, now.toIso8601String());
     });

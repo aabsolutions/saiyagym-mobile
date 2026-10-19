@@ -11,13 +11,19 @@ class Seed {
   final SyncStores _stores;
   final _at = DateTime.utc(2026, 10);
 
-  Future<void> exercise(String id, String name) => _stores.exercises.put(
+  Future<void> exercise(
+    String id,
+    String name, {
+    String muscle = 'quads',
+    String? hypertrophyTier,
+  }) => _stores.exercises.put(
     {
       'id': id,
       'name': name,
-      'primaryMuscle': 'quads',
+      'primaryMuscle': muscle,
       'equipment': 'barbell',
       'isGlobal': true,
+      'tiers': {'hypertrophy': hypertrophyTier, 'powerlifting': null},
     },
     id: id,
     updatedAt: _at,

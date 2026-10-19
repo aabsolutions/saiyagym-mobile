@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saiyagym_mobile/core/widgets/primary_button.dart';
 import 'package:saiyagym_mobile/core/widgets/sync_status_button.dart';
+import 'package:saiyagym_mobile/features/exercises/exercises_providers.dart';
 import 'package:saiyagym_mobile/features/live_workout/data/start_plans.dart';
 import 'package:saiyagym_mobile/features/live_workout/domain/live_session.dart';
 import 'package:saiyagym_mobile/features/live_workout/live_workout_providers.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_controller.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/start_session.dart';
+import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
+import 'package:saiyagym_mobile/features/records/domain/personal_records.dart';
+import 'package:saiyagym_mobile/features/stats/stats_providers.dart';
 
 /// Today's program day (with its target weights), or an empty session.
 class TodayPage extends ConsumerWidget {
@@ -45,6 +49,8 @@ class TodayPage extends ConsumerWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
             },
+            const SizedBox(height: 16),
+            const _WeekCard(),
             const SizedBox(height: 16),
             OutlinedButton.icon(
               icon: const Icon(Icons.add),
@@ -181,4 +187,101 @@ class _InfoCard extends StatelessWidget {
       subtitle: Text(message),
     ),
   );
+}
+
+/// Weekly streak, this week's totals and the latest record (local data).
+class _WeekCard extends ConsumerWidget {
+  const _WeekCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final stats = ref.watch(todayStatsProvider).value;
+    if (stats == null) return const SizedBox.shrink();
+    final formatter = ref.unitFormatter(context);
+    final theme = Theme.of(context);
+    final week = stats.summary.week;
+    final last = stats.lastRecord;
+    final names = ref.watch(exerciseNamesProvider);
+
+    Widget stat(IconData icon, String value, String label) => Expanded(
+      child: Column(
+        children: [
+          Icon(icon, color: theme.colorScheme.primary),
+          const SizedBox(height: 4),
+          Text(value, style: theme.textTheme.titleLarge),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium,
+          ),
+        ],
+      ),
+    );
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              context.tr('today.week.title'),
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                stat(
+                  Icons.local_fire_department,
+                  '${stats.summary.streakWeeks}',
+                  context.tr('today.week.streak'),
+                ),
+                stat(
+                  Icons.event_available,
+                  '${week.sessions}',
+                  context.tr('today.week.sessions'),
+                ),
+                stat(
+                  Icons.fitness_center,
+                  formatter.formatWeight(week.volumeKg.roundToDouble()),
+                  context.tr('live.stats.volume'),
+                ),
+              ],
+            ),
+            if (last != null) ...[
+              const Divider(height: 32),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(
+                  Icons.emoji_events,
+                  color: theme.colorScheme.tertiary,
+                  size: 32,
+                ),
+                title: Text(context.tr('today.week.lastRecord')),
+                subtitle: Text(
+                  [
+                    names[last.records.first.exerciseId] ?? '',
+                    DateFormat.MMMd(context.locale.languageCode)
+                        .format(last.workout.startedAt.toLocal()),
+                  ].where((s) => s.isNotEmpty).join(' · '),
+                ),
+                trailing: Text(
+                  last.records.first.record.type == RecordType.repsAtWeight
+                      ? context.tr(
+                          'history.repsOnly',
+                          namedArgs: {
+                            'reps':
+                                '${last.records.first.record.value.round()}',
+                          },
+                        )
+                      : formatter.formatWeight(last.records.first.record.value),
+                  style: theme.textTheme.titleMedium,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }

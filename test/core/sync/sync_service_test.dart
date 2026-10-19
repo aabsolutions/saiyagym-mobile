@@ -204,6 +204,7 @@ void main() {
           stores: stores,
           writer: SyncWriter(db, queue),
           languageCode: () => language,
+          dio: Dio(),
         );
         await exercises.setFavorite('ex-bench', favorite: true);
         api.onPush = (changes) => [
@@ -276,6 +277,7 @@ void main() {
           stores: stores,
           writer: SyncWriter(db, queue),
           languageCode: () => language,
+          dio: Dio(),
         ).find('ex-custom');
         expect(custom!.name, 'Remo Meadows');
         expect(
@@ -626,6 +628,27 @@ void main() {
   });
 
   group('exercise catalog', () {
+    test('an empty answer never hides the offline catalog', () async {
+      await at(() async {
+        api.catalog = [
+          {
+            'id': 'g-0',
+            'name': 'Sentadilla',
+            'primaryMuscle': 'quads',
+            'equipment': 'barbell',
+            'isGlobal': true,
+          },
+        ];
+        await service.sync();
+        now = now.add(const Duration(hours: 25));
+        api.catalog = [];
+
+        await service.sync();
+
+        expect(await stores.exercises.active(), hasLength(1));
+      });
+    });
+
     List<Map<String, Object?>> catalog(int n) => [
       for (var i = 0; i < n; i++)
         {
@@ -649,6 +672,7 @@ void main() {
           stores: stores,
           writer: SyncWriter(db, queue),
           languageCode: () => language,
+          dio: Dio(),
         );
         final all = await exercises.watchCatalog().first;
         expect(all, hasLength(150));
@@ -679,6 +703,7 @@ void main() {
             stores: stores,
             writer: SyncWriter(db, queue),
             languageCode: () => language,
+            dio: Dio(),
           );
           expect(await exercises.watchCatalog().first, hasLength(2));
           // Still resolvable for old workouts.

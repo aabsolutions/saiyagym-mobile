@@ -1,8 +1,10 @@
 import 'package:clock/clock.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:saiyagym_mobile/core/database/app_database.dart';
 import 'package:saiyagym_mobile/core/database/database_provider.dart';
+import 'package:saiyagym_mobile/core/network/api_client.dart';
 import 'package:saiyagym_mobile/core/sync/sync_collection.dart';
 import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
 import 'package:saiyagym_mobile/core/sync/sync_queue.dart';
@@ -53,6 +55,8 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
+        // Never called here (no network in these flows).
+        apiClientProvider.overrideWithValue(Dio()),
         syncWriterProvider.overrideWithValue(SyncWriter(db, SyncQueueDao(db))),
         syncSchedulerProvider.overrideWithValue(scheduler),
         restAlarmProvider.overrideWithValue(device),

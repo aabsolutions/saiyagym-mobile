@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
+import 'package:saiyagym_mobile/core/network/api_exception.dart';
 import 'package:saiyagym_mobile/core/sync/stores.dart';
 import 'package:saiyagym_mobile/core/sync/sync_writer.dart';
 import 'package:saiyagym_mobile/core/sync/synced_store.dart';
@@ -12,8 +14,11 @@ class ExercisesRepositoryImpl implements ExercisesRepository {
     required this._stores,
     required this._writer,
     required this._languageCode,
+    required this._dio,
     this._uuid = const Uuid(),
   });
+
+  final Dio _dio;
 
   final SyncStores _stores;
   final SyncWriter _writer;
@@ -92,4 +97,24 @@ class ExercisesRepositoryImpl implements ExercisesRepository {
           },
         ),
       );
+
+  @override
+  Future<Exercise> createCustom(CustomExerciseDraft draft) async {
+    final body = await guardApi(() async {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/exercises',
+        data: draft.toJson(),
+      );
+      return response.data!;
+    });
+    final id = body['id'] as String;
+    // Version 0: the raw document arriving with the next pull replaces it.
+    await _stores.exercises.put(
+      {...body, 'isGlobal': false, 'isCustom': true},
+      id: id,
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+      deletedAt: null,
+    );
+    return _decode((await _stores.exercises.find(id))!);
+  }
 }

@@ -55,4 +55,43 @@ final class ProgramsRepositoryProvider
 }
 
 String _$programsRepositoryHash() =>
-    r'65dfc51b6978629a32d8d00af7f9e4179a2de334';
+    r'ed4b35ce7b7016cd98711235714fc969ccdbf4ba';
+
+@ProviderFor(programs)
+final programsProvider = ProgramsProvider._();
+
+final class ProgramsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Program>>,
+          List<Program>,
+          Stream<List<Program>>
+        >
+    with $FutureModifier<List<Program>>, $StreamProvider<List<Program>> {
+  ProgramsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'programsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$programsHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Program>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Program>> create(Ref ref) {
+    return programs(ref);
+  }
+}
+
+String _$programsHash() => r'8582e8ca280a3335a7d1f8426e369303ed8b9a97';

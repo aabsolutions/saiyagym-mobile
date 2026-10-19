@@ -64,6 +64,36 @@ abstract class ExercisePref with _$ExercisePref {
       _$ExercisePrefFromJson(json);
 }
 
+/// Fields of `CreateCustomExerciseDto` the mobile form fills.
+class CustomExerciseDraft {
+  const CustomExerciseDraft({
+    required this.name,
+    required this.primaryMuscle,
+    required this.equipment,
+    required this.mechanic,
+    this.category = 'strength',
+    this.secondaryMuscles = const [],
+  });
+
+  final String name;
+  final String primaryMuscle;
+  final String equipment;
+
+  /// `compound` | `isolation`.
+  final String mechanic;
+  final String category;
+  final List<String> secondaryMuscles;
+
+  Map<String, Object> toJson() => {
+    'name': name.trim(),
+    'primaryMuscle': primaryMuscle,
+    'equipment': equipment,
+    'mechanic': mechanic,
+    'category': category,
+    'secondaryMuscles': secondaryMuscles,
+  };
+}
+
 abstract interface class ExercisesRepository {
   /// Global catalog + custom exercises, by name. Works offline.
   Stream<List<Exercise>> watchCatalog({String? search});
@@ -76,4 +106,9 @@ abstract interface class ExercisesRepository {
   Future<void> setFavorite(String exerciseId, {required bool favorite});
 
   Future<void> setPersonalTier(String exerciseId, Goal goal, Tier? tier);
+
+  /// Online only (`POST /exercises`): custom exercises are created through
+  /// the API (they count toward the plan limit) and then pulled. Stored
+  /// locally right away so it can be used immediately.
+  Future<Exercise> createCustom(CustomExerciseDraft draft);
 }

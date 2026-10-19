@@ -169,7 +169,7 @@ final class UnitSystemProvider
         argument: null,
         retry: null,
         name: r'unitSystemProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -196,7 +196,7 @@ final class UnitSystemProvider
   }
 }
 
-String _$unitSystemHash() => r'ab9ea067f555c385e21e773772ec10e3bf77a582';
+String _$unitSystemHash() => r'd01f7c8363cd7af401fd15d1156f8abeab3761a8';
 
 @ProviderFor(themeMode)
 final themeModeProvider = ThemeModeProvider._();

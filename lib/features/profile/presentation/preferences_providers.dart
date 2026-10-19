@@ -28,7 +28,7 @@ UpdateProfileUseCase updateProfileUseCase(Ref ref) =>
     UpdateProfileUseCase(ref.watch(profileRepositoryProvider));
 
 /// Units of the signed-in user (metric before sign-in).
-@riverpod
+@Riverpod(keepAlive: true)
 UnitSystem unitSystem(Ref ref) => ref.watch(
   currentUserProvider.select((u) => u?.preferences.units ?? UnitSystem.metric),
 );

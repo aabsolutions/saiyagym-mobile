@@ -37,7 +37,7 @@ flutter run --flavor dev --dart-define=API_BASE_URL=http://192.168.1.20:3000/api
 | What | Command |
 |------|---------|
 | Codegen (one-off / watch) | `dart run build_runner build` · `dart run build_runner watch` |
-| Lint | `flutter analyze` (very_good_analysis) |
+| Lint | `dart analyze` (very_good_analysis **+ riverpod_lint**; locally `flutter analyze` may not run the analyzer plugin, CI does) |
 | Format | `dart format lib test tool` |
 | Tests | `flutter test` · one file: `flutter test test/core/units/unit_formatter_test.dart` · by name: `flutter test --plain-name "single-flight"` |
 | Translations check | `dart run tool/check_i18n.dart` (same keys in every language, every key used in `lib/` exists; also a test) |

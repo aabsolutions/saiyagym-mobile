@@ -45,6 +45,6 @@ class SessionController extends _$SessionController {
 }
 
 /// The signed-in user, or `null`.
-@riverpod
+@Riverpod(keepAlive: true)
 User? currentUser(Ref ref) =>
     ref.watch(sessionControllerProvider.select((s) => s.value?.user));

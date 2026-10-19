@@ -11,7 +11,7 @@ WorkoutsRepository workoutsRepository(Ref ref) => WorkoutsRepositoryImpl(
   writer: ref.watch(syncWriterProvider),
 );
 
-@riverpod
+@Riverpod(keepAlive: true)
 FinishWorkoutUseCase finishWorkoutUseCase(Ref ref) => FinishWorkoutUseCase(
   ref.watch(workoutsRepositoryProvider),
   ref.watch(syncSchedulerProvider),

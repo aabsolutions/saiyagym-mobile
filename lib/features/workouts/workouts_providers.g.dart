@@ -74,7 +74,7 @@ final class FinishWorkoutUseCaseProvider
         argument: null,
         retry: null,
         name: r'finishWorkoutUseCaseProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -103,7 +103,7 @@ final class FinishWorkoutUseCaseProvider
 }
 
 String _$finishWorkoutUseCaseHash() =>
-    r'614868371ea6eae921c5d513e893d815025b91f1';
+    r'a4a3e6cb65d68a2bde9a7eb9a61f3030b202997a';
 
 @ProviderFor(workoutHistory)
 final workoutHistoryProvider = WorkoutHistoryProvider._();

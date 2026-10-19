@@ -14,14 +14,15 @@ Future<void> main() async {
     flavorName: appFlavor ?? const String.fromEnvironment('FLAVOR'),
   );
 
+  // ProviderScope at the root (riverpod_lint: missing_provider_scope).
   runApp(
-    EasyLocalization(
-      supportedLocales: AppLocales.supported,
-      path: AppLocales.path,
-      fallbackLocale: AppLocales.fallback,
-      useOnlyLangCode: true,
-      child: ProviderScope(
-        overrides: [appConfigProvider.overrideWithValue(config)],
+    ProviderScope(
+      overrides: [appConfigProvider.overrideWithValue(config)],
+      child: EasyLocalization(
+        supportedLocales: AppLocales.supported,
+        path: AppLocales.path,
+        fallbackLocale: AppLocales.fallback,
+        useOnlyLangCode: true,
         child: const SaiyaGymApp(),
       ),
     ),

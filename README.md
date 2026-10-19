@@ -311,6 +311,8 @@ flutter build appbundle --release --flavor prod \
   --obfuscate --split-debug-info=build/symbols
 ```
 
+**R8 keep rules** (`android/app/proguard-rules.pro`): plugins that call Java/Kotlin from Dart through **JNI** (`package:jni`, e.g. `shared_preferences_android` 2.5) need their classes kept, or the release build dies at startup (`NoSuchMethodError` / `ClassNotFoundException`, stuck on the splash) while debug works. After adding or upgrading a plugin, smoke-test a **release** build (install it, open it, check `adb logcat`).
+
 Without a keystore the release is signed with the **debug** key (Gradle warns):
 fine for `flutter run --release`, never for the store. Keep `build/symbols` of
 each release to symbolize crash stack traces.

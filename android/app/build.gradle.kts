@@ -80,6 +80,11 @@ android {
 
     buildTypes {
         release {
+            // Keep rules for classes reached only through JNI (see the file).
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
             signingConfig = if (releaseStoreFile != null) {
                 signingConfigs.getByName("release")
             } else {

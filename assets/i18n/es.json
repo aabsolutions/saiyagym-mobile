@@ -290,7 +290,8 @@
     "NETWORK_ERROR": "Sin conexión. Revisa tu internet e inténtalo de nuevo.",
     "TIMEOUT": "El servidor tardó demasiado en responder. Inténtalo de nuevo.",
     "CANCELLED": "La operación se canceló.",
-    "UNKNOWN_ERROR": "Algo salió mal. Inténtalo de nuevo."
+    "UNKNOWN_ERROR": "Algo salió mal. Inténtalo de nuevo.",
+    "SECURE_CONNECTION_FAILED": "No se pudo establecer una conexión segura. Revisa que la fecha y la hora del teléfono sean correctas."
   },
   "sync": {
     "title": "Sincronización",

@@ -290,7 +290,8 @@
     "NETWORK_ERROR": "You're offline. Check your connection and try again.",
     "TIMEOUT": "The server took too long to respond. Try again.",
     "CANCELLED": "The operation was cancelled.",
-    "UNKNOWN_ERROR": "Something went wrong. Try again."
+    "UNKNOWN_ERROR": "Something went wrong. Try again.",
+    "SECURE_CONNECTION_FAILED": "Couldn't establish a secure connection. Check that your phone's date and time are correct."
   },
   "sync": {
     "title": "Sync",

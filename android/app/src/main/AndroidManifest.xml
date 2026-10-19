@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The API (release too: the template only declares it for debug/profile). -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Rest timer: exact alert when the rest ends (the user may deny it →
          inexact fallback) and rescheduling after a reboot. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />

@@ -58,6 +58,33 @@ void main() {
       expect(of(DioExceptionType.unknown).code, 'UNKNOWN_ERROR');
     });
 
+    test('TLS failures → secure-connection code (e.g. wrong device clock)', () {
+      ApiException of(DioExceptionType type, [Object? cause]) =>
+          ApiException.fromDio(
+            DioException(requestOptions: request, type: type, error: cause),
+          );
+
+      expect(
+        of(
+          DioExceptionType.unknown,
+          const HandshakeException('certificate is not yet valid'),
+        ).code,
+        ApiException.secureConnection,
+      );
+      expect(
+        of(DioExceptionType.badCertificate).code,
+        ApiException.secureConnection,
+      );
+      expect(
+        of(
+          DioExceptionType.unknown,
+          const HandshakeException('x'),
+        ).isConnectivity,
+        isFalse,
+        reason: 'retrying will not fix the clock',
+      );
+    });
+
     test('returns an already mapped exception untouched', () {
       const mapped = ApiException(code: 'ROUTINE_NOT_FOUND', statusCode: 404);
 

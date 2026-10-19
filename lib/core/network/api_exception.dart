@@ -33,10 +33,14 @@ class ApiException implements Exception {
       case DioExceptionType.badResponse:
         return ApiException._fromResponse(error.response);
       case DioExceptionType.badCertificate:
+        return const ApiException(code: secureConnection);
       case DioExceptionType.unknown:
-        return error.error is SocketException
-            ? const ApiException(code: networkError)
-            : const ApiException(code: unknown);
+        return switch (error.error) {
+          SocketException() => const ApiException(code: networkError),
+          // Usually a wrong device clock ("certificate is not yet valid").
+          HandshakeException() => const ApiException(code: secureConnection),
+          _ => const ApiException(code: unknown),
+        };
     }
   }
 
@@ -72,6 +76,10 @@ class ApiException implements Exception {
   static const timeout = 'TIMEOUT';
   static const cancelled = 'CANCELLED';
   static const unknown = 'UNKNOWN_ERROR';
+
+  /// TLS failed (wrong date/time on the device, or a network intercepting
+  /// HTTPS).
+  static const secureConnection = 'SECURE_CONNECTION_FAILED';
 
   static const unauthorized = 'UNAUTHORIZED';
 

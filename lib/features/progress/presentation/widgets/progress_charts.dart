@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:saiyagym_mobile/core/cache/json_cache.dart';
 
 class ChartPoint {
   const ChartPoint(this.date, this.value);
@@ -61,8 +60,15 @@ class TrendChart extends StatelessWidget {
     final maxX = math.max(_dayOf(points.last.date), minX + 1);
     final color = theme.colorScheme.primary;
 
-    return SizedBox(
-      height: _chartHeight,
+    return _ChartSemantics(
+      label: context.tr(
+        'progress.chartSummary',
+        namedArgs: {
+          'count': '${points.length}',
+          'first': format(points.first.value),
+          'last': format(points.last.value),
+        },
+      ),
       child: LineChart(
         LineChartData(
           minX: minX,
@@ -159,8 +165,16 @@ class WeeklyBarChart extends StatelessWidget {
     // Labels on every bar get crowded past ~6 weeks.
     final labelEvery = math.max(1, (weeks.length / 5).ceil());
 
-    return SizedBox(
-      height: _chartHeight,
+    return _ChartSemantics(
+      label: values.isEmpty
+          ? context.tr('progress.noData')
+          : context.tr(
+              'progress.barSummary',
+              namedArgs: {
+                'count': '${values.length}',
+                'last': format(values.last),
+              },
+            ),
       child: BarChart(
         BarChartData(
           maxY: high * 1.15,
@@ -232,39 +246,19 @@ class WeeklyBarChart extends StatelessWidget {
   }
 }
 
-/// "Offline · data from Oct 18, 10:00" when the API couldn't be reached.
-class CacheNote extends StatelessWidget {
-  const CacheNote(this.cached, {super.key});
+/// Screen readers hear [label], not the chart's painted pieces.
+class _ChartSemantics extends StatelessWidget {
+  const _ChartSemantics({required this.label, required this.child});
 
-  final Cached<Object?> cached;
+  final String label;
+  final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    if (!cached.fromCache) return const SizedBox.shrink();
-    final theme = Theme.of(context);
-    final when = DateFormat.MMMd(context.locale.toLanguageTag())
-        .add_Hm()
-        .format(cached.fetchedAt.toLocal());
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Row(
-        children: [
-          Icon(
-            Icons.cloud_off,
-            size: 16,
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              context.tr('progress.cachedAt', namedArgs: {'date': when}),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Semantics(
+    container: true,
+    label: label,
+    child: ExcludeSemantics(
+      child: SizedBox(height: _chartHeight, child: child),
+    ),
+  );
 }

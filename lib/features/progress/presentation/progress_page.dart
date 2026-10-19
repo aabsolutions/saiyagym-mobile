@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saiyagym_mobile/app/router/app_routes.dart';
-import 'package:saiyagym_mobile/core/cache/json_cache.dart';
-import 'package:saiyagym_mobile/core/widgets/error_banner.dart';
+import 'package:saiyagym_mobile/core/widgets/cached_view.dart';
 import 'package:saiyagym_mobile/core/widgets/sync_status_button.dart';
 import 'package:saiyagym_mobile/features/body_metrics/domain/body_metric.dart';
 import 'package:saiyagym_mobile/features/body_metrics/presentation/quick_weight_sheet.dart';
@@ -133,37 +132,6 @@ class _SectionCard extends StatelessWidget {
       ),
     ),
   );
-}
-
-/// Loading / error (no local copy either) / data + "offline since" note.
-class _CachedView<T> extends StatelessWidget {
-  const _CachedView({
-    required this.value,
-    required this.onRetry,
-    required this.builder,
-  });
-
-  final AsyncValue<Cached<T>> value;
-  final VoidCallback onRetry;
-  final Widget Function(T data) builder;
-
-  @override
-  Widget build(BuildContext context) => switch (value) {
-    AsyncValue(:final value?) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [builder(value.data), CacheNote(value)],
-    ),
-    AsyncValue(:final error?) => Column(
-      children: [
-        Text(errorText(context, error), textAlign: TextAlign.center),
-        TextButton(onPressed: onRetry, child: Text(context.tr('common.retry'))),
-      ],
-    ),
-    _ => const SizedBox(
-      height: 180,
-      child: Center(child: CircularProgressIndicator()),
-    ),
-  };
 }
 
 class _BodyWeightCard extends ConsumerWidget {
@@ -301,7 +269,7 @@ class _ExerciseProgressCardState extends ConsumerState<_ExerciseProgressCard> {
                       setState(() => _metric = value.single),
                 ),
                 const SizedBox(height: 12),
-                _CachedView(
+                CachedView(
                   value: ref.watch(exerciseProgressProvider(selected)),
                   onRetry: () =>
                       ref.invalidate(exerciseProgressProvider(selected)),
@@ -345,7 +313,7 @@ class _MuscleVolumeCardState extends ConsumerState<_MuscleVolumeCard> {
     final formatter = ref.unitFormatter(context);
     return _SectionCard(
       title: context.tr('progress.muscleVolume'),
-      child: _CachedView(
+      child: CachedView(
         value: ref.watch(muscleVolumeProvider),
         onRetry: () => ref.invalidate(muscleVolumeProvider),
         builder: (data) {
@@ -457,7 +425,7 @@ class _PowerliftingCardState extends ConsumerState<_PowerliftingCard> {
                 setState(() => _metric = value.single),
           ),
           const SizedBox(height: 12),
-          _CachedView(
+          CachedView(
             value: ref.watch(powerliftingTotalProvider(_metric)),
             onRetry: () => ref.invalidate(powerliftingTotalProvider(_metric)),
             builder: (data) {

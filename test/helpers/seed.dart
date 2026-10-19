@@ -1,6 +1,7 @@
 import 'package:saiyagym_mobile/core/database/app_database.dart';
 import 'package:saiyagym_mobile/core/sync/stores.dart';
 import 'package:saiyagym_mobile/core/training/training_types.dart';
+import 'package:saiyagym_mobile/features/body_metrics/domain/body_metric.dart';
 import 'package:saiyagym_mobile/features/routines/domain/routine.dart';
 import 'package:saiyagym_mobile/features/workouts/domain/workout.dart';
 
@@ -40,6 +41,13 @@ class Seed {
   Future<void> workout(Workout workout) => _stores.workouts.put(
     workout.toJson(),
     id: workout.id,
+    updatedAt: _at,
+    deletedAt: null,
+  );
+
+  Future<void> bodyMetric(BodyMetric metric) => _stores.bodyMetrics.put(
+    metric.toJson(),
+    id: metric.id,
     updatedAt: _at,
     deletedAt: null,
   );

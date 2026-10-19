@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:saiyagym_mobile/app/router/app_routes.dart';
 import 'package:saiyagym_mobile/core/widgets/primary_button.dart';
 import 'package:saiyagym_mobile/core/widgets/sync_status_button.dart';
 import 'package:saiyagym_mobile/features/exercises/exercises_providers.dart';
@@ -51,6 +53,16 @@ class TodayPage extends ConsumerWidget {
             },
             const SizedBox(height: 16),
             const _WeekCard(),
+            const SizedBox(height: 16),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.restaurant_outlined),
+                title: Text(context.tr('nutrition.title')),
+                subtitle: Text(context.tr('nutrition.entry')),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.go(AppRoutes.nutrition),
+              ),
+            ),
             const SizedBox(height: 16),
             OutlinedButton.icon(
               icon: const Icon(Icons.add),

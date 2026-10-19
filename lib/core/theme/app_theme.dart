@@ -13,6 +13,9 @@ abstract final class AppTheme {
   static const touchTarget = 56.0;
   static const radius = 14.0;
 
+  /// Largest system text scale applied (see SaiyaGymApp).
+  static const maxTextScale = 2.0;
+
   static ThemeData light() => _build(Brightness.light);
   static ThemeData dark() => _build(Brightness.dark);
 

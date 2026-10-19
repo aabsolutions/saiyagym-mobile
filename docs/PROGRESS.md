@@ -1,5 +1,44 @@
 # Progress — gymapp-mobile
 
+## 2026-10-19 — Nutrición, pulido y preparación de release
+
+### Hecho
+- **Nutrición** (Hoy → Nutrición): calculadora · comidas · guías · alimentos, con el **aviso "orientativo, consulta con un profesional" siempre visible** encima de las pestañas.
+  - **Calculadora en el dispositivo**: port de `nutrition-calculator.ts` de la API (Mifflin-St Jeor × actividad, macros por objetivo, nunca por debajo del metabolismo basal); tests espejo del spec del backend. Prellenada con el perfil (sexo, edad, altura) y el último pesaje; objetivo y actividad se recuerdan. Validación con los límites de la API (18–100 años, 120–230 cm, 35–250 kg) en las unidades del usuario.
+  - **Comidas por objetivo y tipo**: Free ve la muestra de la API + "N sugerencias más con Premium" + `UpgradeCta`; la API decide (`limitedByPlan`, `lockedCount`).
+  - **Guías** por objetivo y **buscador de alimentos** (sin tildes, por categoría, macros por 100 g).
+  - **Caché local**: la base completa (≈80 alimentos, 30 comidas, 10 guías) se descarga y se guarda por idioma; sin red se ve la última copia con su fecha.
+- **Pulido**
+  - Estados: `AsyncBody` (carga → error + reintentar → contenido, sin parpadeo del estado vacío) en historial, entrenar, ejercicios, récords y medidas; `CachedView` (con fecha offline) compartido por progreso y nutrición.
+  - Haptics en acciones clave (guardar peso/medidas/rutina, favorito, foto en cola, recordatorio activado), siempre sin bloquear la UI.
+  - Accesibilidad: tamaño de texto del sistema respetado hasta 2×; gráficas con descripción hablada (resumen en lugar del lienzo); fotos con etiqueta; guía de encuadre excluida del lector.
+  - **Script de i18n** `tool/check_i18n.dart`: mismas claves en es/en, mismos placeholders, y toda clave usada en `lib/` existe (literal o prefijo de las interpoladas). También corre como test.
+- **Ícono y splash**: ícono propio (mancuerna blanca sobre el teal de marca, generado por `tool/generate_branding.dart`), ícono adaptativo de Android, splash nativo (Android 12+ incluido) con `flutter_launcher_icons` y `flutter_native_splash`.
+- **Release**: firma de Android por `android/key.properties` (ignorado; hay `.example`) o variables `ANDROID_KEYSTORE_*` en CI, con fallback a la clave debug avisado por Gradle; versionado (`X.Y.Z` a mano, build number de CI, tag `vX.Y.Z` = pubspec); pasos de iOS (team, bundle id, `flutter build ipa`, privacidad).
+- **GitHub Actions** (`.github/workflows/ci.yml`): código generado al día, formato, analyze, i18n, tests; APK + AAB prod ofuscados como artefactos (main y tags); compilación iOS sin firma en macOS.
+- **README**: nutrición, pulido, ícono/splash, release, CI y **cómo integrar RevenueCat** sin cambiar el modelo de entitlements.
+
+### Verificación
+- `flutter analyze` ✅ · `dart format --set-exit-if-changed` ✅ · `dart run tool/check_i18n.dart` ✅.
+- `flutter test` ✅ 217/217, estable en 3 corridas. Nuevos: calculadora (espejo del spec de la API), script de i18n (detecta faltantes, sobrantes, placeholders y claves desconocidas), pantallas de nutrición (prellenado + validación, muestra Free + CTA, copia offline con fecha + búsqueda sin tildes, error sin copia), **guías de accesibilidad de Flutter** (tap targets Android/iOS, etiquetas, contraste) en las 5 pestañas + nutrición, en claro y oscuro.
+- **No ejecutado**: `flutter build` (regla del proyecto: no compilar localmente; lo hace CI), el workflow en GitHub (no hay remote), dispositivo real.
+
+### Decisiones y gotchas
+- **Calculadora local en vez de `POST /nutrition/calculator`**: funciona sin red y responde al instante; misma fórmula que la API (port + tests espejo, como los récords).
+- La base de nutrición es chica: se baja entera y se filtra en el dispositivo (búsqueda sin tildes reutilizando `core/text/search.dart`, extraído de ejercicios).
+- **Haptics nunca con `await`**: el canal de plataforma puede tardar (o no responder en tests) y la hoja no se cerraba — lo detectó un test.
+- `flutter_launcher_icons` cambia `ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS` a `AppIcon` en el pbxproj (bug conocido): revertido a `YES`; anotado en el README.
+- No se reutilizó el logo de `plantilla-app` (es otra marca); el ícono actual es provisional hasta tener un logo diseñado.
+- La TabBar de nutrición es desplazable: con texto grande las 4 pestañas no entran en 360 px.
+
+### Pendiente / próximo
+- **URL real de la API** (Render) como variable `API_BASE_URL` del repo / `--dart-define`.
+- Crear el keystore de subida y cargar los secretos en GitHub; subir el repo a GitHub para que corra CI.
+- iOS en un Mac: team y firma, schemes de flavors, `flutter build ipa`, prueba en dispositivo.
+- Logo diseñado (reemplazar `assets/branding/*.png` y regenerar).
+- Probar en dispositivo: cámara, Cloudinary, notificaciones, haptics, lector de pantalla.
+- Compras in-app (RevenueCat) cuando haya pasarela: seguir la guía del README.
+
 ## 2026-10-19 — Progreso, medidas, fotos y recordatorios
 
 ### Hecho

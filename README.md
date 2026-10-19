@@ -38,8 +38,10 @@ flutter run --flavor dev --dart-define=API_BASE_URL=http://192.168.1.20:3000/api
 |------|---------|
 | Codegen (one-off / watch) | `dart run build_runner build` · `dart run build_runner watch` |
 | Lint | `flutter analyze` (very_good_analysis) |
-| Format | `dart format lib test` |
+| Format | `dart format lib test tool` |
 | Tests | `flutter test` · one file: `flutter test test/core/units/unit_formatter_test.dart` · by name: `flutter test --plain-name "single-flight"` |
+| Translations check | `dart run tool/check_i18n.dart` (same keys in every language, every key used in `lib/` exists; also a test) |
+| Icon + splash | `dart run tool/generate_branding.dart` → `dart run flutter_launcher_icons` → `dart run flutter_native_splash:create` |
 
 Generated files (`*.g.dart`, `*.freezed.dart`) are committed so the project
 compiles right after cloning; regenerate after changing annotated code.
@@ -202,6 +204,35 @@ in `build.gradle.kts` / `AndroidManifest.xml`); exact alarms use
   The notification permission is asked only when a reminder is turned on (or
   the weekly weigh-in is accepted right after a weigh-in).
 
+## Nutrition
+
+`features/nutrition` (Today → Nutrition): calculator · meals · guides · foods,
+under an always-visible "orientative, consult a professional" notice.
+
+- **Calculator** runs on the device: `domain/nutrition_calculator.dart` is a
+  port of the API's `nutrition-calculator.ts` (Mifflin-St Jeor × activity,
+  macros per goal) — change both together; the tests mirror the API spec.
+  Prefilled from the profile (sex, birth date, height) and the latest
+  weigh-in; goal and activity are remembered on the device.
+- **Meals, guides, foods**: the whole (small, localized) base is downloaded and
+  cached in `app_meta` per language; filtering and the accent-insensitive food
+  search run locally, so it all works offline with the "data from …" date.
+  Free gets the API's sample of meals plus an `UpgradeCta` (`limitedByPlan`,
+  `lockedCount`); the API decides what each plan sees.
+
+## UX polish
+
+- States: local lists go through `AsyncBody` (spinner → error + retry →
+  content, no empty-state flash); API data through `CachedView` (+ offline
+  date).
+- Haptics: `confirmHaptic()` on key actions (save weight/measurements/routine,
+  favorite, photo queued, reminder on); sets and rest use the live-workout
+  `Haptics`.
+- Accessibility: system text size respected up to 2× (`AppTheme.maxTextScale`);
+  charts and photos have spoken labels; `test/accessibility_test.dart` runs
+  Flutter's tap-target, label and contrast guidelines on the main screens in
+  light and dark.
+
 ## i18n
 
 `easy_localization`, files in `assets/i18n/{lang}.json` (`es` default and
@@ -238,3 +269,112 @@ To add native schemes: in Xcode duplicate the `Debug`/`Release`/`Profile`
 configurations as `Debug-dev`, `Release-prod`, …, create schemes `dev` and
 `prod`, set `PRODUCT_BUNDLE_IDENTIFIER` (`.dev` suffix for dev) and the display
 name per configuration. Then `flutter run --flavor dev` works on iOS too.
+
+## Icon and splash
+
+`assets/branding/` holds the source PNGs (a brand-teal dumbbell drawn by
+`tool/generate_branding.dart`, a placeholder until there is a designed logo).
+To change them, replace the PNGs (1024 px icon, 1024 px adaptive foreground
+inside the 66 % safe zone, splash mark) and run:
+
+```bash
+dart run flutter_launcher_icons
+dart run flutter_native_splash:create
+```
+
+Config lives in `pubspec.yaml`. Known bug of `flutter_launcher_icons`: it may
+set `ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = AppIcon` in
+`ios/Runner.xcodeproj/project.pbxproj`; put it back to `YES`.
+
+## Release builds
+
+**Versioning**: `version: X.Y.Z+N` in `pubspec.yaml`. `X.Y.Z` is the store
+version (bump it by hand, semver); CI sets the build number `N` from the run
+number, so every upload is higher. A release is a git tag `vX.Y.Z` that must
+match `pubspec.yaml`.
+
+**Production API URL**: `--dart-define=API_BASE_URL=https://…/api/v1` (CI: the
+`API_BASE_URL` repository variable). Tag builds fail without it.
+
+### Android
+
+1. Create the upload keystore once (keep it and its passwords safe — Play
+   needs the same key for every update):
+   `keytool -genkey -v -keystore android/app/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload`
+2. Copy `android/key.properties.example` to `android/key.properties`
+   (git-ignored, like `*.jks`) and fill it in.
+3. Build:
+
+```bash
+flutter build appbundle --release --flavor prod \
+  --dart-define=API_BASE_URL=https://<render-service>.onrender.com/api/v1 \
+  --obfuscate --split-debug-info=build/symbols
+```
+
+Without a keystore the release is signed with the **debug** key (Gradle warns):
+fine for `flutter run --release`, never for the store. Keep `build/symbols` of
+each release to symbolize crash stack traces.
+
+### iOS (on a Mac)
+
+1. Xcode → Runner → Signing & Capabilities: your **Team**, bundle id
+   `com.saiyagym.app` (register it in App Store Connect).
+2. Optional native flavors: see [iOS flavors](#ios-flavors) (until then
+   `--dart-define=FLAVOR=prod`).
+3. `flutter build ipa --release --dart-define=FLAVOR=prod --dart-define=API_BASE_URL=… --obfuscate --split-debug-info=build/symbols`
+   and upload with Transporter / Xcode Organizer.
+
+Before the first upload: privacy texts in `Info.plist` (camera, photo library)
+are set; fill App Store privacy details (account data, photos, health-adjacent
+fitness data) and the Play data-safety form accordingly.
+
+### CI (GitHub Actions)
+
+`.github/workflows/ci.yml`:
+
+- **checks** (every push / PR): generated code up to date, `dart format`,
+  `flutter analyze`, translations check, `flutter test`.
+- **android** (main and `v*` tags): signed APK + AAB (prod, obfuscated) as
+  artifacts. Secrets: `ANDROID_KEYSTORE_BASE64` (`base64 -w0 upload-keystore.jks`),
+  `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`;
+  variable `API_BASE_URL`. Tags fail without them.
+- **ios** (main and tags): `flutter build ios --no-codesign` on macOS — proves it
+  compiles; signing/upload needs the Apple certificates (manual or fastlane).
+
+## In-app purchases with RevenueCat (future)
+
+Today an admin assigns plans (`user.subscription.provider = 'manual'`) and the
+upgrade sheet says so. The model is already shaped for stores: **access always
+comes from `GET /users/me` → `plan.entitlements`**, resolved by the API from
+`user.subscription { planId, status, currentPeriodEnd, provider }`. Adding
+RevenueCat changes how the subscription gets there, not how the app reads it.
+
+1. **Stores + RevenueCat**: create the subscription products in App Store
+   Connect and Google Play, add them to a RevenueCat project and group them
+   in an *entitlement* whose identifier equals the plan's `code` (`premium`).
+   Map by plan **code**, never by plan id (ids differ per environment).
+2. **API** (`saiyagym-backend`): implement `RevenueCatPaymentProvider`
+   (`src/modules/billing/payment-provider.interface.ts`, `id: 'revenuecat'`):
+   a webhook endpoint that verifies the authorization header, is idempotent
+   (store processed event ids) and turns `INITIAL_PURCHASE`, `RENEWAL`,
+   `CANCELLATION`, `EXPIRATION`, … into `user.subscription` with
+   `provider: 'revenuecat'`. Entitlements, guards and limits don't change.
+3. **App**:
+   - Add `purchases_flutter`; after sign-in `Purchases.configure(...)` with the
+     platform's public SDK key and `appUserID = user.id` (so webhooks name our
+     user); `Purchases.logOut()` on logout.
+   - Put it behind an interface in `features/plans` (e.g. `BillingService`:
+     `offers()`, `purchase(offer)`, `restore()`, `manageUrl()`) with a fake for
+     tests, like the device services.
+   - `UpgradeSheet`: show the offers and a "restore purchases" button
+     (required by Apple) instead of the "an admin assigns plans" text.
+   - After a purchase **don't unlock from `CustomerInfo`**: call
+     `refreshUser()` until `/users/me` reports the new plan (the webhook may
+     take a few seconds) — `entitlementsProvider` and every `PlanGate` /
+     `UpgradeCta` update by themselves.
+   - Manage/cancel: link to the store's subscription page.
+4. **Rules**: digital subscriptions sold in the app must use the stores'
+   billing (no links to web payments in the iOS app). Web keeps Stripe; a user
+   subscribed on one platform is Premium everywhere because the API decides.
+5. **Test** with sandbox / license-tester accounts and RevenueCat's webhook
+   test events before going live.

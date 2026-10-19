@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saiyagym_mobile/app/router/app_routes.dart';
 import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
+import 'package:saiyagym_mobile/core/widgets/async_body.dart';
 import 'package:saiyagym_mobile/core/widgets/refreshable_list.dart';
 import 'package:saiyagym_mobile/core/widgets/sync_status_button.dart';
 import 'package:saiyagym_mobile/features/live_workout/data/start_plans.dart';
@@ -48,7 +49,8 @@ class TrainPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final routines = ref.watch(activeRoutinesProvider).value ?? const [];
+    final routinesValue = ref.watch(activeRoutinesProvider);
+    final routines = routinesValue.value ?? const [];
     final programs = ref.watch(programsProvider).value ?? const <Program>[];
     final theme = Theme.of(context);
 
@@ -79,75 +81,79 @@ class TrainPage extends ConsumerWidget {
         label: Text(context.tr('today.emptyWorkout')),
         onPressed: () => startSession(context, ref, const StartPlan.empty()),
       ),
-      body: RefreshableList(
-        onRefresh: () => ref.read(syncServiceProvider).sync(),
-        empty: const SizedBox.shrink(),
-        children: [
-          if (programs.isNotEmpty) ...[
-            header(context.tr('programs.title')),
-            for (final program in programs)
+      body: AsyncBody(
+        value: routinesValue,
+        onRetry: () => ref.invalidate(activeRoutinesProvider),
+        builder: (_) => RefreshableList(
+          onRefresh: () => ref.read(syncServiceProvider).sync(),
+          empty: const SizedBox.shrink(),
+          children: [
+            if (programs.isNotEmpty) ...[
+              header(context.tr('programs.title')),
+              for (final program in programs)
+                Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ListTile(
+                    leading: Icon(
+                      program.status == ProgramStatus.active
+                          ? Icons.play_circle
+                          : Icons.calendar_month_outlined,
+                      color: program.status == ProgramStatus.active
+                          ? theme.colorScheme.primary
+                          : null,
+                    ),
+                    title: Text(program.name),
+                    subtitle: Text(
+                      context.tr('programs.status.${program.status.name}'),
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.go(AppRoutes.program(program.id)),
+                  ),
+                ),
+              const SizedBox(height: 8),
+            ],
+            header(
+              context.tr('train.routines'),
+              action: TextButton.icon(
+                icon: const Icon(Icons.add),
+                label: Text(context.tr('routines.new')),
+                onPressed: () => _newRoutine(context, ref, routines.length),
+              ),
+            ),
+            if (routines.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Text(
+                  context.tr('routines.empty'),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyLarge,
+                ),
+              ),
+            for (final routine in routines)
               Card(
                 margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
-                  leading: Icon(
-                    program.status == ProgramStatus.active
-                        ? Icons.play_circle
-                        : Icons.calendar_month_outlined,
-                    color: program.status == ProgramStatus.active
-                        ? theme.colorScheme.primary
-                        : null,
-                  ),
-                  title: Text(program.name),
+                  contentPadding: const EdgeInsets.only(left: 20, right: 4),
+                  leading: const Icon(Icons.play_arrow),
+                  title: Text(routine.name),
                   subtitle: Text(
-                    context.tr('programs.status.${program.status.name}'),
+                    context.tr(
+                      'train.exercises',
+                      namedArgs: {'count': '${routine.exercises.length}'},
+                    ),
                   ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.go(AppRoutes.program(program.id)),
+                  trailing: IconButton(
+                    tooltip: context.tr('routines.edit'),
+                    icon: const Icon(Icons.edit_outlined),
+                    onPressed: () => context.go(AppRoutes.routine(routine.id)),
+                  ),
+                  onTap: () =>
+                      startSession(context, ref, planFromRoutine(routine)),
                 ),
               ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 80),
           ],
-          header(
-            context.tr('train.routines'),
-            action: TextButton.icon(
-              icon: const Icon(Icons.add),
-              label: Text(context.tr('routines.new')),
-              onPressed: () => _newRoutine(context, ref, routines.length),
-            ),
-          ),
-          if (routines.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: Text(
-                context.tr('routines.empty'),
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyLarge,
-              ),
-            ),
-          for (final routine in routines)
-            Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ListTile(
-                contentPadding: const EdgeInsets.only(left: 20, right: 4),
-                leading: const Icon(Icons.play_arrow),
-                title: Text(routine.name),
-                subtitle: Text(
-                  context.tr(
-                    'train.exercises',
-                    namedArgs: {'count': '${routine.exercises.length}'},
-                  ),
-                ),
-                trailing: IconButton(
-                  tooltip: context.tr('routines.edit'),
-                  icon: const Icon(Icons.edit_outlined),
-                  onPressed: () => context.go(AppRoutes.routine(routine.id)),
-                ),
-                onTap: () =>
-                    startSession(context, ref, planFromRoutine(routine)),
-              ),
-            ),
-          const SizedBox(height: 80),
-        ],
+        ),
       ),
     );
   }

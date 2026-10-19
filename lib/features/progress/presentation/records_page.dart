@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
+import 'package:saiyagym_mobile/core/widgets/async_body.dart';
 import 'package:saiyagym_mobile/core/widgets/empty_state.dart';
 import 'package:saiyagym_mobile/features/exercises/exercises_providers.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
@@ -14,7 +15,8 @@ class RecordsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final records = ref.watch(personalRecordsProvider).value;
+    final value = ref.watch(personalRecordsProvider);
+    final records = value.value;
     final names = ref.watch(exerciseNamesProvider);
     final formatter = ref.unitFormatter(context);
     final entries =
@@ -31,7 +33,11 @@ class RecordsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.tr('records.title'))),
       body: records == null
-          ? const Center(child: CircularProgressIndicator())
+          ? AsyncBody(
+              value: value,
+              onRetry: () => ref.invalidate(personalRecordsProvider),
+              builder: (_) => const SizedBox.shrink(),
+            )
           : entries.isEmpty
           ? EmptyState(
               icon: Icons.emoji_events_outlined,

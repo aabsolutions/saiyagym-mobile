@@ -10,12 +10,14 @@ class FramingGuide extends StatelessWidget {
   final Color? color;
 
   @override
-  Widget build(BuildContext context) => CustomPaint(
-    painter: _GuidePainter(
-      view,
-      color ?? Theme.of(context).colorScheme.primary,
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: CustomPaint(
+      painter: _GuidePainter(
+        view,
+        color ?? Theme.of(context).colorScheme.primary,
+      ),
+      child: const SizedBox.expand(),
     ),
-    child: const SizedBox.expand(),
   );
 }
 

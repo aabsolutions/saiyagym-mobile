@@ -6,7 +6,8 @@
     "cancel": "Cancel",
     "retry": "Retry",
     "save": "Save",
-    "delete": "Delete"
+    "delete": "Delete",
+    "loading": "Loading"
   },
   "nav": {
     "today": "Today",
@@ -160,7 +161,9 @@
       "bench": "Bench",
       "deadlift": "Deadlift"
     },
-    "liftValue": "{lift}: {value}"
+    "liftValue": "{lift}: {value}",
+    "chartSummary": "{count} entries, from {first} to {last}",
+    "barSummary": "{count} weeks, latest: {last}"
   },
   "profile": {
     "title": "Profile",
@@ -646,6 +649,84 @@
       "side": "Side-on (right side), arms relaxed, natural posture.",
       "back": "Back to the camera, arms relaxed, feet shoulder-width apart.",
       "same": "Always use the same light, distance and time of day so the comparison is fair."
+    }
+  },
+  "nutrition": {
+    "title": "Nutrition",
+    "entry": "Calculator, meals, guides and foods",
+    "disclaimer": "Orientative information, not medical advice. Consult a health or nutrition professional.",
+    "tabs": {
+      "calculator": "Calculator",
+      "meals": "Meals",
+      "guides": "Guides",
+      "foods": "Foods"
+    },
+    "calculator": {
+      "sex": "Sex",
+      "age": "Age (years)",
+      "height": "Height",
+      "weight": "Weight",
+      "activity": "Activity level",
+      "goal": "Goal",
+      "range": "Between {min} and {max}.",
+      "fillIn": "Fill in sex, age, height and weight to see your estimate.",
+      "target": "Orientative daily calories",
+      "bmrTdee": "Basal metabolism: {bmr} kcal · Daily expenditure: {tdee} kcal",
+      "clamped": "The deficit would go below your basal metabolism, so it was raised to that minimum."
+    },
+    "activity": {
+      "sedentary": "Sedentary (little or no exercise)",
+      "light": "Light (1–3 days a week)",
+      "moderate": "Moderate (3–5 days a week)",
+      "active": "Active (6–7 days a week)",
+      "veryActive": "Very active (twice a day or physical job)"
+    },
+    "goals": {
+      "bulk": "Bulk",
+      "cut": "Cut",
+      "maintenance": "Maintenance"
+    },
+    "macros": {
+      "protein": "Protein",
+      "carbs": "Carbs",
+      "fat": "Fat"
+    },
+    "kcal": "{value} kcal",
+    "kcalPer100": "{value} kcal/100 g",
+    "macroLine": "P {protein} · C {carbs} · F {fat}",
+    "mealTypes": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snack": "Snack",
+      "pre_workout": "Pre-workout",
+      "post_workout": "Post-workout"
+    },
+    "meals": {
+      "empty": "No suggestions match these filters.",
+      "locked": "{count} more suggestions available with Premium."
+    },
+    "guides": {
+      "empty": "No guides for this goal."
+    },
+    "foods": {
+      "search": "Search food",
+      "empty": "No foods found."
+    },
+    "categories": {
+      "meat": "Meat",
+      "fish": "Fish",
+      "eggs": "Eggs",
+      "dairy": "Dairy",
+      "legumes": "Legumes",
+      "grains": "Grains",
+      "tubers": "Tubers",
+      "fruits": "Fruit",
+      "vegetables": "Vegetables",
+      "nuts_seeds": "Nuts and seeds",
+      "fats_oils": "Fats and oils",
+      "supplements": "Supplements",
+      "other": "Other"
     }
   }
 }

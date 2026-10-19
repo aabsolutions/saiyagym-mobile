@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saiyagym_mobile/app/router/app_routes.dart';
 import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
+import 'package:saiyagym_mobile/core/widgets/async_body.dart';
 import 'package:saiyagym_mobile/core/widgets/empty_state.dart';
 import 'package:saiyagym_mobile/core/widgets/refreshable_list.dart';
 import 'package:saiyagym_mobile/core/widgets/sync_status_button.dart';
@@ -31,8 +32,8 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final workouts =
-        ref.watch(workoutHistoryProvider).value ?? const <Workout>[];
+    final history = ref.watch(workoutHistoryProvider);
+    final workouts = history.value ?? const <Workout>[];
     final shown = _view == _View.calendar && _day != null
         ? workouts.where((w) => dayOf(w.startedAt) == _day).toList()
         : workouts;
@@ -65,27 +66,31 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
           ),
         ),
       ),
-      body: RefreshableList(
-        onRefresh: () => ref.read(syncServiceProvider).sync(),
-        empty: EmptyState(
-          icon: Icons.history,
-          title: context.tr('history.emptyTitle'),
-          message: context.tr('history.emptyMessage'),
+      body: AsyncBody(
+        value: history,
+        onRetry: () => ref.invalidate(workoutHistoryProvider),
+        builder: (_) => RefreshableList(
+          onRefresh: () => ref.read(syncServiceProvider).sync(),
+          empty: EmptyState(
+            icon: Icons.history,
+            title: context.tr('history.emptyTitle'),
+            message: context.tr('history.emptyMessage'),
+          ),
+          children: [
+            if (_view == _View.calendar && workouts.isNotEmpty)
+              _MonthCalendar(
+                month: _month,
+                selected: _day,
+                trainedDays: {for (final w in workouts) dayOf(w.startedAt)},
+                onMonth: (month) => setState(() {
+                  _month = month;
+                  _day = null;
+                }),
+                onDay: (day) => setState(() => _day = _day == day ? null : day),
+              ),
+            for (final workout in shown) WorkoutTile(workout: workout),
+          ],
         ),
-        children: [
-          if (_view == _View.calendar && workouts.isNotEmpty)
-            _MonthCalendar(
-              month: _month,
-              selected: _day,
-              trainedDays: {for (final w in workouts) dayOf(w.startedAt)},
-              onMonth: (month) => setState(() {
-                _month = month;
-                _day = null;
-              }),
-              onDay: (day) => setState(() => _day = _day == day ? null : day),
-            ),
-          for (final workout in shown) WorkoutTile(workout: workout),
-        ],
       ),
     );
   }

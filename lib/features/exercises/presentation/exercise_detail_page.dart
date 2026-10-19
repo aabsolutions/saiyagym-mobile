@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saiyagym_mobile/core/feedback/haptics.dart';
 import 'package:saiyagym_mobile/core/training/training_types.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
 import 'package:saiyagym_mobile/features/exercises/domain/exercise.dart';
@@ -57,9 +58,12 @@ class ExerciseDetailPage extends ConsumerWidget {
               favorite ? 'exercises.unfavorite' : 'exercises.favorite',
             ),
             icon: Icon(favorite ? Icons.star : Icons.star_border),
-            onPressed: () => unawaited(
-              repository.setFavorite(exerciseId, favorite: !favorite),
-            ),
+            onPressed: () {
+              unawaited(confirmHaptic());
+              unawaited(
+                repository.setFavorite(exerciseId, favorite: !favorite),
+              );
+            },
           ),
         ],
       ),

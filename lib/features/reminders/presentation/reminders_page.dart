@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saiyagym_mobile/core/feedback/haptics.dart';
 import 'package:saiyagym_mobile/features/reminders/domain/reminder_settings.dart';
 import 'package:saiyagym_mobile/features/reminders/presentation/weigh_in_prompt.dart';
 import 'package:saiyagym_mobile/features/reminders/reminders_providers.dart';
@@ -38,7 +39,9 @@ class _RemindersForm extends ConsumerWidget {
     final granted = await ref
         .read(remindersControllerProvider.notifier)
         .save(next, reminderTexts(context));
-    if (!granted) {
+    if (granted) {
+      unawaited(confirmHaptic());
+    } else {
       messenger.showSnackBar(SnackBar(content: Text(denied)));
     }
   }

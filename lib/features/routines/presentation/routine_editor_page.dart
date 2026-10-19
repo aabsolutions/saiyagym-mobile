@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:saiyagym_mobile/core/feedback/haptics.dart';
 import 'package:saiyagym_mobile/core/training/training_types.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
 import 'package:saiyagym_mobile/core/widgets/primary_button.dart';
@@ -73,6 +74,7 @@ class _RoutineEditorPageState extends ConsumerState<RoutineEditorPage> {
     if (!routine.isValid) return;
     setState(() => _saving = true);
     await ref.read(routinesRepositoryProvider).save(routine);
+    unawaited(confirmHaptic());
     if (mounted) context.pop();
   }
 

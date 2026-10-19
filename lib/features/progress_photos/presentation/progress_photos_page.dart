@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saiyagym_mobile/app/router/app_routes.dart';
+import 'package:saiyagym_mobile/core/feedback/haptics.dart';
 import 'package:saiyagym_mobile/core/network/api_exception.dart';
 import 'package:saiyagym_mobile/core/widgets/error_banner.dart';
 import 'package:saiyagym_mobile/features/plans/domain/entitlements.dart';
@@ -71,6 +72,7 @@ class _ProgressPhotosPageState extends ConsumerState<ProgressPhotosPage> {
       await ref
           .read(photoUploadQueueProvider)
           .enqueue(path, view: view, notes: notes);
+      unawaited(confirmHaptic());
       messenger.showSnackBar(SnackBar(content: Text(queued)));
     } on ApiException {
       messenger.showSnackBar(SnackBar(content: Text(unreadable)));
@@ -342,44 +344,48 @@ class _Framed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ColoredBox(color: theme.colorScheme.surfaceContainerHighest),
-          image,
-          if (badge != null)
+    return Semantics(
+      image: true,
+      label: caption,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            ColoredBox(color: theme.colorScheme.surfaceContainerHighest),
+            image,
+            if (badge != null)
+              Positioned(
+                top: 6,
+                right: 6,
+                child: CircleAvatar(
+                  radius: 14,
+                  backgroundColor: theme.colorScheme.surface,
+                  child: IconTheme(
+                    data: const IconThemeData(size: 18),
+                    child: badge!,
+                  ),
+                ),
+              ),
             Positioned(
-              top: 6,
-              right: 6,
-              child: CircleAvatar(
-                radius: 14,
-                backgroundColor: theme.colorScheme.surface,
-                child: IconTheme(
-                  data: const IconThemeData(size: 18),
-                  child: badge!,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                color: Colors.black54,
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                child: Text(
+                  caption,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              color: Colors.black54,
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-              child: Text(
-                caption,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

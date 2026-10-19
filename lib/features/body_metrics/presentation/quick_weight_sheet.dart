@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:clock/clock.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saiyagym_mobile/core/feedback/haptics.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
 import 'package:saiyagym_mobile/core/widgets/primary_button.dart';
 import 'package:saiyagym_mobile/features/body_metrics/body_metrics_providers.dart';
@@ -57,6 +60,7 @@ class _QuickWeightSheetState extends ConsumerState<_QuickWeightSheet> {
             weightKg: kg,
           ),
         );
+    unawaited(confirmHaptic());
     if (mounted) Navigator.of(context).pop(true);
   }
 

@@ -15,6 +15,8 @@ abstract final class AppRoutes {
   static const progress = '/progress';
   static const profile = '/profile';
 
+  static const nutrition = '/today/nutrition';
+
   static const editProfile = '/profile/edit';
   static const reminders = '/profile/reminders';
 

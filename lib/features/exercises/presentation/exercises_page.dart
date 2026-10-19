@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saiyagym_mobile/app/router/app_routes.dart';
+import 'package:saiyagym_mobile/core/feedback/haptics.dart';
 import 'package:saiyagym_mobile/core/training/training_types.dart';
+import 'package:saiyagym_mobile/core/widgets/async_body.dart';
 import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
 import 'package:saiyagym_mobile/features/exercises/domain/exercise.dart';
@@ -40,8 +42,8 @@ class _ExercisesPageState extends ConsumerState<ExercisesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final exercises =
-        ref.watch(exerciseCatalogProvider).value ?? const <Exercise>[];
+    final catalog = ref.watch(exerciseCatalogProvider);
+    final exercises = catalog.value ?? const <Exercise>[];
     final prefs =
         ref.watch(exercisePrefsProvider).value ??
         const <String, ExercisePref>{};
@@ -63,30 +65,34 @@ class _ExercisesPageState extends ConsumerState<ExercisesPage> {
           label: Text(context.tr('exercises.create')),
           onPressed: () => context.go(AppRoutes.newExercise),
         ),
-        body: TabBarView(
-          children: [
-            _ListTab(
-              exercises: filterExercises(exercises, _filter, prefs),
-              prefs: prefs,
-              filter: _filter,
-              onFilter: (filter) => setState(() => _filter = filter),
-            ),
-            _TierTab(
-              board: tierBoard(
-                exercises,
-                goal: _goal,
+        body: AsyncBody(
+          value: catalog,
+          onRetry: () => ref.invalidate(exerciseCatalogProvider),
+          builder: (_) => TabBarView(
+            children: [
+              _ListTab(
+                exercises: filterExercises(exercises, _filter, prefs),
                 prefs: prefs,
+                filter: _filter,
+                onFilter: (filter) => setState(() => _filter = filter),
+              ),
+              _TierTab(
+                board: tierBoard(
+                  exercises,
+                  goal: _goal,
+                  prefs: prefs,
+                  source: _source,
+                  muscle: _tierMuscle,
+                ),
+                goal: _goal,
                 source: _source,
                 muscle: _tierMuscle,
+                onGoal: (goal) => setState(() => _goal = goal),
+                onSource: (source) => setState(() => _source = source),
+                onMuscle: (muscle) => setState(() => _tierMuscle = muscle),
               ),
-              goal: _goal,
-              source: _source,
-              muscle: _tierMuscle,
-              onGoal: (goal) => setState(() => _goal = goal),
-              onSource: (source) => setState(() => _source = source),
-              onMuscle: (muscle) => setState(() => _tierMuscle = muscle),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -194,12 +200,15 @@ class _ListTab extends ConsumerWidget {
                         color: favorite
                             ? Theme.of(context).colorScheme.primary
                             : null,
-                        onPressed: () => unawaited(
-                          repository.setFavorite(
-                            exercise.id,
-                            favorite: !favorite,
-                          ),
-                        ),
+                        onPressed: () {
+                          unawaited(confirmHaptic());
+                          unawaited(
+                            repository.setFavorite(
+                              exercise.id,
+                              favorite: !favorite,
+                            ),
+                          );
+                        },
                       ),
                       onTap: () => context.go(AppRoutes.exercise(exercise.id)),
                     );

@@ -40,9 +40,12 @@ dev_dependencies:
   # 2.17.x is blocked by a transitive constraint of the generators.
   build_runner: ^2.16.2
   drift_dev: ^2.35.1
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
   flutter_test:
     sdk: flutter
   freezed: ^4.0.3
+  image: ^4.12.0
   json_serializable: ^6.14.1
   mocktail: ^1.0.5
   riverpod_generator: ^4.0.9
@@ -61,3 +64,24 @@ flutter:
     - family: Outfit
       fonts:
         - asset: assets/fonts/Outfit/Outfit-Variable.ttf
+
+# App icon: `dart run flutter_launcher_icons` (source PNGs drawn by
+# tool/generate_branding.dart; replace them with a designed logo any time).
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/branding/icon.png
+  adaptive_icon_background: "#00C9B7"
+  adaptive_icon_foreground: assets/branding/icon_foreground.png
+  remove_alpha_ios: true
+  min_sdk_android: 21
+
+# Launch screen: `dart run flutter_native_splash:create`.
+flutter_native_splash:
+  color: "#00C9B7"
+  image: assets/branding/splash.png
+  android_12:
+    color: "#00C9B7"
+    image: assets/branding/icon_foreground.png
+    icon_background_color: "#00C9B7"
+  fullscreen: false

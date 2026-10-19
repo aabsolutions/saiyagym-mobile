@@ -1,3 +1,4 @@
+import 'package:saiyagym_mobile/core/text/search.dart';
 import 'package:saiyagym_mobile/core/training/training_types.dart';
 import 'package:saiyagym_mobile/features/exercises/domain/exercise.dart';
 
@@ -72,24 +73,12 @@ class ExerciseFilter {
       !customOnly;
 }
 
-/// Accent-insensitive contains ("press banca" finds "Press de banca").
-String _fold(String text) => text
-    .toLowerCase()
-    .replaceAll(RegExp('[áàä]'), 'a')
-    .replaceAll(RegExp('[éèë]'), 'e')
-    .replaceAll(RegExp('[íìï]'), 'i')
-    .replaceAll(RegExp('[óòö]'), 'o')
-    .replaceAll(RegExp('[úùü]'), 'u')
-    .replaceAll('ñ', 'n');
-
 List<Exercise> filterExercises(
   List<Exercise> exercises,
   ExerciseFilter filter,
   Map<String, ExercisePref> prefs,
 ) {
-  final words = _fold(filter.search)
-      .split(RegExp(r'\s+'))
-      .where((w) => w.isNotEmpty);
+  final matches = searchMatcher(filter.search);
   return [
     for (final exercise in exercises)
       if ((filter.muscle == null || exercise.primaryMuscle == filter.muscle) &&
@@ -98,7 +87,7 @@ List<Exercise> filterExercises(
           (!filter.favoritesOnly ||
               (prefs[exercise.id]?.isFavorite ?? false)) &&
           (!filter.customOnly || !exercise.isGlobal) &&
-          words.every(_fold(exercise.name).contains))
+          matches(exercise.name))
         exercise,
   ];
 }

@@ -56,9 +56,14 @@ class _SaiyaGymAppState extends ConsumerState<SaiyaGymApp> {
       locale: context.locale,
       supportedLocales: context.supportedLocales,
       localizationsDelegates: context.localizationDelegates,
-      builder: (context, child) => ServerWakingBanner(
-        slow: ref.watch(slowRequestMonitorProvider),
-        child: child ?? const SizedBox.shrink(),
+      // The system text size is respected (accessibility), capped at 2×:
+      // beyond that the live-workout rows can't fit a phone.
+      builder: (context, child) => MediaQuery.withClampedTextScaling(
+        maxScaleFactor: AppTheme.maxTextScale,
+        child: ServerWakingBanner(
+          slow: ref.watch(slowRequestMonitorProvider),
+          child: child ?? const SizedBox.shrink(),
+        ),
       ),
     );
   }

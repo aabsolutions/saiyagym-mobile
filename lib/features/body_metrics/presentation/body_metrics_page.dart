@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saiyagym_mobile/app/router/app_routes.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
+import 'package:saiyagym_mobile/core/widgets/async_body.dart';
 import 'package:saiyagym_mobile/core/widgets/empty_state.dart';
 import 'package:saiyagym_mobile/features/body_metrics/body_metrics_providers.dart';
 import 'package:saiyagym_mobile/features/body_metrics/domain/body_metric.dart';
@@ -18,7 +19,8 @@ class BodyMetricsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final metrics = ref.watch(bodyMetricsProvider).value;
+    final value = ref.watch(bodyMetricsProvider);
+    final metrics = value.value;
     final formatter = ref.unitFormatter(context);
     final dateFormat = DateFormat.yMMMd(context.locale.toLanguageTag());
 
@@ -30,7 +32,11 @@ class BodyMetricsPage extends ConsumerWidget {
         label: Text(context.tr('body.add')),
       ),
       body: switch (metrics) {
-        null => const Center(child: CircularProgressIndicator()),
+        null => AsyncBody(
+          value: value,
+          onRetry: () => ref.invalidate(bodyMetricsProvider),
+          builder: (_) => const SizedBox.shrink(),
+        ),
         [] => EmptyState(
           icon: Icons.straighten,
           title: context.tr('body.emptyTitle'),

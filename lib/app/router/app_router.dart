@@ -21,6 +21,7 @@ import 'package:saiyagym_mobile/features/history/presentation/workout_edit_page.
 import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_controller.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_page.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/workout_summary_page.dart';
+import 'package:saiyagym_mobile/features/nutrition/presentation/nutrition_page.dart';
 import 'package:saiyagym_mobile/features/onboarding/presentation/onboarding_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/edit_profile_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/profile_page.dart';
@@ -114,7 +115,20 @@ GoRouter appRouter(Ref ref) {
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => HomeShell(navigationShell: shell),
         branches: [
-          _tab(AppRoutes.today, const TodayPage()),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.today,
+                builder: (_, _) => const TodayPage(),
+                routes: [
+                  GoRoute(
+                    path: 'nutrition',
+                    builder: (_, _) => const NutritionPage(),
+                  ),
+                ],
+              ),
+            ],
+          ),
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -249,7 +263,3 @@ GoRouter appRouter(Ref ref) {
   ref.onDispose(router.dispose);
   return router;
 }
-
-StatefulShellBranch _tab(String path, Widget page) => StatefulShellBranch(
-  routes: [GoRoute(path: path, builder: (_, _) => page)],
-);

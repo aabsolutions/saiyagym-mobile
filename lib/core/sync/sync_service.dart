@@ -103,7 +103,10 @@ class SyncService implements SyncScheduler {
       _runAgain = true;
       return running;
     }
-    return _running = _loop().whenComplete(() => _running = null);
+    // Starts on a microtask: callers may be inside a build (initState, a
+    // listener) and the first state update must not land mid-build.
+    return _running = Future.microtask(_loop)
+        .whenComplete(() => _running = null);
   }
 
   Future<SyncReport> _loop() async {

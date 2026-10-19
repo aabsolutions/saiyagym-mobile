@@ -16,6 +16,7 @@ dependencies:
   easy_localization: ^3.0.8
   flutter:
     sdk: flutter
+  flutter_local_notifications: ^22.3.2
   flutter_localizations:
     sdk: flutter
   flutter_riverpod: ^3.4.3
@@ -25,7 +26,9 @@ dependencies:
   intl: ^0.20.3
   json_annotation: ^4.12.0
   riverpod_annotation: ^4.0.7
+  timezone: ^0.11.2
   uuid: ^4.6.0
+  wakelock_plus: ^1.8.1
   workmanager: ^0.10.10
 
 dev_dependencies:

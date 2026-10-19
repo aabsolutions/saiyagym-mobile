@@ -15,6 +15,10 @@ abstract final class AppRoutes {
 
   static const editProfile = '/profile/edit';
 
+  /// Full screen, outside the tabs.
+  static const workout = '/workout';
+  static const workoutSummary = '/workout/summary';
+
   /// Reachable signed out (and only then).
   static const Set<String> public = {welcome, login, register, forgotPassword};
 }

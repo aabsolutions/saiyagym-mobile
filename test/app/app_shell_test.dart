@@ -43,7 +43,9 @@ void main() {
         reason: label,
       );
     }
-    expect(find.text('Nada planificado para hoy'), findsOneWidget);
+    // No program reachable in tests: the empty-workout option is there.
+    expect(find.text('Sin programa activo'), findsOneWidget);
+    expect(find.text('Entreno vacío'), findsOneWidget);
   });
 
   testWidgets('tapping a tab switches the page', (tester) async {

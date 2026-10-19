@@ -79,7 +79,18 @@ abstract interface class WorkoutsRepository {
   /// The workout being logged, if any (survives app kills: it's local).
   Stream<Workout?> watchInProgress();
 
+  Future<Workout?> inProgress();
+
   Future<Workout?> find(String id);
+
+  /// Every finished workout, newest first (previous sets, records).
+  Future<List<Workout>> finished();
+
+  /// Sets of the last finished workout that included [exerciseId].
+  Future<List<WorkoutSet>?> lastPerformance(
+    String exerciseId, {
+    String? excludingWorkoutId,
+  });
 
   Future<Workout> save(Workout workout);
 

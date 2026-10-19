@@ -67,6 +67,14 @@ abstract class SyncedStore<T extends SyncedColumns, R extends DataClass> {
   Future<void> remove(String id) =>
       (db.delete(table)..where((t) => t.id.equals(id))).go();
 
+  /// Not deleted documents, once.
+  Future<List<LocalDoc>> active() async {
+    final rows = await (db.select(
+      table,
+    )..where((t) => t.deletedAt.isNull())).get();
+    return rows.map(toDoc).toList();
+  }
+
   /// Live, not deleted documents.
   Stream<List<LocalDoc>> watchActive({
     List<OrderingTerm Function(T table)> orderBy = const [],

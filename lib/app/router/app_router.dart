@@ -11,6 +11,9 @@ import 'package:saiyagym_mobile/features/auth/presentation/pages/register_page.d
 import 'package:saiyagym_mobile/features/auth/presentation/pages/splash_page.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/pages/welcome_page.dart';
 import 'package:saiyagym_mobile/features/history/presentation/history_page.dart';
+import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_controller.dart';
+import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_page.dart';
+import 'package:saiyagym_mobile/features/live_workout/presentation/workout_summary_page.dart';
 import 'package:saiyagym_mobile/features/onboarding/presentation/onboarding_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/edit_profile_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/profile_page.dart';
@@ -79,6 +82,20 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.onboarding,
         builder: (_, _) => const OnboardingPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.workout,
+        builder: (_, _) => const LiveWorkoutPage(),
+        routes: [
+          GoRoute(
+            path: 'summary',
+            // Lost after an app restart (extra isn't persisted): go home.
+            redirect: (_, state) =>
+                state.extra is FinishOutcome ? null : AppRoutes.history,
+            builder: (_, state) =>
+                WorkoutSummaryPage(outcome: state.extra! as FinishOutcome),
+          ),
+        ],
       ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => HomeShell(navigationShell: shell),

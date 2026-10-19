@@ -153,6 +153,29 @@ add `BGTaskSchedulerPermittedIdentifiers` (`saiyagym.sync`) and
 `AppDelegate.swift` (see the `workmanager_apple` docs) and remove the platform
 check in `background_sync.dart`.
 
+## Live workout
+
+`features/live_workout`: the session lives in the `workouts` table
+(`finishedAt: null`) and every edit is written immediately (chained writes);
+UI-only state (targets, rest timer) is stored in `app_meta` (`live.meta`), never
+inside the synced document. On app open a running session is offered to resume.
+
+- Starting points: today's program day (`TodayPlanService`: API, or computed
+  locally with `program_schedule.dart` when offline), any routine, or empty.
+- Pure logic, unit-tested: `workout_editing.dart` (prefill, supersets, finish
+  keeps completed sets), `plate_calculator.dart`,
+  `records/domain/personal_records.dart` (port of the API's PR calculation —
+  keep both in sync) and `program_schedule.dart` (port of the API's calendar).
+- Rest timer: end time persisted + a local notification scheduled at that time
+  (`RestAlarm`); haptics in foreground. Device services (`RestAlarm`,
+  `ScreenAwake`, `Haptics`) are interfaces with fakes for tests.
+- PRs are detected locally on finish and confirmed after sync via
+  `GET /exercises/:id/records`.
+
+Android needs core library desugaring and the notification receivers (already
+in `build.gradle.kts` / `AndroidManifest.xml`); exact alarms use
+`SCHEDULE_EXACT_ALARM` (asked at session start, inexact fallback).
+
 ## i18n
 
 `easy_localization`, files in `assets/i18n/{lang}.json` (`es` default and

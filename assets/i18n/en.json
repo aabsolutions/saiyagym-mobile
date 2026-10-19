@@ -4,7 +4,8 @@
   },
   "common": {
     "cancel": "Cancel",
-    "retry": "Retry"
+    "retry": "Retry",
+    "save": "Save"
   },
   "nav": {
     "today": "Today",
@@ -86,7 +87,20 @@
   "today": {
     "title": "Today",
     "emptyTitle": "Nothing planned for today",
-    "emptyMessage": "Once you activate a program, today's workout shows up here."
+    "emptyMessage": "Once you activate a program, today's workout shows up here.",
+    "noProgramTitle": "No active program",
+    "noProgramMessage": "Activate a program on the web to see each day's workout here.",
+    "emptyWorkout": "Empty workout",
+    "emptyWorkoutHint": "Start without a plan and add exercises as you go.",
+    "programWeek": "{program} · Week {week}",
+    "exercises": "{count} exercises",
+    "deload": "Deload week",
+    "offlineTargets": "Offline: routine weights, without automatic progression.",
+    "start": "Start workout",
+    "restTitle": "Rest day",
+    "restMessage": "{program} has no workout today. Recover!",
+    "programFinished": "The program is over.",
+    "programStarts": "Starts in {days} days."
   },
   "train": {
     "title": "Train",
@@ -177,7 +191,9 @@
       "message": "Data stored on this device will be deleted. Your synced data stays in your account.",
       "unsynced": "You have {count} unsynced changes. Signing out now deletes them for good. Go online and wait for them to sync first.",
       "discard": "Sign out and lose changes"
-    }
+    },
+    "training": "Training",
+    "keepScreenOnHint": "Stops the screen from turning off during a session."
   },
   "plans": {
     "cta": {
@@ -258,6 +274,158 @@
       "routines": "Routine",
       "body_metrics": "Body measurement",
       "user_exercise_prefs": "Exercise preference"
+    }
+  },
+  "muscles": {
+    "chest": "Chest",
+    "lats": "Lats",
+    "upper_back": "Upper back",
+    "traps": "Traps",
+    "front_delts": "Front delts",
+    "side_delts": "Side delts",
+    "rear_delts": "Rear delts",
+    "biceps": "Biceps",
+    "triceps": "Triceps",
+    "forearms": "Forearms",
+    "abs": "Abs",
+    "obliques": "Obliques",
+    "lower_back": "Lower back",
+    "glutes": "Glutes",
+    "quads": "Quads",
+    "hamstrings": "Hamstrings",
+    "adductors": "Adductors",
+    "abductors": "Abductors",
+    "calves": "Calves"
+  },
+  "equipment": {
+    "barbell": "Barbell",
+    "dumbbell": "Dumbbell",
+    "machine": "Machine",
+    "cable": "Cable",
+    "bodyweight": "Bodyweight",
+    "kettlebell": "Kettlebell",
+    "band": "Band",
+    "smith": "Smith machine",
+    "other": "Other"
+  },
+  "live": {
+    "keypad": {
+      "backspace": "Delete",
+      "next": "Next"
+    },
+    "rest": {
+      "label": "Rest remaining",
+      "skip": "Skip",
+      "notification": "Rest is over! On to the next set.",
+      "channel": "Rest timer"
+    },
+    "superset": "Superset",
+    "exerciseMenu": "Exercise options",
+    "actions": {
+      "notes": "Notes",
+      "replace": "Replace exercise",
+      "superset": "Superset with next",
+      "leaveSuperset": "Remove from superset",
+      "remove": "Remove exercise"
+    },
+    "addSet": "Add set",
+    "setType": "Set type",
+    "setTypes": {
+      "warmup": {
+        "name": "Warm-up",
+        "short": "W"
+      },
+      "normal": {
+        "name": "Normal",
+        "short": "N"
+      },
+      "dropset": {
+        "name": "Drop set",
+        "short": "D"
+      },
+      "failure": {
+        "name": "To failure",
+        "short": "F"
+      }
+    },
+    "columns": {
+      "set": "Set",
+      "previous": "Previous",
+      "reps": "Reps",
+      "weight": "Weight"
+    },
+    "completeSet": "Complete set",
+    "undoSet": "Uncheck set",
+    "picker": {
+      "search": "Search exercise",
+      "empty": "No exercises. Sync to download the catalog."
+    },
+    "reorder": "Reorder exercises",
+    "finish": {
+      "action": "Finish",
+      "title": "Finish workout",
+      "rating": "How did it go?",
+      "notes": "Session notes",
+      "nothingDone": "You haven't completed any set. Discard the session if you don't want to keep it.",
+      "save": "Save workout"
+    },
+    "stats": {
+      "duration": "Duration",
+      "volume": "Volume",
+      "sets": "Sets"
+    },
+    "removeExercise": {
+      "title": "Remove exercise?",
+      "message": "Its sets in this session will be deleted."
+    },
+    "discard": {
+      "title": "Discard the session?",
+      "message": "Everything logged in this session will be deleted. This cannot be undone.",
+      "action": "Discard session"
+    },
+    "noSession": "No session in progress.",
+    "header": "{volume} · {sets} sets",
+    "menu": "More options",
+    "keepScreenOn": "Keep screen on",
+    "empty": "Add your first exercise to start.",
+    "addExercise": "Add exercise",
+    "alreadyRunning": {
+      "title": "A session is already running",
+      "message": "Finish or discard the current session before starting another."
+    },
+    "resume": "Resume",
+    "activeBar": "Session in progress · {time}",
+    "resumePrompt": {
+      "title": "You have an unfinished session",
+      "message": "You started training at {time}. Pick up where you left off?"
+    }
+  },
+  "plates": {
+    "title": "Plate calculator",
+    "target": "Total weight",
+    "bar": "Bar: {weight}",
+    "perSide": "Plates per side",
+    "none": "Just the bar.",
+    "closest": "Can't hit it exactly with your plates. Closest: {weight}",
+    "configureHint": "Set up your bar and plates in Profile → Training.",
+    "barLabel": "Bar",
+    "available": "Available plates",
+    "reset": "Reset plates"
+  },
+  "summary": {
+    "title": "Workout saved!",
+    "titleRecords": "{count} new records!",
+    "records": "Personal records",
+    "pending": "They will be confirmed by the server when you sync.",
+    "pendingShort": "Waiting for confirmation",
+    "confirmed": "Confirmed by the server",
+    "notConfirmed": "The server did not count it as a record",
+    "done": "Done",
+    "types": {
+      "maxWeight": "Heaviest weight: {value} (was {previous})",
+      "bestE1RM": "Estimated 1RM: {value} (was {previous})",
+      "maxVolume": "Single-session volume: {value} (was {previous})",
+      "repsAtWeight": "{reps} reps at {weight} (was {previous})"
     }
   }
 }

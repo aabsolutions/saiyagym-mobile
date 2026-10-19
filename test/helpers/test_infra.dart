@@ -13,6 +13,8 @@ import 'package:saiyagym_mobile/core/network/api_client.dart';
 import 'package:saiyagym_mobile/core/storage/token_storage.dart';
 import 'package:saiyagym_mobile/core/sync/connectivity_monitor.dart';
 import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
+import 'package:saiyagym_mobile/features/live_workout/data/device_services.dart';
+import 'package:saiyagym_mobile/features/live_workout/live_workout_providers.dart';
 
 import 'fake_sync_api.dart';
 import 'in_memory_token_storage.dart';
@@ -47,10 +49,11 @@ class FakeBackgroundSync implements BackgroundSyncScheduler {
 /// Infrastructure every app-level widget test needs: in-memory database,
 /// a quiet fake API (empty, successful syncs), fixed connectivity and no
 /// background work. Real sync code runs against them.
-List<Override> testInfraOverrides({FakeSyncApi? api}) {
+/// In-memory database for tests. Drift closes cancelled stream queries on a
+/// 0 ms timer, which widget tests report as pending at teardown; close them
+/// synchronously instead.
+AppDatabase testDatabase() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
-  // Drift closes cancelled stream queries on a 0 ms timer, which widget
-  // tests report as pending at teardown; close them synchronously instead.
   final database = AppDatabase(
     DatabaseConnection(
       NativeDatabase.memory(),
@@ -58,6 +61,16 @@ List<Override> testInfraOverrides({FakeSyncApi? api}) {
     ),
   );
   addTearDown(database.close);
+  return database;
+}
+
+List<Override> testInfraOverrides({
+  FakeSyncApi? api,
+  AppDatabase? database,
+  SilentDeviceServices? device,
+}) {
+  final db = database ?? testDatabase();
+  final services = device ?? SilentDeviceServices();
   final fakeApi = api ?? FakeSyncApi();
   final storage = InMemoryTokenStorage(
     const AuthTokens(accessToken: 'a', refreshToken: 'r'),
@@ -66,7 +79,10 @@ List<Override> testInfraOverrides({FakeSyncApi? api}) {
     appConfigProvider.overrideWithValue(
       const AppConfig(flavor: Flavor.dev, apiBaseUrl: 'https://api.test'),
     ),
-    appDatabaseProvider.overrideWithValue(database),
+    appDatabaseProvider.overrideWithValue(db),
+    restAlarmProvider.overrideWithValue(services),
+    hapticsProvider.overrideWithValue(services),
+    screenAwakeProvider.overrideWithValue(services),
     tokenStorageProvider.overrideWithValue(storage),
     apiClientProvider.overrideWith(
       (ref) => buildApiClient(

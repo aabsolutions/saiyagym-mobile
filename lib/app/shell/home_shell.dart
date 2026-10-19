@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saiyagym_mobile/app/shell/session_banners.dart';
+import 'package:saiyagym_mobile/features/live_workout/presentation/start_session.dart';
 
 /// Bottom navigation. Each tab keeps its own navigation stack.
 class HomeShell extends StatelessWidget {
@@ -23,11 +24,14 @@ class HomeShell extends StatelessWidget {
     return Scaffold(
       // Banners sit at the bottom, close to the thumb and clear of the
       // pages' own app bars.
-      body: Column(
-        children: [
-          Expanded(child: navigationShell),
-          const SessionBanners(),
-        ],
+      body: ResumeSessionGate(
+        child: Column(
+          children: [
+            Expanded(child: navigationShell),
+            const ActiveSessionBar(),
+            const SessionBanners(),
+          ],
+        ),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,

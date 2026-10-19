@@ -5,6 +5,9 @@ import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
 import 'package:saiyagym_mobile/core/widgets/empty_state.dart';
 import 'package:saiyagym_mobile/core/widgets/refreshable_list.dart';
 import 'package:saiyagym_mobile/core/widgets/sync_status_button.dart';
+import 'package:saiyagym_mobile/features/live_workout/data/start_plans.dart';
+import 'package:saiyagym_mobile/features/live_workout/domain/live_session.dart';
+import 'package:saiyagym_mobile/features/live_workout/presentation/start_session.dart';
 import 'package:saiyagym_mobile/features/routines/routines_providers.dart';
 
 /// The user's routines from the LOCAL database (works offline).
@@ -18,6 +21,11 @@ class TrainPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.tr('train.title')),
         actions: const [SyncStatusButton()],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        label: Text(context.tr('today.emptyWorkout')),
+        onPressed: () => startSession(context, ref, const StartPlan.empty()),
       ),
       body: RefreshableList(
         onRefresh: () => ref.read(syncServiceProvider).sync(),
@@ -43,7 +51,10 @@ class TrainPage extends ConsumerWidget {
                   vertical: 8,
                 ),
                 leading: const Icon(Icons.list_alt),
+                trailing: const Icon(Icons.play_arrow),
                 title: Text(routine.name),
+                onTap: () =>
+                    startSession(context, ref, planFromRoutine(routine)),
                 subtitle: Text(
                   context.tr(
                     'train.exercises',

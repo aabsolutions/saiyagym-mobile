@@ -598,16 +598,30 @@ void main() {
     });
   });
 
-  test('single-flight: concurrent calls share a run', () async {
+  test('single-flight: calls before the run starts share it', () async {
     await at(() async {
       await workouts.save(workout());
 
       final results = await Future.wait([service.sync(), service.sync()]);
 
-      expect(api.pushes, hasLength(1));
       expect(identical(results[0], results[1]), isTrue);
-      // The second call asked for one more pass (cheap: nothing to push).
-      expect(api.pulls, hasLength(2));
+      expect(api.pushes, hasLength(1));
+      expect(api.pulls, hasLength(1), reason: 'the run had not read yet');
+    });
+  });
+
+  test('a call DURING a run schedules exactly one more pass', () async {
+    await at(() async {
+      await workouts.save(workout());
+
+      final first = service.sync();
+      await Future<void>.delayed(Duration.zero); // the run is under way
+      final second = service.sync();
+      final third = service.sync();
+      await Future.wait([first, second, third]);
+
+      expect(api.pushes, hasLength(1));
+      expect(api.pulls, hasLength(2), reason: 'one extra pass, not two');
     });
   });
 

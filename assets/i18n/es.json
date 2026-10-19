@@ -4,7 +4,8 @@
   },
   "common": {
     "cancel": "Cancelar",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "save": "Guardar"
   },
   "nav": {
     "today": "Hoy",
@@ -86,7 +87,20 @@
   "today": {
     "title": "Hoy",
     "emptyTitle": "Nada planificado para hoy",
-    "emptyMessage": "Cuando actives un programa, aquí verás el entreno del día."
+    "emptyMessage": "Cuando actives un programa, aquí verás el entreno del día.",
+    "noProgramTitle": "Sin programa activo",
+    "noProgramMessage": "Activa un programa en la web para ver aquí el entreno de cada día.",
+    "emptyWorkout": "Entreno vacío",
+    "emptyWorkoutHint": "Empieza sin plan y añade ejercicios sobre la marcha.",
+    "programWeek": "{program} · Semana {week}",
+    "exercises": "{count} ejercicios",
+    "deload": "Semana de descarga",
+    "offlineTargets": "Sin conexión: pesos de la rutina, sin la progresión automática.",
+    "start": "Empezar entreno",
+    "restTitle": "Hoy toca descanso",
+    "restMessage": "{program} no tiene entreno hoy. ¡Recupera!",
+    "programFinished": "El programa ha terminado.",
+    "programStarts": "Empieza en {days} días."
   },
   "train": {
     "title": "Entrenar",
@@ -177,7 +191,9 @@
       "message": "Se borrarán los datos guardados en este dispositivo. Tus datos sincronizados siguen en tu cuenta.",
       "unsynced": "Tienes {count} cambios sin sincronizar. Si cierras sesión ahora se perderán para siempre. Conéctate a internet y espera a que se sincronicen.",
       "discard": "Cerrar y perder cambios"
-    }
+    },
+    "training": "Entrenamiento",
+    "keepScreenOnHint": "Evita que la pantalla se apague durante la sesión."
   },
   "plans": {
     "cta": {
@@ -258,6 +274,158 @@
       "routines": "Rutina",
       "body_metrics": "Medida corporal",
       "user_exercise_prefs": "Preferencia de ejercicio"
+    }
+  },
+  "muscles": {
+    "chest": "Pecho",
+    "lats": "Dorsales",
+    "upper_back": "Espalda alta",
+    "traps": "Trapecios",
+    "front_delts": "Deltoides anterior",
+    "side_delts": "Deltoides lateral",
+    "rear_delts": "Deltoides posterior",
+    "biceps": "Bíceps",
+    "triceps": "Tríceps",
+    "forearms": "Antebrazos",
+    "abs": "Abdominales",
+    "obliques": "Oblicuos",
+    "lower_back": "Lumbares",
+    "glutes": "Glúteos",
+    "quads": "Cuádriceps",
+    "hamstrings": "Isquiotibiales",
+    "adductors": "Aductores",
+    "abductors": "Abductores",
+    "calves": "Gemelos"
+  },
+  "equipment": {
+    "barbell": "Barra",
+    "dumbbell": "Mancuerna",
+    "machine": "Máquina",
+    "cable": "Polea",
+    "bodyweight": "Peso corporal",
+    "kettlebell": "Kettlebell",
+    "band": "Banda",
+    "smith": "Multipower",
+    "other": "Otro"
+  },
+  "live": {
+    "keypad": {
+      "backspace": "Borrar",
+      "next": "Sig."
+    },
+    "rest": {
+      "label": "Descanso restante",
+      "skip": "Saltar",
+      "notification": "¡Descanso terminado! A por la siguiente serie.",
+      "channel": "Temporizador de descanso"
+    },
+    "superset": "Superserie",
+    "exerciseMenu": "Opciones del ejercicio",
+    "actions": {
+      "notes": "Notas",
+      "replace": "Sustituir ejercicio",
+      "superset": "Superserie con el siguiente",
+      "leaveSuperset": "Quitar de la superserie",
+      "remove": "Quitar ejercicio"
+    },
+    "addSet": "Añadir serie",
+    "setType": "Tipo de serie",
+    "setTypes": {
+      "warmup": {
+        "name": "Calentamiento",
+        "short": "C"
+      },
+      "normal": {
+        "name": "Normal",
+        "short": "N"
+      },
+      "dropset": {
+        "name": "Drop set",
+        "short": "D"
+      },
+      "failure": {
+        "name": "Al fallo",
+        "short": "F"
+      }
+    },
+    "columns": {
+      "set": "Serie",
+      "previous": "Anterior",
+      "reps": "Reps",
+      "weight": "Peso"
+    },
+    "completeSet": "Completar serie",
+    "undoSet": "Desmarcar serie",
+    "picker": {
+      "search": "Buscar ejercicio",
+      "empty": "No hay ejercicios. Sincroniza para descargar el catálogo."
+    },
+    "reorder": "Reordenar ejercicios",
+    "finish": {
+      "action": "Terminar",
+      "title": "Terminar entreno",
+      "rating": "¿Qué tal fue?",
+      "notes": "Notas de la sesión",
+      "nothingDone": "No has completado ninguna serie. Descarta la sesión si no vas a guardarla.",
+      "save": "Guardar entreno"
+    },
+    "stats": {
+      "duration": "Duración",
+      "volume": "Volumen",
+      "sets": "Series"
+    },
+    "removeExercise": {
+      "title": "¿Quitar ejercicio?",
+      "message": "Se borrarán sus series de esta sesión."
+    },
+    "discard": {
+      "title": "¿Descartar la sesión?",
+      "message": "Se borrará todo lo registrado en esta sesión. No se puede deshacer.",
+      "action": "Descartar sesión"
+    },
+    "noSession": "No hay ninguna sesión en curso.",
+    "header": "{volume} · {sets} series",
+    "menu": "Más opciones",
+    "keepScreenOn": "Pantalla siempre encendida",
+    "empty": "Añade tu primer ejercicio para empezar.",
+    "addExercise": "Añadir ejercicio",
+    "alreadyRunning": {
+      "title": "Ya tienes una sesión en curso",
+      "message": "Termina o descarta la sesión actual antes de empezar otra."
+    },
+    "resume": "Reanudar",
+    "activeBar": "Sesión en curso · {time}",
+    "resumePrompt": {
+      "title": "Tienes una sesión sin terminar",
+      "message": "Empezaste a entrenar a las {time}. ¿Quieres seguir donde lo dejaste?"
+    }
+  },
+  "plates": {
+    "title": "Calculadora de discos",
+    "target": "Peso total",
+    "bar": "Barra: {weight}",
+    "perSide": "Discos por lado",
+    "none": "Solo la barra.",
+    "closest": "No se puede exacto con tus discos. Lo más cercano: {weight}",
+    "configureHint": "Configura tu barra y tus discos en Perfil → Entrenamiento.",
+    "barLabel": "Barra",
+    "available": "Discos disponibles",
+    "reset": "Restablecer discos"
+  },
+  "summary": {
+    "title": "¡Entreno guardado!",
+    "titleRecords": "¡{count} récords nuevos!",
+    "records": "Récords personales",
+    "pending": "Se confirmarán con el servidor al sincronizar.",
+    "pendingShort": "Pendiente de confirmar",
+    "confirmed": "Confirmado por el servidor",
+    "notConfirmed": "El servidor no lo registró como récord",
+    "done": "Listo",
+    "types": {
+      "maxWeight": "Peso máximo: {value} (antes {previous})",
+      "bestE1RM": "1RM estimado: {value} (antes {previous})",
+      "maxVolume": "Volumen en una sesión: {value} (antes {previous})",
+      "repsAtWeight": "{reps} reps con {weight} (antes {previous})"
     }
   }
 }

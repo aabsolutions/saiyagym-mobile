@@ -18,6 +18,7 @@ Future<void> pumpLocalized(
   WidgetTester tester,
   Widget child, {
   List<Override> overrides = const [],
+  List<Override>? infra,
 }) async {
   // A phone, not the default 800×600 landscape test surface.
   tester.view
@@ -41,7 +42,7 @@ Future<void> pumpLocalized(
       // A new key per pump: a mounted ProviderScope ignores new overrides.
       child: ProviderScope(
         key: UniqueKey(),
-        overrides: [...testInfraOverrides(), ...overrides],
+        overrides: [...infra ?? testInfraOverrides(), ...overrides],
         child: child,
       ),
     ),

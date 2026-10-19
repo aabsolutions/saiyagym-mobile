@@ -1,5 +1,39 @@
 # Progress — gymapp-mobile
 
+## 2026-10-18 — Entrenamiento en vivo
+
+### Hecho
+- **Inicio** desde: el día del programa activo (Hoy; online con `GET /programs/active/today?date=<local>` → pesos objetivo con progresión; offline calculado en local con un port de `program-schedule.ts` y los pesos estáticos de la rutina, avisado en la UI), cualquier rutina (Entrenar) o entreno vacío. Una sesión a la vez.
+- **Tarjeta por ejercicio**: filas con tipo (badge: número / C / D / F, menú para cambiarlo), "Anterior" (peso × reps de la última vez, de la historia local), peso y reps **prellenados** (objetivo; si no, lo anterior) y check de completado (**1 toque**). Borrar serie deslizando; añadir serie (copia la anterior); notas; sustituir; quitar; superserie con el siguiente (siempre contigua); reordenar (hoja con drag).
+- **Teclado numérico propio** (teclas de 56 dp, ±2,5 kg / ±5 lb / ±1 rep, "Sig." peso → reps → siguiente serie); cada tecla persiste.
+- **Descanso**: arranca al completar (descanso del objetivo de la rutina, o el del usuario; en superseries solo tras el último ejercicio del grupo), +15 / −15 / Saltar. Se guarda la hora de fin (sobrevive a cierres) y se programa una **notificación local exacta** (`flutter_local_notifications`, `SCHEDULE_EXACT_ALARM` pedido al iniciar sesión; si se niega, inexacta) + vibración háptica en primer plano.
+- **Cabecera**: cronómetro de sesión y volumen/series acumulados (solo series de trabajo completadas). **Calculadora de discos** (barra y discos configurables en Perfil → Entrenamiento, por unidad: gimnasios en kg o lb).
+- **Persistencia instantánea**: cada cambio va a Drift (el workout en `workouts` con `finishedAt: null` + metadatos de UI —objetivos, descanso— en `app_meta`). Escrituras encadenadas en orden. Al abrir la app con una sesión en curso se ofrece **reanudar o descartar**; una barra "Sesión en curso · mm:ss" vuelve a la pantalla.
+- **Pantalla encendida** opcional (`wakelock_plus`), por defecto activa.
+- **Finalizar**: resumen (duración, volumen, series), valoración 1-5 y notas; se guardan solo las series completadas; encola sync (`FinishWorkoutUseCase`). **PRs** calculados en local con un port exacto de `personal-records.calc.ts` y mostrados con animación de celebración; tras sincronizar se **confirman** con `GET /exercises/:id/records` (dueño del récord = esta sesión). Offline quedan "pendientes de confirmar". No se puede guardar una sesión sin series completadas.
+- **Descartar** con confirmación (borrado lógico: si ya se había sincronizado en curso, el borrado también viaja).
+
+### Verificación
+- `flutter analyze` ✅ sin issues.
+- `flutter test` ✅ 144/144, estable en 3 corridas. Nuevos: PRs (mismos casos que el spec del backend), calendario de programas (mismos casos que el spec del backend), calculadora de discos, edición del workout (prellenado, superseries contiguas, solo lo completado, volumen sin calentamientos), controller (inicio, **sobrevive a un kill** con otra instancia sobre la misma base, descanso caducado, descanso/superserie, finalizar + PRs + cola, descartar, una sesión a la vez) y **flujo de widget**: iniciar rutina → teclado ±2,5 → completar series (descanso + alarma programada) → terminar con valoración → resumen con 3 récords; reanudar al reabrir; descartar con confirmación.
+- **No ejecutado**: en dispositivo (notificación real con la app en segundo plano, vibración, wakelock), contra la API real, iOS.
+
+### Decisiones y gotchas
+- Los metadatos de la sesión NO van en el JSON del workout: un pull de nuestra propia escritura lo reemplaza y se perderían. Van en `app_meta`.
+- El workout en curso se sincroniza (con debounce) como cualquier otro: la web puede verlo en curso y un descarte se propaga.
+- Al finalizar se descartan las series prellenadas no marcadas (no se hicieron) y los ejercicios que quedan vacíos.
+- Lecturas puntuales con `get()`, nunca `watch().first`: el stream arma y desarma el seguimiento de cambios y, bajo el reloj fake de los widget tests, no terminaba (lo detectó el test de flujo).
+- `SyncService.sync()` arranca en un microtask: el resumen lo llama desde `initState` y su primera actualización de estado caía en pleno build. Dos llamadas antes de que la corrida arranque comparten esa corrida (no había leído la cola); una llamada **durante** la corrida agenda exactamente una pasada más.
+- `ref` no se puede usar en `dispose()`: el `ScreenAwake` se guarda en `initState`.
+- Widget tests de la pantalla en vivo: el cronómetro hace tick cada segundo → `pump` por pasos, nunca `pumpAndSettle`.
+- Android: core library desugaring + receivers de `flutter_local_notifications`. No se usa `USE_EXACT_ALARM` (Play lo restringe a apps de alarma/calendario).
+
+### Pendiente / próximo
+- Probar en dispositivo: notificación de descanso con la app en segundo plano/cerrada, permisos de Android 13/14, wakelock.
+- iOS: verificar notificaciones (en Mac).
+- Crear/editar rutinas en el móvil (hoy se crean en la web); ejercicios personalizados.
+- Estadísticas y récords en Progreso.
+
 ## 2026-10-18 — Offline-first: base local + sincronización
 
 ### Hecho

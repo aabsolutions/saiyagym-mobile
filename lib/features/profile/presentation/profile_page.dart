@@ -12,6 +12,7 @@ import 'package:saiyagym_mobile/core/widgets/error_banner.dart';
 import 'package:saiyagym_mobile/core/widgets/sync_status_button.dart';
 import 'package:saiyagym_mobile/features/auth/domain/entities/user.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
+import 'package:saiyagym_mobile/features/live_workout/presentation/widgets/training_settings_section.dart';
 import 'package:saiyagym_mobile/features/plans/domain/entitlements.dart';
 import 'package:saiyagym_mobile/features/plans/plans_providers.dart';
 import 'package:saiyagym_mobile/features/plans/presentation/upgrade_cta.dart';
@@ -184,6 +185,7 @@ class ProfilePage extends ConsumerWidget {
               );
             },
           ),
+          const TrainingSettingsSection(),
           const SizedBox(height: 40),
           const _LogoutButton(),
         ],

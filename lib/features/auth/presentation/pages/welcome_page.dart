@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saiyagym_mobile/app/router/app_routes.dart';
 import 'package:saiyagym_mobile/core/i18n/app_locales.dart';
+import 'package:saiyagym_mobile/core/widgets/app_logo.dart';
 
 /// First screen when signed out.
 class WelcomePage extends StatelessWidget {
@@ -31,15 +32,7 @@ class WelcomePage extends StatelessWidget {
                   child: _LanguageButton(),
                 ),
                 const SizedBox(height: 8),
-                CircleAvatar(
-                  radius: 44,
-                  backgroundColor: scheme.primary,
-                  child: Icon(
-                    Icons.fitness_center,
-                    size: 44,
-                    color: scheme.onPrimary,
-                  ),
-                ),
+                const Center(child: AppLogo()),
                 const SizedBox(height: 24),
                 Text(
                   context.tr('app.name'),

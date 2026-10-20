@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:saiyagym_mobile/core/widgets/app_logo.dart';
 
 /// Shared layout of the auth screens: brand header + scrollable form.
 class AuthScaffold extends StatelessWidget {
@@ -46,17 +47,9 @@ class AuthScaffold extends StatelessWidget {
                         onPressed: onBack,
                       ),
                     ),
-                  Align(
+                  const Align(
                     alignment: Alignment.centerLeft,
-                    child: CircleAvatar(
-                      radius: 32,
-                      backgroundColor: theme.colorScheme.primary,
-                      child: Icon(
-                        Icons.fitness_center,
-                        size: 32,
-                        color: theme.colorScheme.onPrimary,
-                      ),
-                    ),
+                    child: AppLogo(size: 64),
                   ),
                   const SizedBox(height: 16),
                   Text(

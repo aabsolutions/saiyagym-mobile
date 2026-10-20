@@ -41,7 +41,7 @@ flutter run --flavor dev --dart-define=API_BASE_URL=http://192.168.1.20:3000/api
 | Format | `dart format lib test tool` |
 | Tests | `flutter test` · one file: `flutter test test/core/units/unit_formatter_test.dart` · by name: `flutter test --plain-name "single-flight"` |
 | Translations check | `dart run tool/check_i18n.dart` (same keys in every language, every key used in `lib/` exists; also a test) |
-| Icon + splash | `dart run tool/generate_branding.dart` → `dart run flutter_launcher_icons` → `dart run flutter_native_splash:create` |
+| Icon + splash | `dart run tool/sync_branding.dart` (from `../icono-app`) → `dart run flutter_native_splash:create` |
 
 Generated files (`*.g.dart`, `*.freezed.dart`) are committed so the project
 compiles right after cloning; regenerate after changing annotated code.
@@ -270,21 +270,28 @@ configurations as `Debug-dev`, `Release-prod`, …, create schemes `dev` and
 `prod`, set `PRODUCT_BUNDLE_IDENTIFIER` (`.dev` suffix for dev) and the display
 name per configuration. Then `flutter run --flavor dev` works on iOS too.
 
-## Icon and splash
+## Icon, colours and splash
 
-`assets/branding/` holds the source PNGs (a brand-teal dumbbell drawn by
-`tool/generate_branding.dart`, a placeholder until there is a designed logo).
-To change them, replace the PNGs (1024 px icon, 1024 px adaptive foreground
-inside the 66 % safe zone, splash mark) and run:
+The design folder **`../icono-app`** (next to this repo, outside git) is the
+source of truth: master SVG/PNG plus exports for Android, iOS and web. Bring
+changes into the app with:
 
 ```bash
-dart run flutter_launcher_icons
+dart run tool/sync_branding.dart          # or: … tool/sync_branding.dart <path>
 dart run flutter_native_splash:create
 ```
 
-Config lives in `pubspec.yaml`. Known bug of `flutter_launcher_icons`: it may
-set `ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = AppIcon` in
-`ios/Runner.xcodeproj/project.pbxproj`; put it back to `YES`.
+The script copies the Android mipmaps (legacy, adaptive and Android 13
+monochrome icons), the iOS `AppIcon.appiconset` **flattened on the background
+colour** (the App Store rejects icons with an alpha channel) and the in-app logo
+/ splash image into `assets/branding/`. The synced files are committed, so CI
+doesn't need the design folder.
+
+Colours come from `master/icon.svg`: the dumbbell blue `#1E3FBF` is the
+primary seed (`AppColors.brand`), the background yellow `#C9C23A` the accent /
+tertiary (`AppColors.accent`) and the splash colour in `pubspec.yaml`. Yellow
+can't carry white text, which is why it isn't the primary;
+`test/accessibility_test.dart` checks the contrast of the result.
 
 ## Release builds
 

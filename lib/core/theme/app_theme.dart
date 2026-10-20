@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
-/// Brand tokens (from the design template). Everything else is derived by
-/// Material 3 from [brand], so light and dark stay consistent.
+/// Brand tokens, taken from the app icon (../icono-app/master/icon.svg).
+/// Everything else is derived by Material 3 from these two seeds, so light
+/// and dark stay consistent and readable.
 abstract final class AppColors {
-  static const brand = Color(0xFF00C9B7);
+  /// The dumbbell blue: primary (buttons, navigation, focus).
+  static const brand = Color(0xFF1E3FBF);
+
+  /// The icon background: accents (records, notices) and the splash. Too
+  /// light to carry white text, so it is the tertiary role, not primary.
+  static const accent = Color(0xFFC9C23A);
 }
 
 /// Built for the gym: tired, sweaty hands. Large text, 56 dp buttons,
@@ -20,12 +26,23 @@ abstract final class AppTheme {
   static ThemeData dark() => _build(Brightness.dark);
 
   static ThemeData _build(Brightness brightness) {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.brand,
+    // Fidelity keeps the brand hues recognisable instead of desaturated.
+    final accent = ColorScheme.fromSeed(
+      seedColor: AppColors.accent,
       brightness: brightness,
-      // Keeps the teal recognisable instead of a desaturated tone.
       dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
     );
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.brand,
+          brightness: brightness,
+          dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+        ).copyWith(
+          tertiary: accent.primary,
+          onTertiary: accent.onPrimary,
+          tertiaryContainer: accent.primaryContainer,
+          onTertiaryContainer: accent.onPrimaryContainer,
+        );
     final base = ThemeData(
       colorScheme: scheme,
       fontFamily: fontFamily,

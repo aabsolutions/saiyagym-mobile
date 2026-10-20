@@ -35,7 +35,9 @@
 - **URL real de la API** (Render) como variable `API_BASE_URL` del repo / `--dart-define`.
 - Crear el keystore de subida y cargar los secretos en GitHub; subir el repo a GitHub para que corra CI.
 - iOS en un Mac: team y firma, schemes de flavors, `flutter build ipa`, prueba en dispositivo.
-- Logo diseñado (reemplazar `assets/branding/*.png` y regenerar).
+- ~~Logo diseñado~~ Hecho: ícono y colores desde `../icono-app` (`tool/sync_branding.dart`; azul = primario, amarillo = acento).
+- `default-flavor: dev` en el pubspec **después** de crear los schemes de iOS (hoy rompería el build de iOS e inyectaría appFlavor=dev).
+- Plugins que aún aplican Kotlin Gradle Plugin (`flutter_image_compress_common`, `workmanager_android`): revisar versiones nuevas antes de actualizar Flutter.
 - Probar en dispositivo: cámara, Cloudinary, notificaciones, haptics, lector de pantalla.
 - Compras in-app (RevenueCat) cuando haya pasarela: seguir la guía del README.
 

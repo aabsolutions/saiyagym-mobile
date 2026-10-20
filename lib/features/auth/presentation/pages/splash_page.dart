@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:saiyagym_mobile/core/widgets/app_logo.dart';
 
 /// Shown while the stored session is restored.
 class SplashPage extends StatelessWidget {
@@ -13,11 +14,7 @@ class SplashPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.fitness_center,
-              size: 72,
-              color: theme.colorScheme.primary,
-            ),
+            const AppLogo(),
             const SizedBox(height: 16),
             Text(context.tr('app.name'), style: theme.textTheme.headlineSmall),
             const SizedBox(height: 32),

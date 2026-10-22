@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:saiyagym_mobile/features/live_workout/data/device_services.dart';
+import 'package:saiyagym_mobile/features/sounds/data/alarm_sound_platform.dart';
 import 'package:saiyagym_mobile/features/sounds/domain/alarm_sound.dart';
 
 import '../../helpers/fake_alarm_sound_platform.dart';

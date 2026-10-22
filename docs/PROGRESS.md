@@ -1,5 +1,18 @@
 # Progress — gymapp-mobile
 
+## 2026-10-22 — Sonidos en recordatorios y limpieza de sonidos (cambio `reminder-sounds-cleanup`)
+
+### Hecho
+- **Sonido propio para recordatorios de entreno y de pesaje** (Ajustes → Recordatorios): una fila "Sonido" bajo cada recordatorio activo, con el mismo selector que el descanso (`SoundSelector(purpose)`); cada propósito edita solo su preferencia (`trainingReminderSoundId` / `weighInSoundId`).
+- **Canales por sonido en Android**: `reminder_training_<assetKey>` / `reminder_weighin_<assetKey>` (`UriAndroidNotificationSound`). Cae al canal `reminders` si no hay sonido, ya no está instalado, falla la creación del canal o Android < 10. iOS: `DarwinNotificationDetails(sound: iosFileName)`. Tras cada aplicación se borran los canales huérfanos por prefijo.
+- **Reaplicar sin `BuildContext`**: al guardar se cachean los textos (`app_meta` `reminders.texts`); `RemindersController.reapply()` (serializado) los reutiliza. Disparadores: guardar ajustes, cambio de sonido (tras la descarga) y arranque (el primer valor de los sonidos efectivos se compara contra "nada aplicado" ⇒ cubre un downgrade con la app cerrada). Sin textos cacheados solo se podan canales.
+- Al iniciar sesión: se sueltan los sonidos que ningún propósito usa y se descargan (best effort) los de los recordatorios (dispositivo nuevo).
+- `usableSound` pasó a `sounds/data` (lo comparten descanso y recordatorios).
+
+### Decisiones y gotchas
+- El disparador por cambio de sonido vive en `SyncCoordinator` (siempre observado), no en un `ref.listen` dentro de `RemindersController`: Riverpod 3 pausa los listeners de un provider que nadie escucha (el controller solo se lee) y el reapply no se disparaba.
+- Los recordatorios siguen siendo locales al dispositivo; una sesión expirada los conserva.
+
 ## 2026-10-19 — Nutrición, pulido y preparación de release
 
 ### Hecho

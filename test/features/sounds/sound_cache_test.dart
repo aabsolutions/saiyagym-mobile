@@ -125,17 +125,80 @@ void main() {
       expect(await cache.installed('sound-1'), isNull);
     });
 
-    test('a new selection discards the previous sound', () async {
+    test('ensure keeps other sounds; retain drops the unneeded ones', () async {
       final cache = cacheFor(SoundTarget.android);
       final first = await cache.ensure(sound());
       final second = await cache.ensure(
         sound(id: 'sound-2', mp3: _mp3.replaceFirst('aaaa-1111', 'bbbb-2222')),
       );
 
+      expect(platform.removed, isEmpty);
+      expect(await cache.installed('sound-1'), isNotNull);
+
+      await cache.retain({'sound-2'});
+
       expect(platform.removed, [first!.androidUri]);
       expect(File(first.localPath).existsSync(), isFalse);
       expect(File(second!.localPath).existsSync(), isTrue);
       expect(await cache.installed('sound-1'), isNull);
+      expect(await cache.installed('sound-2'), isNotNull);
+    });
+
+    test('retain with every id keeps everything', () async {
+      final cache = cacheFor(SoundTarget.android);
+      final alarm = await cache.ensure(sound());
+
+      await cache.retain({'sound-1'});
+
+      expect(platform.removed, isEmpty);
+      expect(File(alarm!.localPath).existsSync(), isTrue);
+    });
+
+    test(
+      'two ids with the same asset: installed once, kept while used',
+      () async {
+        final cache = cacheFor(SoundTarget.android);
+        await cache.ensure(sound());
+        await cache.ensure(sound(id: 'sound-2'));
+
+        expect(downloads.requests, hasLength(1));
+        expect(platform.installed, hasLength(1));
+
+        await cache.retain({'sound-2'});
+        expect(platform.removed, isEmpty);
+        expect(await cache.installed('sound-2'), isNotNull);
+
+        await cache.retain({});
+        expect(platform.removed, hasLength(1));
+      },
+    );
+
+    test('parallel ensures do not lose each other record', () async {
+      final cache = cacheFor(SoundTarget.android);
+      await Future.wait([
+        cache.ensure(sound()),
+        cache.ensure(
+          sound(
+            id: 'sound-2',
+            mp3: _mp3.replaceFirst('aaaa-1111', 'bbbb-2222'),
+          ),
+        ),
+      ]);
+
+      expect(await cache.installed('sound-1'), isNotNull);
+      expect(await cache.installed('sound-2'), isNotNull);
+    });
+
+    test('hasRecord is false until something is installed', () async {
+      final cache = cacheFor(SoundTarget.android);
+      expect(await cache.hasRecord(), isFalse);
+
+      await cache.ensure(sound());
+      expect(await cache.hasRecord(), isTrue);
+
+      // An empty record is still a record (nothing wiped it).
+      await cache.retain({});
+      expect(await cache.hasRecord(), isTrue);
     });
 
     test('offline download failure returns null, no crash', () async {
@@ -157,14 +220,20 @@ void main() {
       expect(downloads.requests, isEmpty);
     });
 
-    test('clear() removes the OS copy and the file', () async {
+    test('purgeAll removes OS items, record and files', () async {
       final cache = cacheFor(SoundTarget.android);
       final alarm = await cache.ensure(sound());
+      File('${dir.path}/orphan.mp3').writeAsStringSync('x');
+      File('${dir.path}/keep.txt').writeAsStringSync('x');
 
-      await cache.clear();
+      await cache.purgeAll();
 
-      expect(platform.removed, [alarm!.androidUri]);
-      expect(File(alarm.localPath).existsSync(), isFalse);
+      expect(platform.removeAllCalls, 1);
+      expect(File(alarm!.localPath).existsSync(), isFalse);
+      expect(File('${dir.path}/orphan.mp3').existsSync(), isFalse);
+      // Only audio files: never the whole directory.
+      expect(File('${dir.path}/keep.txt').existsSync(), isTrue);
+      expect(await cache.hasRecord(), isFalse);
       expect(await cache.installed('sound-1'), isNull);
     });
   });

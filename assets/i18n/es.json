@@ -92,7 +92,11 @@
     "subtitle": "Suena cuando termina el descanso, incluso con la app cerrada.",
     "default": "Predeterminado",
     "premium": "Premium",
-    "preview": "Escuchar"
+    "preview": "Escuchar",
+    "trainingTitle": "Sonido del recordatorio de entreno",
+    "trainingSubtitle": "Suena en la notificación del recordatorio de entreno.",
+    "weighInTitle": "Sonido del recordatorio de pesaje",
+    "weighInSubtitle": "Suena en la notificación del recordatorio de pesaje."
   },
   "today": {
     "title": "Hoy",
@@ -608,6 +612,7 @@
     "title": "Recordatorios",
     "entry": "Entrenos y pesaje semanal",
     "channel": "Recordatorios",
+    "sound": "Sonido",
     "trainingTitle": "¡Hoy toca entrenar!",
     "trainingBody": "Abre SaiyaGym y empieza tu sesión.",
     "weighInTitle": "Hora de pesarte",

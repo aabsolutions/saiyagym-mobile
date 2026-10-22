@@ -7,6 +7,8 @@ import 'package:saiyagym_mobile/core/feedback/haptics.dart';
 import 'package:saiyagym_mobile/features/reminders/domain/reminder_settings.dart';
 import 'package:saiyagym_mobile/features/reminders/presentation/weigh_in_prompt.dart';
 import 'package:saiyagym_mobile/features/reminders/reminders_providers.dart';
+import 'package:saiyagym_mobile/features/sounds/domain/sound_purpose.dart';
+import 'package:saiyagym_mobile/features/sounds/presentation/sound_selector.dart';
 
 /// Training days + time and the weekly weigh-in, as local notifications.
 class RemindersPage extends ConsumerWidget {
@@ -127,6 +129,7 @@ class _RemindersForm extends ConsumerWidget {
               );
             },
           ),
+          const SoundSelector(purpose: SoundPurpose.trainingReminder),
         ],
         const Divider(),
         SwitchListTile(
@@ -174,6 +177,7 @@ class _RemindersForm extends ConsumerWidget {
               );
             },
           ),
+          const SoundSelector(purpose: SoundPurpose.weighIn),
         ],
       ],
     );

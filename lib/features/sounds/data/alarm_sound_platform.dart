@@ -36,6 +36,11 @@ abstract interface class AlarmSoundPlatform {
   /// Android: deletes the MediaStore item.
   Future<void> remove(String androidUri);
 
+  /// Android: deletes every MediaStore item this app put under
+  /// `Notifications/SaiyaGym` (items it doesn't own are skipped). Returns how
+  /// many were removed. iOS / unsupported: `0`.
+  Future<int> removeAll();
+
   /// Is [sound] still usable right now (uri resolvable / file present)?
   Future<bool> isAvailable(AlarmSound sound);
 
@@ -85,6 +90,18 @@ class MethodChannelAlarmSoundPlatform implements AlarmSoundPlatform {
   }
 
   @override
+  Future<int> removeAll() async {
+    if (_target != SoundTarget.android) return 0;
+    try {
+      return await _channel.invokeMethod<int>('removeAll') ?? 0;
+    } on PlatformException {
+      return 0;
+    } on MissingPluginException {
+      return 0;
+    }
+  }
+
+  @override
   Future<bool> isAvailable(AlarmSound sound) async {
     try {
       switch (_target) {
@@ -126,5 +143,19 @@ class MethodChannelAlarmSoundPlatform implements AlarmSoundPlatform {
     } on MissingPluginException {
       // Preview is a convenience.
     }
+  }
+}
+
+/// [sound] when it is still usable now (uri / file present), else `null`
+/// (= default sound). Never throws: the alarm must always ring.
+Future<AlarmSound?> usableSound(
+  AlarmSound? sound,
+  AlarmSoundPlatform platform,
+) async {
+  if (sound == null) return null;
+  try {
+    return await platform.isAvailable(sound) ? sound : null;
+  } on Object {
+    return null;
   }
 }

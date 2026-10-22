@@ -54,7 +54,57 @@ final class ReminderSchedulerProvider
   }
 }
 
-String _$reminderSchedulerHash() => r'd9b7daac8b42435862688dd5d37e58ca5896aee0';
+String _$reminderSchedulerHash() => r'21cb9bc0b12b885cf18cff79165cb6e791ff082a';
+
+/// The sounds the user chose for the training and weigh-in reminders, when
+/// they are installed on this device (`null` = default sound). Changes when
+/// a choice changes or its download finishes.
+
+@ProviderFor(reminderSounds)
+final reminderSoundsProvider = ReminderSoundsProvider._();
+
+/// The sounds the user chose for the training and weigh-in reminders, when
+/// they are installed on this device (`null` = default sound). Changes when
+/// a choice changes or its download finishes.
+
+final class ReminderSoundsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<ReminderSounds>,
+          ReminderSounds,
+          FutureOr<ReminderSounds>
+        >
+    with $FutureModifier<ReminderSounds>, $FutureProvider<ReminderSounds> {
+  /// The sounds the user chose for the training and weigh-in reminders, when
+  /// they are installed on this device (`null` = default sound). Changes when
+  /// a choice changes or its download finishes.
+  ReminderSoundsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'reminderSoundsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$reminderSoundsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<ReminderSounds> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<ReminderSounds> create(Ref ref) {
+    return reminderSounds(ref);
+  }
+}
+
+String _$reminderSoundsHash() => r'd53f2a657256ab6c2599c6fa2a04ddffb4351af1';
 
 @ProviderFor(RemindersController)
 final remindersControllerProvider = RemindersControllerProvider._();
@@ -81,7 +131,7 @@ final class RemindersControllerProvider
 }
 
 String _$remindersControllerHash() =>
-    r'e0825c53f76b6b17e3a24978ae82af7e1f3dfbc2';
+    r'2ecb7c476b43a4f58211e2af72a6260719957a7e';
 
 abstract class _$RemindersController extends $AsyncNotifier<ReminderSettings> {
   FutureOr<ReminderSettings> build();

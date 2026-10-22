@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:saiyagym_mobile/core/notifications/notification_channels.dart';
 import 'package:saiyagym_mobile/features/sounds/data/alarm_sound_platform.dart';
 import 'package:saiyagym_mobile/features/sounds/domain/alarm_sound.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -45,24 +46,7 @@ String restChannelIdFor(AlarmSound? sound) =>
 List<String> staleRestChannels(
   Iterable<String> existing, {
   required String keep,
-}) => [
-  for (final id in existing)
-    if (id.startsWith('${restChannelId}_') && id != keep) id,
-];
-
-/// [sound] when it is still usable now (uri / file present), else `null`
-/// (= default sound). Never throws: the alarm must always ring.
-Future<AlarmSound?> usableSound(
-  AlarmSound? sound,
-  AlarmSoundPlatform platform,
-) async {
-  if (sound == null) return null;
-  try {
-    return await platform.isAvailable(sound) ? sound : null;
-  } on Object {
-    return null;
-  }
-}
+}) => staleChannels(existing, prefix: '${restChannelId}_', keep: keep);
 
 class NotificationRestAlarm implements RestAlarm {
   NotificationRestAlarm({

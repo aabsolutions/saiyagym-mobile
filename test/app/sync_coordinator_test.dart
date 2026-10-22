@@ -7,6 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:saiyagym_mobile/app/sync/sync_coordinator.dart';
 import 'package:saiyagym_mobile/core/database/app_database.dart';
 import 'package:saiyagym_mobile/core/database/database_provider.dart';
+import 'package:saiyagym_mobile/core/notifications/notification_channels.dart';
 import 'package:saiyagym_mobile/core/sync/connectivity_monitor.dart';
 import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
 import 'package:saiyagym_mobile/core/sync/sync_service.dart';
@@ -19,7 +20,12 @@ import 'package:saiyagym_mobile/features/progress_photos/progress_photos_provide
 import 'package:saiyagym_mobile/features/reminders/data/reminder_scheduler.dart';
 import 'package:saiyagym_mobile/features/reminders/domain/reminder_settings.dart';
 import 'package:saiyagym_mobile/features/reminders/reminders_providers.dart';
+import 'package:saiyagym_mobile/features/sounds/data/alarm_sound_platform.dart';
+import 'package:saiyagym_mobile/features/sounds/data/sound_cache.dart';
+import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
 
+import '../helpers/fake_alarm_sound_platform.dart';
+import '../helpers/fake_notification_channels.dart';
 import '../helpers/fake_photos.dart';
 import '../helpers/fixtures.dart';
 import '../helpers/test_infra.dart';
@@ -62,6 +68,8 @@ void main() {
   late AppDatabase db;
   late _CountingQueue photos;
   late FakeReminderScheduler reminders;
+  late FakeAlarmSoundPlatform soundPlatform;
+  late FakeNotificationChannels channels;
 
   setUpAll(() => registerFallbackValue(SyncReason.manual));
 
@@ -73,11 +81,40 @@ void main() {
     db = testDatabase();
     photos = _CountingQueue(db);
     reminders = FakeReminderScheduler();
+    soundPlatform = FakeAlarmSoundPlatform();
+    channels = FakeNotificationChannels();
   });
 
+  /// Channels as a signed-in device has them (startup already purged once).
+  void seedChannels() => channels
+    ..deleted.clear()
+    ..existing.clear()
+    ..existing.addAll([
+      'reminders',
+      'rest_timer',
+      'rest_timer_a',
+      'reminder_training_a',
+      'reminder_weighin_b',
+    ]);
+
   Future<ProviderContainer> start({Session? session}) async {
+    final soundDir = Directory.systemTemp.createTempSync('sc_sounds');
+    addTearDown(() => soundDir.deleteSync(recursive: true));
     final container = ProviderContainer(
       overrides: [
+        alarmSoundPlatformProvider.overrideWithValue(soundPlatform),
+        notificationChannelsProvider.overrideWithValue(channels),
+        soundTargetProvider.overrideWithValue(SoundTarget.none),
+        soundDirectoryProvider.overrideWithValue(() async => soundDir),
+        soundCacheProvider.overrideWith(
+          (ref) => SoundCache(
+            dio: Dio(),
+            db: db,
+            platform: soundPlatform,
+            target: SoundTarget.none,
+            directory: () async => soundDir,
+          ),
+        ),
         syncServiceProvider.overrideWithValue(sync),
         connectivityMonitorProvider.overrideWithValue(
           connectivity as ConnectivityMonitor,
@@ -192,4 +229,60 @@ void main() {
       expect(reminders.applied, [const ReminderSettings()]);
     },
   );
+
+  group('device sounds', () {
+    test(
+      'logout (record wiped) purges files, items and sound channels',
+      () async {
+        final container = await start(session: Session(user: testUser()));
+        final session =
+            container.read(sessionControllerProvider.notifier) as _Session;
+        // A signed-in user with wiped data: no record of installed sounds.
+        await db.wipe();
+        soundPlatform.removeAllCalls = 0;
+        seedChannels();
+
+        session.set(null);
+        await pumpEventQueue();
+
+        expect(soundPlatform.removeAllCalls, 1);
+        expect(channels.deleted, [
+          'rest_timer_a',
+          'reminder_training_a',
+          'reminder_weighin_b',
+        ]);
+        expect(channels.existing, ['reminders', 'rest_timer']);
+      },
+    );
+
+    test('an expired session (record kept) purges nothing', () async {
+      final container = await start(session: Session(user: testUser()));
+      final session =
+          container.read(sessionControllerProvider.notifier) as _Session;
+      await db.writeMeta(SoundCache.installedKey, '{}');
+      soundPlatform.removeAllCalls = 0;
+      seedChannels();
+
+      session.set(null);
+      await pumpEventQueue();
+
+      expect(soundPlatform.removeAllCalls, 0);
+      expect(channels.deleted, isEmpty);
+    });
+
+    test('a different user signing in purges first', () async {
+      final container = await start(session: Session(user: testUser()));
+      final session =
+          container.read(sessionControllerProvider.notifier) as _Session;
+      await db.wipe();
+      soundPlatform.removeAllCalls = 0;
+      seedChannels();
+
+      session.set(Session(user: testUser(id: 'other')));
+      await pumpEventQueue();
+
+      expect(soundPlatform.removeAllCalls, 1);
+      expect(channels.deleted, isNotEmpty);
+    });
+  });
 }

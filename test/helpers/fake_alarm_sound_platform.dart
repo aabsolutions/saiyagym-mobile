@@ -13,6 +13,7 @@ class FakeAlarmSoundPlatform implements AlarmSoundPlatform {
   final removed = <String>[];
   final previews = <String>[];
   int stops = 0;
+  int removeAllCalls = 0;
 
   @override
   Future<String?> install({
@@ -25,6 +26,12 @@ class FakeAlarmSoundPlatform implements AlarmSoundPlatform {
 
   @override
   Future<void> remove(String androidUri) async => removed.add(androidUri);
+
+  @override
+  Future<int> removeAll() async {
+    removeAllCalls++;
+    return 0;
+  }
 
   @override
   Future<bool> isAvailable(AlarmSound sound) async => available;

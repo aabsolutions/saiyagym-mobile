@@ -9,6 +9,7 @@ import 'package:saiyagym_mobile/core/sync/sync_state.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
 import 'package:saiyagym_mobile/features/progress_photos/progress_photos_providers.dart';
 import 'package:saiyagym_mobile/features/reminders/reminders_providers.dart';
+import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
 
 part 'sync_coordinator.g.dart';
 
@@ -38,6 +39,19 @@ class SyncCoordinator extends _$SyncCoordinator {
             : _signedIn(changed: previous != userId),
         fireImmediately: true,
       )
+      // Reminder sounds changed (choice, download done) or, at start, may
+      // differ from the schedule: reapply it (no-op when nothing changed).
+      ..listen(reminderSoundsProvider, (previous, next) {
+        final sounds = next.value;
+        if (sounds == null) return;
+        unawaited(
+          _guard(
+            ref
+                .read(remindersControllerProvider.notifier)
+                .soundsChanged(sounds),
+          ),
+        );
+      }, fireImmediately: true)
       ..onDispose(_detach);
   }
 
@@ -48,7 +62,7 @@ class SyncCoordinator extends _$SyncCoordinator {
       ..start()
       ..requestSync(SyncReason.appOpen);
     _uploadPhotos();
-    if (changed) _dropWipedReminders();
+    if (changed) _dropWiped(refreshSounds: true);
     _attach();
     unawaited(_guard(ref.read(backgroundSyncSchedulerProvider).schedule()));
   }
@@ -58,7 +72,7 @@ class SyncCoordinator extends _$SyncCoordinator {
     _active = false;
     _detach();
     unawaited(ref.read(syncServiceProvider).stop());
-    _dropWipedReminders();
+    _dropWiped();
     unawaited(_guard(ref.read(backgroundSyncSchedulerProvider).cancel()));
   }
 
@@ -95,11 +109,28 @@ class SyncCoordinator extends _$SyncCoordinator {
   /// The catalog is stored in the UI language.
   void languageChanged() => _request(SyncReason.languageChanged);
 
-  /// Logout (or another user signing in) wiped the reminder settings;
-  /// an expired session keeps them, and its reminders too.
-  void _dropWipedReminders() => unawaited(
-    _guard(ref.read(remindersControllerProvider.notifier).cancelIfWiped()),
-  );
+  /// Logout (or another user signing in) wiped the reminder settings and the
+  /// sound record; an expired session keeps them, and its reminders and
+  /// sounds too. Each step is guarded on its own: one failing must not skip
+  /// the other.
+  ///
+  /// On sign-in ([refreshSounds]) the purge is followed, in order, by
+  /// dropping sounds no purpose selects and a best-effort download of the
+  /// reminder sounds (new device).
+  void _dropWiped({bool refreshSounds = false}) {
+    unawaited(
+      _guard(ref.read(remindersControllerProvider.notifier).cancelIfWiped()),
+    );
+    final sounds = ref.read(soundHousekeepingProvider);
+    unawaited(
+      _guard(() async {
+        await sounds.purgeIfWiped();
+        if (!refreshSounds) return;
+        await sounds.retainSelected();
+        await sounds.prefetch();
+      }()),
+    );
+  }
 
   /// Photos queued offline (their own outbox, not `sync_queue`).
   void _uploadPhotos() =>

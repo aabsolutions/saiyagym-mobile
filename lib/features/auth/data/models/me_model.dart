@@ -46,6 +46,8 @@ abstract class MeModel with _$MeModel {
       defaultRestSeconds: preferences.defaultRestSeconds,
       firstDayOfWeek: preferences.firstDayOfWeek,
       restSoundId: preferences.restSoundId,
+      trainingReminderSoundId: preferences.trainingReminderSoundId,
+      weighInSoundId: preferences.weighInSoundId,
     ),
   );
 }
@@ -96,6 +98,8 @@ abstract class PreferencesModel with _$PreferencesModel {
     required int defaultRestSeconds,
     required int firstDayOfWeek,
     String? restSoundId,
+    String? trainingReminderSoundId,
+    String? weighInSoundId,
   }) = _PreferencesModel;
 
   factory PreferencesModel.fromJson(Map<String, dynamic> json) =>

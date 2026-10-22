@@ -17,6 +17,7 @@ import 'package:saiyagym_mobile/features/live_workout/presentation/widgets/numbe
 import 'package:saiyagym_mobile/features/live_workout/presentation/widgets/rest_timer_bar.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/widgets/ticker.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
+import 'package:saiyagym_mobile/features/sounds/domain/sound_purpose.dart';
 import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
 
 class LiveWorkoutPage extends ConsumerStatefulWidget {
@@ -54,13 +55,17 @@ class _LiveWorkoutPageState extends ConsumerState<LiveWorkoutPage> {
   /// it is fetched in the background and the alarm re-prepared once it is.
   Future<void> _prepareAlarm(String channelName) async {
     final alarm = ref.read(restAlarmProvider);
-    final sounds = ref.read(restSoundControllerProvider.notifier);
-    final installed = await ref.read(installedAlarmSoundProvider.future);
+    final sounds = ref.read(
+      soundSelectionControllerProvider(SoundPurpose.rest).notifier,
+    );
+    final installed = await ref.read(
+      installedAlarmSoundProvider(SoundPurpose.rest).future,
+    );
     if (!mounted) return;
     await alarm.prepare(channelName: channelName, sound: installed);
     if (!mounted ||
         installed != null ||
-        ref.read(selectedRestSoundIdProvider) == null) {
+        ref.read(selectedSoundIdProvider(SoundPurpose.rest)) == null) {
       return;
     }
     final fetched = await sounds.ensureSelectedInstalled();

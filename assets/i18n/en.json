@@ -92,7 +92,11 @@
     "subtitle": "Plays when the rest ends, even with the app closed.",
     "default": "Default",
     "premium": "Premium",
-    "preview": "Preview"
+    "preview": "Preview",
+    "trainingTitle": "Training reminder sound",
+    "trainingSubtitle": "Plays with the training reminder notification.",
+    "weighInTitle": "Weigh-in reminder sound",
+    "weighInSubtitle": "Plays with the weigh-in reminder notification."
   },
   "today": {
     "title": "Today",
@@ -608,6 +612,7 @@
     "title": "Reminders",
     "entry": "Workouts and weekly weigh-in",
     "channel": "Reminders",
+    "sound": "Sound",
     "trainingTitle": "Training day!",
     "trainingBody": "Open SaiyaGym and start your session.",
     "weighInTitle": "Time to weigh in",

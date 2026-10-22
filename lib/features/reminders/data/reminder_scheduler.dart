@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:saiyagym_mobile/core/database/app_database.dart';
+import 'package:saiyagym_mobile/core/notifications/notification_channels.dart';
 import 'package:saiyagym_mobile/features/reminders/domain/reminder_settings.dart';
+import 'package:saiyagym_mobile/features/sounds/data/alarm_sound_platform.dart';
+import 'package:saiyagym_mobile/features/sounds/domain/alarm_sound.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -17,12 +20,60 @@ class ReminderTexts {
     required this.weighInBody,
   });
 
+  factory ReminderTexts.fromJson(Map<String, dynamic> json) => ReminderTexts(
+    channelName: json['channelName'] as String,
+    trainingTitle: json['trainingTitle'] as String,
+    trainingBody: json['trainingBody'] as String,
+    weighInTitle: json['weighInTitle'] as String,
+    weighInBody: json['weighInBody'] as String,
+  );
+
   final String channelName;
   final String trainingTitle;
   final String trainingBody;
   final String weighInTitle;
   final String weighInBody;
+
+  Map<String, dynamic> toJson() => {
+    'channelName': channelName,
+    'trainingTitle': trainingTitle,
+    'trainingBody': trainingBody,
+    'weighInTitle': weighInTitle,
+    'weighInBody': weighInBody,
+  };
 }
+
+/// The installed sounds the reminders may use (`null` = default sound).
+class ReminderSounds {
+  const ReminderSounds({this.training, this.weighIn});
+
+  final AlarmSound? training;
+  final AlarmSound? weighIn;
+
+  AlarmSound? of(ReminderKind kind) =>
+      kind == ReminderKind.training ? training : weighIn;
+
+  /// Equal signature = same channels / files: avoids reapplying for nothing.
+  String get signature =>
+      '${training?.assetKey}|${training?.androidUri}|${training?.iosFileName}'
+      '#${weighIn?.assetKey}|${weighIn?.androidUri}|${weighIn?.iosFileName}';
+}
+
+const defaultReminderChannelId = 'reminders';
+const _trainingChannelPrefix = 'reminder_training_';
+const _weighInChannelPrefix = 'reminder_weighin_';
+
+String _channelPrefix(ReminderKind kind) => kind == ReminderKind.training
+    ? _trainingChannelPrefix
+    : _weighInChannelPrefix;
+
+/// Channel of a reminder: `reminder_<kind>_<assetKey>` when [sound] is usable
+/// on Android (has a MediaStore uri), else the default `reminders` one. A
+/// channel's sound can't change once created, so each sound gets its own.
+String reminderChannelId(ReminderKind kind, AlarmSound? sound) =>
+    sound?.androidUri == null
+    ? defaultReminderChannelId
+    : '${_channelPrefix(kind)}${sound!.assetKey}';
 
 abstract interface class ReminderScheduler {
   /// Asks the OS. Called only when the user turns a reminder ON (never at
@@ -30,7 +81,15 @@ abstract interface class ReminderScheduler {
   Future<bool> requestPermission();
 
   /// Cancels every reminder and schedules [settings] again.
-  Future<void> apply(ReminderSettings settings, ReminderTexts texts);
+  /// [sounds] picks the per-sound channel (Android) / file (iOS).
+  Future<void> apply(
+    ReminderSettings settings,
+    ReminderTexts texts, {
+    ReminderSounds sounds = const ReminderSounds(),
+  });
+
+  /// Deletes the sound channels [sounds] no longer uses (schedule untouched).
+  Future<void> pruneChannels({ReminderSounds sounds = const ReminderSounds()});
 
   /// Logout: the settings are wiped with the local data, so are these.
   Future<void> cancelAll();
@@ -80,12 +139,14 @@ tz.TZDateTime nextWeekly(
 class LocalReminderScheduler implements ReminderScheduler {
   LocalReminderScheduler({
     required this._timezone,
+    required this._platform,
+    required this._channels,
     FlutterLocalNotificationsPlugin? plugin,
   }) : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
-  static const _channelId = 'reminders';
-
   final FlutterLocalNotificationsPlugin _plugin;
+  final AlarmSoundPlatform _platform;
+  final NotificationChannels _channels;
   final Future<String> Function() _timezone;
   Future<void>? _ready;
 
@@ -127,8 +188,18 @@ class LocalReminderScheduler implements ReminderScheduler {
   }
 
   @override
-  Future<void> apply(ReminderSettings settings, ReminderTexts texts) async {
+  Future<void> apply(
+    ReminderSettings settings,
+    ReminderTexts texts, {
+    ReminderSounds sounds = const ReminderSounds(),
+  }) async {
     await cancelAll();
+    // The file / MediaStore item may be gone: only usable sounds count.
+    final usable = await _usable(sounds);
+    final channelIds = {
+      for (final kind in ReminderKind.values)
+        kind: await _channelFor(kind, usable[kind], texts.channelName),
+    };
     final now = tz.TZDateTime.now(tz.local);
     for (final slot in slotsOf(settings)) {
       final training = slot.kind == ReminderKind.training;
@@ -143,13 +214,84 @@ class LocalReminderScheduler implements ReminderScheduler {
           minute: slot.minute,
         ),
         notificationDetails: NotificationDetails(
-          android: AndroidNotificationDetails(_channelId, texts.channelName),
-          iOS: const DarwinNotificationDetails(),
+          android: AndroidNotificationDetails(
+            channelIds[slot.kind]!,
+            texts.channelName,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentSound: true,
+            sound: usable[slot.kind]?.iosFileName,
+          ),
         ),
         // A reminder a few minutes late is fine: no exact-alarm permission.
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
       );
+    }
+    await _prune(channelIds);
+  }
+
+  Future<Map<ReminderKind, AlarmSound?>> _usable(ReminderSounds sounds) async =>
+      {
+        for (final kind in ReminderKind.values)
+          kind: await usableSound(sounds.of(kind), _platform),
+      };
+
+  /// Android: creates the channel of [sound] (if any) and returns the id to
+  /// notify on; any failure falls back to the default channel.
+  Future<String> _channelFor(
+    ReminderKind kind,
+    AlarmSound? sound,
+    String channelName,
+  ) async {
+    final uri = sound?.androidUri;
+    if (uri == null) return defaultReminderChannelId;
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android == null) return defaultReminderChannelId;
+    try {
+      final id = reminderChannelId(kind, sound);
+      await android.createNotificationChannel(
+        AndroidNotificationChannel(
+          id,
+          '$channelName · ${sound!.name}',
+          sound: UriAndroidNotificationSound(uri),
+        ),
+      );
+      return id;
+    } on Object {
+      return defaultReminderChannelId;
+    }
+  }
+
+  @override
+  Future<void> pruneChannels({
+    ReminderSounds sounds = const ReminderSounds(),
+  }) async {
+    final usable = await _usable(sounds);
+    await _prune({
+      for (final kind in ReminderKind.values)
+        kind: reminderChannelId(kind, usable[kind]),
+    });
+  }
+
+  /// Deletes every sound channel of each kind except the one in use.
+  Future<void> _prune(Map<ReminderKind, String> keep) async {
+    try {
+      final existing = await _channels.ids();
+      for (final kind in ReminderKind.values) {
+        for (final id in staleChannels(
+          existing,
+          prefix: _channelPrefix(kind),
+          keep: keep[kind]!,
+        )) {
+          await _channels.delete(id);
+        }
+      }
+    } on Object {
+      // Leftover channels are harmless.
     }
   }
 
@@ -169,6 +311,10 @@ class FakeReminderScheduler implements ReminderScheduler {
   int permissionRequests = 0;
   @visibleForTesting
   final applied = <ReminderSettings>[];
+  @visibleForTesting
+  final appliedSounds = <ReminderSounds>[];
+  @visibleForTesting
+  final pruned = <ReminderSounds>[];
 
   @override
   Future<bool> requestPermission() async {
@@ -177,11 +323,44 @@ class FakeReminderScheduler implements ReminderScheduler {
   }
 
   @override
-  Future<void> apply(ReminderSettings settings, ReminderTexts texts) async =>
-      applied.add(settings);
+  Future<void> apply(
+    ReminderSettings settings,
+    ReminderTexts texts, {
+    ReminderSounds sounds = const ReminderSounds(),
+  }) async {
+    applied.add(settings);
+    appliedSounds.add(sounds);
+  }
+
+  @override
+  Future<void> pruneChannels({
+    ReminderSounds sounds = const ReminderSounds(),
+  }) async => pruned.add(sounds);
 
   @override
   Future<void> cancelAll() async => applied.add(const ReminderSettings());
+}
+
+/// The texts of the last save, so a reapply (sound changed) needs no UI.
+class ReminderTextsStore {
+  ReminderTextsStore(this._db);
+
+  static const key = 'reminders.texts';
+
+  final AppDatabase _db;
+
+  Future<ReminderTexts?> read() async {
+    final raw = await _db.readMeta(key);
+    if (raw == null) return null;
+    try {
+      return ReminderTexts.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    } on Object {
+      return null;
+    }
+  }
+
+  Future<void> write(ReminderTexts texts) =>
+      _db.writeMeta(key, jsonEncode(texts.toJson()));
 }
 
 class ReminderSettingsStore {

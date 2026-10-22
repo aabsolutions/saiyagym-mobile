@@ -85,10 +85,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         'language': ?preferences.language,
         'defaultRestSeconds': ?preferences.defaultRestSeconds,
         // `null` is a real value here: it clears the choice (default sound).
-        if (preferences.resetRestSound)
-          'restSoundId': null
-        else
-          'restSoundId': ?preferences.restSoundId,
+        ...preferences.soundIds,
       };
 
   static String _isoDate(DateTime date) =>

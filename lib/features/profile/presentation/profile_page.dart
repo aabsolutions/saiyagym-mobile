@@ -19,7 +19,8 @@ import 'package:saiyagym_mobile/features/plans/presentation/upgrade_cta.dart';
 import 'package:saiyagym_mobile/features/profile/domain/profile_repository.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/widgets/profile_fields.dart';
-import 'package:saiyagym_mobile/features/sounds/presentation/rest_sound_selector.dart';
+import 'package:saiyagym_mobile/features/sounds/domain/sound_purpose.dart';
+import 'package:saiyagym_mobile/features/sounds/presentation/sound_selector.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -186,7 +187,7 @@ class ProfilePage extends ConsumerWidget {
               );
             },
           ),
-          const RestSoundSelector(),
+          const SoundSelector(purpose: SoundPurpose.rest),
           const TrainingSettingsSection(),
           _SectionTitle(context.tr('reminders.title')),
           ListTile(

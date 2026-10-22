@@ -10,6 +10,7 @@ import 'package:saiyagym_mobile/core/config/app_config.dart';
 import 'package:saiyagym_mobile/core/database/app_database.dart';
 import 'package:saiyagym_mobile/core/database/database_provider.dart';
 import 'package:saiyagym_mobile/core/network/api_client.dart';
+import 'package:saiyagym_mobile/core/notifications/notification_channels.dart';
 import 'package:saiyagym_mobile/core/storage/token_storage.dart';
 import 'package:saiyagym_mobile/core/sync/connectivity_monitor.dart';
 import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
@@ -23,6 +24,7 @@ import 'package:saiyagym_mobile/features/sounds/data/sound_preview.dart';
 import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
 
 import 'fake_alarm_sound_platform.dart';
+import 'fake_notification_channels.dart';
 import 'fake_sync_api.dart';
 import 'in_memory_token_storage.dart';
 
@@ -77,6 +79,8 @@ List<Override> testInfraOverrides({
   SilentDeviceServices? device,
   ReminderScheduler? reminders,
   SilentSoundPreview? preview,
+  FakeAlarmSoundPlatform? soundPlatform,
+  FakeNotificationChannels? channels,
 }) {
   final db = database ?? testDatabase();
   final services = device ?? SilentDeviceServices();
@@ -91,7 +95,12 @@ List<Override> testInfraOverrides({
     appDatabaseProvider.overrideWithValue(db),
     restAlarmProvider.overrideWithValue(services),
     // No native audio / MediaStore and no device-specific target in tests.
-    alarmSoundPlatformProvider.overrideWithValue(FakeAlarmSoundPlatform()),
+    alarmSoundPlatformProvider.overrideWithValue(
+      soundPlatform ?? FakeAlarmSoundPlatform(),
+    ),
+    notificationChannelsProvider.overrideWithValue(
+      channels ?? FakeNotificationChannels(),
+    ),
     soundTargetProvider.overrideWithValue(SoundTarget.none),
     soundPreviewProvider.overrideWithValue(preview ?? SilentSoundPreview()),
     hapticsProvider.overrideWithValue(services),

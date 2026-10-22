@@ -645,7 +645,7 @@ as String?,
 /// @nodoc
 mixin _$PreferencesModel {
 
- String get units; String get theme; String get language; int get defaultRestSeconds; int get firstDayOfWeek; String? get restSoundId;
+ String get units; String get theme; String get language; int get defaultRestSeconds; int get firstDayOfWeek; String? get restSoundId; String? get trainingReminderSoundId; String? get weighInSoundId;
 /// Create a copy of PreferencesModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -659,20 +659,20 @@ $PreferencesModelCopyWith<PreferencesModel> get copyWith => _$PreferencesModelCo
 @override
 bool operator ==(Object other) {
   final _this = this as PreferencesModel;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PreferencesModel&&(identical(other.units, _this.units) || other.units == _this.units)&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.language, _this.language) || other.language == _this.language)&&(identical(other.defaultRestSeconds, _this.defaultRestSeconds) || other.defaultRestSeconds == _this.defaultRestSeconds)&&(identical(other.firstDayOfWeek, _this.firstDayOfWeek) || other.firstDayOfWeek == _this.firstDayOfWeek)&&(identical(other.restSoundId, _this.restSoundId) || other.restSoundId == _this.restSoundId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PreferencesModel&&(identical(other.units, _this.units) || other.units == _this.units)&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.language, _this.language) || other.language == _this.language)&&(identical(other.defaultRestSeconds, _this.defaultRestSeconds) || other.defaultRestSeconds == _this.defaultRestSeconds)&&(identical(other.firstDayOfWeek, _this.firstDayOfWeek) || other.firstDayOfWeek == _this.firstDayOfWeek)&&(identical(other.restSoundId, _this.restSoundId) || other.restSoundId == _this.restSoundId)&&(identical(other.trainingReminderSoundId, _this.trainingReminderSoundId) || other.trainingReminderSoundId == _this.trainingReminderSoundId)&&(identical(other.weighInSoundId, _this.weighInSoundId) || other.weighInSoundId == _this.weighInSoundId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as PreferencesModel;
-  return Object.hash(runtimeType,_this.units,_this.theme,_this.language,_this.defaultRestSeconds,_this.firstDayOfWeek,_this.restSoundId);
+  return Object.hash(runtimeType,_this.units,_this.theme,_this.language,_this.defaultRestSeconds,_this.firstDayOfWeek,_this.restSoundId,_this.trainingReminderSoundId,_this.weighInSoundId);
 }
 
 @override
 String toString() {
   final _this = this as PreferencesModel;
-  return 'PreferencesModel(units: ${_this.units}, theme: ${_this.theme}, language: ${_this.language}, defaultRestSeconds: ${_this.defaultRestSeconds}, firstDayOfWeek: ${_this.firstDayOfWeek}, restSoundId: ${_this.restSoundId})';
+  return 'PreferencesModel(units: ${_this.units}, theme: ${_this.theme}, language: ${_this.language}, defaultRestSeconds: ${_this.defaultRestSeconds}, firstDayOfWeek: ${_this.firstDayOfWeek}, restSoundId: ${_this.restSoundId}, trainingReminderSoundId: ${_this.trainingReminderSoundId}, weighInSoundId: ${_this.weighInSoundId})';
 }
 
 
@@ -683,7 +683,7 @@ abstract mixin class $PreferencesModelCopyWith<$Res>  {
   factory $PreferencesModelCopyWith(PreferencesModel value, $Res Function(PreferencesModel) _then) = _$PreferencesModelCopyWithImpl;
 @useResult
 $Res call({
- String units, String theme, String language, int defaultRestSeconds, int firstDayOfWeek, String? restSoundId
+ String units, String theme, String language, int defaultRestSeconds, int firstDayOfWeek, String? restSoundId, String? trainingReminderSoundId, String? weighInSoundId
 });
 
 
@@ -700,7 +700,7 @@ class _$PreferencesModelCopyWithImpl<$Res>
 
 /// Create a copy of PreferencesModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,Object? restSoundId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,Object? restSoundId = freezed,Object? trainingReminderSoundId = freezed,Object? weighInSoundId = freezed,}) {
   return _then(PreferencesModel(
 units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
 as String,theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
@@ -708,6 +708,8 @@ as String,language: null == language ? _self.language : language // ignore: cast
 as String,defaultRestSeconds: null == defaultRestSeconds ? _self.defaultRestSeconds : defaultRestSeconds // ignore: cast_nullable_to_non_nullable
 as int,firstDayOfWeek: null == firstDayOfWeek ? _self.firstDayOfWeek : firstDayOfWeek // ignore: cast_nullable_to_non_nullable
 as int,restSoundId: freezed == restSoundId ? _self.restSoundId : restSoundId // ignore: cast_nullable_to_non_nullable
+as String?,trainingReminderSoundId: freezed == trainingReminderSoundId ? _self.trainingReminderSoundId : trainingReminderSoundId // ignore: cast_nullable_to_non_nullable
+as String?,weighInSoundId: freezed == weighInSoundId ? _self.weighInSoundId : weighInSoundId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -793,10 +795,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId,  String? trainingReminderSoundId,  String? weighInSoundId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PreferencesModel() when $default != null:
-return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId);case _:
+return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId,_that.trainingReminderSoundId,_that.weighInSoundId);case _:
   return orElse();
 
 }
@@ -814,10 +816,10 @@ return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId,  String? trainingReminderSoundId,  String? weighInSoundId)  $default,) {final _that = this;
 switch (_that) {
 case _PreferencesModel():
-return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId);case _:
+return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId,_that.trainingReminderSoundId,_that.weighInSoundId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -834,10 +836,10 @@ return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId,  String? trainingReminderSoundId,  String? weighInSoundId)?  $default,) {final _that = this;
 switch (_that) {
 case _PreferencesModel() when $default != null:
-return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId);case _:
+return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId,_that.trainingReminderSoundId,_that.weighInSoundId);case _:
   return null;
 
 }
@@ -849,7 +851,7 @@ return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,
 @JsonSerializable()
 
 class _PreferencesModel implements PreferencesModel {
-  const _PreferencesModel({required this.units, required this.theme, required this.language, required this.defaultRestSeconds, required this.firstDayOfWeek, this.restSoundId});
+  const _PreferencesModel({required this.units, required this.theme, required this.language, required this.defaultRestSeconds, required this.firstDayOfWeek, this.restSoundId, this.trainingReminderSoundId, this.weighInSoundId});
   factory _PreferencesModel.fromJson(Map<String, dynamic> json) => _$PreferencesModelFromJson(json);
 
 @override final  String units;
@@ -858,6 +860,8 @@ class _PreferencesModel implements PreferencesModel {
 @override final  int defaultRestSeconds;
 @override final  int firstDayOfWeek;
 @override final  String? restSoundId;
+@override final  String? trainingReminderSoundId;
+@override final  String? weighInSoundId;
 
 /// Create a copy of PreferencesModel
 /// with the given fields replaced by the non-null parameter values.
@@ -872,18 +876,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PreferencesModel&&(identical(other.units, units) || other.units == units)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.language, language) || other.language == language)&&(identical(other.defaultRestSeconds, defaultRestSeconds) || other.defaultRestSeconds == defaultRestSeconds)&&(identical(other.firstDayOfWeek, firstDayOfWeek) || other.firstDayOfWeek == firstDayOfWeek)&&(identical(other.restSoundId, restSoundId) || other.restSoundId == restSoundId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PreferencesModel&&(identical(other.units, units) || other.units == units)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.language, language) || other.language == language)&&(identical(other.defaultRestSeconds, defaultRestSeconds) || other.defaultRestSeconds == defaultRestSeconds)&&(identical(other.firstDayOfWeek, firstDayOfWeek) || other.firstDayOfWeek == firstDayOfWeek)&&(identical(other.restSoundId, restSoundId) || other.restSoundId == restSoundId)&&(identical(other.trainingReminderSoundId, trainingReminderSoundId) || other.trainingReminderSoundId == trainingReminderSoundId)&&(identical(other.weighInSoundId, weighInSoundId) || other.weighInSoundId == weighInSoundId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,units,theme,language,defaultRestSeconds,firstDayOfWeek,restSoundId);
+    return Object.hash(runtimeType,units,theme,language,defaultRestSeconds,firstDayOfWeek,restSoundId,trainingReminderSoundId,weighInSoundId);
 }
 
 @override
 String toString() {
-    return 'PreferencesModel(units: $units, theme: $theme, language: $language, defaultRestSeconds: $defaultRestSeconds, firstDayOfWeek: $firstDayOfWeek, restSoundId: $restSoundId)';
+    return 'PreferencesModel(units: $units, theme: $theme, language: $language, defaultRestSeconds: $defaultRestSeconds, firstDayOfWeek: $firstDayOfWeek, restSoundId: $restSoundId, trainingReminderSoundId: $trainingReminderSoundId, weighInSoundId: $weighInSoundId)';
 }
 
 
@@ -894,7 +898,7 @@ abstract mixin class _$PreferencesModelCopyWith<$Res> implements $PreferencesMod
   factory _$PreferencesModelCopyWith(_PreferencesModel value, $Res Function(_PreferencesModel) _then) = __$PreferencesModelCopyWithImpl;
 @override @useResult
 $Res call({
- String units, String theme, String language, int defaultRestSeconds, int firstDayOfWeek, String? restSoundId
+ String units, String theme, String language, int defaultRestSeconds, int firstDayOfWeek, String? restSoundId, String? trainingReminderSoundId, String? weighInSoundId
 });
 
 
@@ -911,7 +915,7 @@ class __$PreferencesModelCopyWithImpl<$Res>
 
 /// Create a copy of PreferencesModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,Object? restSoundId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,Object? restSoundId = freezed,Object? trainingReminderSoundId = freezed,Object? weighInSoundId = freezed,}) {
   return _then(_PreferencesModel(
 units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
 as String,theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
@@ -919,6 +923,8 @@ as String,language: null == language ? _self.language : language // ignore: cast
 as String,defaultRestSeconds: null == defaultRestSeconds ? _self.defaultRestSeconds : defaultRestSeconds // ignore: cast_nullable_to_non_nullable
 as int,firstDayOfWeek: null == firstDayOfWeek ? _self.firstDayOfWeek : firstDayOfWeek // ignore: cast_nullable_to_non_nullable
 as int,restSoundId: freezed == restSoundId ? _self.restSoundId : restSoundId // ignore: cast_nullable_to_non_nullable
+as String?,trainingReminderSoundId: freezed == trainingReminderSoundId ? _self.trainingReminderSoundId : trainingReminderSoundId // ignore: cast_nullable_to_non_nullable
+as String?,weighInSoundId: freezed == weighInSoundId ? _self.weighInSoundId : weighInSoundId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

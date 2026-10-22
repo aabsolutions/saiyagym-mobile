@@ -322,33 +322,43 @@ final class RestSoundsProvider
 
 String _$restSoundsHash() => r'43b3ed229fd9ce035344859d249c0ef332a3a295';
 
-/// Id of the user's EFFECTIVE sound (the API nulls it when deleted or the
-/// plan no longer allows it).
+/// Id of the user's EFFECTIVE sound for [purpose] (the API nulls it when
+/// deleted or the plan no longer allows it). Keep-alive: the (keep-alive)
+/// reminders depend on it.
 
-@ProviderFor(selectedRestSoundId)
-final selectedRestSoundIdProvider = SelectedRestSoundIdProvider._();
+@ProviderFor(selectedSoundId)
+final selectedSoundIdProvider = SelectedSoundIdFamily._();
 
-/// Id of the user's EFFECTIVE sound (the API nulls it when deleted or the
-/// plan no longer allows it).
+/// Id of the user's EFFECTIVE sound for [purpose] (the API nulls it when
+/// deleted or the plan no longer allows it). Keep-alive: the (keep-alive)
+/// reminders depend on it.
 
-final class SelectedRestSoundIdProvider
+final class SelectedSoundIdProvider
     extends $FunctionalProvider<String?, String?, String?>
     with $Provider<String?> {
-  /// Id of the user's EFFECTIVE sound (the API nulls it when deleted or the
-  /// plan no longer allows it).
-  SelectedRestSoundIdProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'selectedRestSoundIdProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+  /// Id of the user's EFFECTIVE sound for [purpose] (the API nulls it when
+  /// deleted or the plan no longer allows it). Keep-alive: the (keep-alive)
+  /// reminders depend on it.
+  SelectedSoundIdProvider._({
+    required SelectedSoundIdFamily super.from,
+    required SoundPurpose super.argument,
+  }) : super(
+         retry: null,
+         name: r'selectedSoundIdProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
-  String debugGetCreateSourceHash() => _$selectedRestSoundIdHash();
+  String debugGetCreateSourceHash() => _$selectedSoundIdHash();
+
+  @override
+  String toString() {
+    return r'selectedSoundIdProvider'
+        ''
+        '($argument)';
+  }
 
   @$internal
   @override
@@ -357,7 +367,8 @@ final class SelectedRestSoundIdProvider
 
   @override
   String? create(Ref ref) {
-    return selectedRestSoundId(ref);
+    final argument = this.argument as SoundPurpose;
+    return selectedSoundId(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -367,19 +378,54 @@ final class SelectedRestSoundIdProvider
       providerOverride: $SyncValueProvider<String?>(value),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SelectedSoundIdProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
-String _$selectedRestSoundIdHash() =>
-    r'aa6dab7eaa85e1946717b034708822ae9e30d8ba';
+String _$selectedSoundIdHash() => r'2d5fff28ca14ef2fe5cd903d0893772f2ea91b63';
 
-/// The selected sound if it is installed on this device right now; never
-/// touches the network. `null` = default sound.
+/// Id of the user's EFFECTIVE sound for [purpose] (the API nulls it when
+/// deleted or the plan no longer allows it). Keep-alive: the (keep-alive)
+/// reminders depend on it.
+
+final class SelectedSoundIdFamily extends $Family
+    with $FunctionalFamilyOverride<String?, SoundPurpose> {
+  SelectedSoundIdFamily._()
+    : super(
+        retry: null,
+        name: r'selectedSoundIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: false,
+      );
+
+  /// Id of the user's EFFECTIVE sound for [purpose] (the API nulls it when
+  /// deleted or the plan no longer allows it). Keep-alive: the (keep-alive)
+  /// reminders depend on it.
+
+  SelectedSoundIdProvider call(SoundPurpose purpose) =>
+      SelectedSoundIdProvider._(argument: purpose, from: this);
+
+  @override
+  String toString() => r'selectedSoundIdProvider';
+}
+
+/// The sound selected for [purpose] if it is installed on this device right
+/// now; never touches the network. `null` = default sound.
 
 @ProviderFor(installedAlarmSound)
-final installedAlarmSoundProvider = InstalledAlarmSoundProvider._();
+final installedAlarmSoundProvider = InstalledAlarmSoundFamily._();
 
-/// The selected sound if it is installed on this device right now; never
-/// touches the network. `null` = default sound.
+/// The sound selected for [purpose] if it is installed on this device right
+/// now; never touches the network. `null` = default sound.
 
 final class InstalledAlarmSoundProvider
     extends
@@ -389,21 +435,28 @@ final class InstalledAlarmSoundProvider
           FutureOr<AlarmSound?>
         >
     with $FutureModifier<AlarmSound?>, $FutureProvider<AlarmSound?> {
-  /// The selected sound if it is installed on this device right now; never
-  /// touches the network. `null` = default sound.
-  InstalledAlarmSoundProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'installedAlarmSoundProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+  /// The sound selected for [purpose] if it is installed on this device right
+  /// now; never touches the network. `null` = default sound.
+  InstalledAlarmSoundProvider._({
+    required InstalledAlarmSoundFamily super.from,
+    required SoundPurpose super.argument,
+  }) : super(
+         retry: null,
+         name: r'installedAlarmSoundProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$installedAlarmSoundHash();
+
+  @override
+  String toString() {
+    return r'installedAlarmSoundProvider'
+        ''
+        '($argument)';
+  }
 
   @$internal
   @override
@@ -413,52 +466,151 @@ final class InstalledAlarmSoundProvider
 
   @override
   FutureOr<AlarmSound?> create(Ref ref) {
-    return installedAlarmSound(ref);
+    final argument = this.argument as SoundPurpose;
+    return installedAlarmSound(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is InstalledAlarmSoundProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
   }
 }
 
 String _$installedAlarmSoundHash() =>
-    r'1c0d15facac0e4188619309ceeacc77a637e193f';
+    r'985fcaf6ced23fd56ce7154fa0c7031bdd26c200';
 
-/// Choosing / clearing the rest sound (keep-alive: a download may outlive
-/// the sheet that started it).
+/// The sound selected for [purpose] if it is installed on this device right
+/// now; never touches the network. `null` = default sound.
 
-@ProviderFor(RestSoundController)
-final restSoundControllerProvider = RestSoundControllerProvider._();
-
-/// Choosing / clearing the rest sound (keep-alive: a download may outlive
-/// the sheet that started it).
-final class RestSoundControllerProvider
-    extends $AsyncNotifierProvider<RestSoundController, void> {
-  /// Choosing / clearing the rest sound (keep-alive: a download may outlive
-  /// the sheet that started it).
-  RestSoundControllerProvider._()
+final class InstalledAlarmSoundFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<AlarmSound?>, SoundPurpose> {
+  InstalledAlarmSoundFamily._()
     : super(
-        from: null,
-        argument: null,
         retry: null,
-        name: r'restSoundControllerProvider',
-        isAutoDispose: false,
+        name: r'installedAlarmSoundProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
+        isAutoDispose: false,
       );
 
+  /// The sound selected for [purpose] if it is installed on this device right
+  /// now; never touches the network. `null` = default sound.
+
+  InstalledAlarmSoundProvider call(SoundPurpose purpose) =>
+      InstalledAlarmSoundProvider._(argument: purpose, from: this);
+
   @override
-  String debugGetCreateSourceHash() => _$restSoundControllerHash();
+  String toString() => r'installedAlarmSoundProvider';
+}
+
+/// Choosing / clearing the sound of one [purpose] (keep-alive: a download
+/// may outlive the sheet that started it). Edits ONLY that purpose's
+/// preference; afterwards the device keeps just the sounds some purpose
+/// still needs.
+
+@ProviderFor(SoundSelectionController)
+final soundSelectionControllerProvider = SoundSelectionControllerFamily._();
+
+/// Choosing / clearing the sound of one [purpose] (keep-alive: a download
+/// may outlive the sheet that started it). Edits ONLY that purpose's
+/// preference; afterwards the device keeps just the sounds some purpose
+/// still needs.
+final class SoundSelectionControllerProvider
+    extends $AsyncNotifierProvider<SoundSelectionController, void> {
+  /// Choosing / clearing the sound of one [purpose] (keep-alive: a download
+  /// may outlive the sheet that started it). Edits ONLY that purpose's
+  /// preference; afterwards the device keeps just the sounds some purpose
+  /// still needs.
+  SoundSelectionControllerProvider._({
+    required SoundSelectionControllerFamily super.from,
+    required SoundPurpose super.argument,
+  }) : super(
+         retry: null,
+         name: r'soundSelectionControllerProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$soundSelectionControllerHash();
+
+  @override
+  String toString() {
+    return r'soundSelectionControllerProvider'
+        ''
+        '($argument)';
+  }
 
   @$internal
   @override
-  RestSoundController create() => RestSoundController();
+  SoundSelectionController create() => SoundSelectionController();
+
+  @override
+  bool operator ==(Object other) {
+    return other is SoundSelectionControllerProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
-String _$restSoundControllerHash() =>
-    r'448426721b77f5e36f90f5a1944a65c9137cbf27';
+String _$soundSelectionControllerHash() =>
+    r'e180b492e4cf2f3184d6abaee41e5dd1fd1cfc31';
 
-/// Choosing / clearing the rest sound (keep-alive: a download may outlive
-/// the sheet that started it).
+/// Choosing / clearing the sound of one [purpose] (keep-alive: a download
+/// may outlive the sheet that started it). Edits ONLY that purpose's
+/// preference; afterwards the device keeps just the sounds some purpose
+/// still needs.
 
-abstract class _$RestSoundController extends $AsyncNotifier<void> {
-  FutureOr<void> build();
+final class SoundSelectionControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          SoundSelectionController,
+          AsyncValue<void>,
+          void,
+          FutureOr<void>,
+          SoundPurpose
+        > {
+  SoundSelectionControllerFamily._()
+    : super(
+        retry: null,
+        name: r'soundSelectionControllerProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: false,
+      );
+
+  /// Choosing / clearing the sound of one [purpose] (keep-alive: a download
+  /// may outlive the sheet that started it). Edits ONLY that purpose's
+  /// preference; afterwards the device keeps just the sounds some purpose
+  /// still needs.
+
+  SoundSelectionControllerProvider call(SoundPurpose purpose) =>
+      SoundSelectionControllerProvider._(argument: purpose, from: this);
+
+  @override
+  String toString() => r'soundSelectionControllerProvider';
+}
+
+/// Choosing / clearing the sound of one [purpose] (keep-alive: a download
+/// may outlive the sheet that started it). Edits ONLY that purpose's
+/// preference; afterwards the device keeps just the sounds some purpose
+/// still needs.
+
+abstract class _$SoundSelectionController extends $AsyncNotifier<void> {
+  late final _$args = ref.$arg as SoundPurpose;
+  SoundPurpose get purpose => _$args;
+
+  FutureOr<void> build(SoundPurpose purpose);
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
@@ -471,6 +623,58 @@ abstract class _$RestSoundController extends $AsyncNotifier<void> {
               Object?,
               Object?
             >;
-    return element.handleCreate(ref, build);
+    return element.handleCreate(ref, () => build(_$args));
   }
 }
+
+/// Device-wide upkeep of the installed sounds (keep-alive, no state).
+
+@ProviderFor(soundHousekeeping)
+final soundHousekeepingProvider = SoundHousekeepingProvider._();
+
+/// Device-wide upkeep of the installed sounds (keep-alive, no state).
+
+final class SoundHousekeepingProvider
+    extends
+        $FunctionalProvider<
+          SoundHousekeeping,
+          SoundHousekeeping,
+          SoundHousekeeping
+        >
+    with $Provider<SoundHousekeeping> {
+  /// Device-wide upkeep of the installed sounds (keep-alive, no state).
+  SoundHousekeepingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'soundHousekeepingProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$soundHousekeepingHash();
+
+  @$internal
+  @override
+  $ProviderElement<SoundHousekeeping> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SoundHousekeeping create(Ref ref) {
+    return soundHousekeeping(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SoundHousekeeping value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SoundHousekeeping>(value),
+    );
+  }
+}
+
+String _$soundHousekeepingHash() => r'307111b49ed3f2dc4bc5cb83d2d4be90dc403c8f';

@@ -62,6 +62,10 @@ abstract class UserPreferences with _$UserPreferences {
     /// Rest-alarm sound. The API returns the EFFECTIVE id: `null` when none
     /// is chosen, it was deleted, or the plan no longer allows it.
     String? restSoundId,
+
+    /// Same contract as [restSoundId], for the training / weigh-in reminders.
+    String? trainingReminderSoundId,
+    String? weighInSoundId,
   }) = _UserPreferences;
 }
 

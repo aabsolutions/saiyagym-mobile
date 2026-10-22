@@ -9,21 +9,25 @@ import 'package:saiyagym_mobile/features/plans/domain/entitlements.dart';
 import 'package:saiyagym_mobile/features/plans/presentation/upgrade_cta.dart';
 import 'package:saiyagym_mobile/features/sounds/data/sound_preview.dart';
 import 'package:saiyagym_mobile/features/sounds/domain/rest_sound.dart';
+import 'package:saiyagym_mobile/features/sounds/domain/sound_purpose.dart';
+import 'package:saiyagym_mobile/features/sounds/presentation/sound_titles.dart';
 import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
 
-Future<void> showSoundPickerSheet(BuildContext context) =>
+Future<void> showSoundPickerSheet(BuildContext context, SoundPurpose purpose) =>
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (_) => const SoundPickerSheet(),
+      builder: (_) => SoundPickerSheet(purpose: purpose),
     );
 
-/// Rest-alarm sounds: the default one plus the catalog. Premium sounds
+/// Sounds for one [purpose]: the default one plus the catalog. Premium sounds
 /// the plan lacks are shown locked; tapping one explains the upgrade and
 /// sends NOTHING (the API would reject it anyway).
 class SoundPickerSheet extends ConsumerStatefulWidget {
-  const SoundPickerSheet({super.key});
+  const SoundPickerSheet({required this.purpose, super.key});
+
+  final SoundPurpose purpose;
 
   @override
   ConsumerState<SoundPickerSheet> createState() => _SoundPickerSheetState();
@@ -47,13 +51,16 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
     super.dispose();
   }
 
+  SoundSelectionControllerProvider get _controller =>
+      soundSelectionControllerProvider(widget.purpose);
+
   Future<void> _select(RestSound sound) async {
     if (sound.locked) {
       setState(() => _showUpgrade = true);
       return;
     }
     setState(() => _showUpgrade = false);
-    await ref.read(restSoundControllerProvider.notifier).select(sound);
+    await ref.read(_controller.notifier).select(sound);
   }
 
   Future<void> _preview(RestSound sound) async {
@@ -68,13 +75,14 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final (titleKey, subtitleKey) = soundTitleKeys(widget.purpose);
     final sounds = ref.watch(restSoundsProvider);
-    final selected = ref.watch(selectedRestSoundIdProvider);
-    final saving = ref.watch(restSoundControllerProvider);
+    final selected = ref.watch(selectedSoundIdProvider(widget.purpose));
+    final saving = ref.watch(_controller);
 
     // A premium rejection from the API (plan changed meanwhile) also ends
     // in the upgrade explanation; other errors are a snack bar.
-    ref.listen(restSoundControllerProvider, (_, next) {
+    ref.listen(_controller, (_, next) {
       if (next case AsyncError(:final error)) {
         if (UpgradeReason.fromError(error) != null) {
           setState(() => _showUpgrade = true);
@@ -95,11 +103,11 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           children: [
             Text(
-              context.tr('sounds.title'),
+              context.tr(titleKey),
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 4),
-            Text(context.tr('sounds.subtitle')),
+            Text(context.tr(subtitleKey)),
             if (saving.isLoading)
               const Padding(
                 padding: EdgeInsets.only(top: 12),
@@ -124,11 +132,7 @@ class _SoundPickerSheetState extends ConsumerState<SoundPickerSheet> {
                   ? null
                   : () {
                       setState(() => _showUpgrade = false);
-                      unawaited(
-                        ref
-                            .read(restSoundControllerProvider.notifier)
-                            .useDefault(),
-                      );
+                      unawaited(ref.read(_controller.notifier).useDefault());
                     },
             ),
             CachedView<List<RestSound>>(

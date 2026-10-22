@@ -105,7 +105,7 @@ final class SyncCoordinatorProvider
   }
 }
 
-String _$syncCoordinatorHash() => r'ea25dfa1a4a632d8c116d562d5a02b20a6f521af';
+String _$syncCoordinatorHash() => r'1a779d61b2fa243774a9bebc9bac94f5d140dd14';
 
 /// Decides WHEN to sync (the service decides how):
 /// sign-in / app open, network back, app resumed or sent to background,

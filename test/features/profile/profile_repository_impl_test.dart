@@ -61,12 +61,14 @@ void main() {
     },
   );
 
-  test('restSoundId: id is sent, reset sends an explicit null', () async {
+  test('soundIds: id is sent, null is sent explicitly', () async {
     await repository.updateMe(
-      preferences: const PreferencesUpdate(restSoundId: 'sound-1'),
+      preferences: const PreferencesUpdate(
+        soundIds: {'restSoundId': 'sound-1'},
+      ),
     );
     await repository.updateMe(
-      preferences: const PreferencesUpdate(resetRestSound: true),
+      preferences: const PreferencesUpdate(soundIds: {'weighInSoundId': null}),
     );
     await repository.updateMe(
       preferences: const PreferencesUpdate(defaultRestSeconds: 60),
@@ -74,10 +76,10 @@ void main() {
 
     final bodies = [for (final r in api.requests) r.data as Map];
     expect(bodies[0]['preferences'], {'restSoundId': 'sound-1'});
-    expect(bodies[1]['preferences'], containsPair('restSoundId', null));
+    expect(bodies[1]['preferences'], containsPair('weighInSoundId', null));
     expect(
       (bodies[1]['preferences'] as Map).containsKey('restSoundId'),
-      isTrue,
+      isFalse,
     );
     // Unchanged when neither is set.
     expect(bodies[2]['preferences'], {'defaultRestSeconds': 60});

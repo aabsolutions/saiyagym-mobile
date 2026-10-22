@@ -8,6 +8,7 @@ import 'package:saiyagym_mobile/features/profile/domain/profile_repository.dart'
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
 import 'package:saiyagym_mobile/features/sounds/data/sound_preview.dart';
 import 'package:saiyagym_mobile/features/sounds/domain/rest_sound.dart';
+import 'package:saiyagym_mobile/features/sounds/domain/sound_purpose.dart';
 import 'package:saiyagym_mobile/features/sounds/presentation/sound_picker_sheet.dart';
 import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
 
@@ -58,13 +59,18 @@ void main() {
   late _FakeProfileRepository repository;
   late SilentSoundPreview preview;
 
-  Future<void> pumpSheet(WidgetTester tester) async {
+  Future<void> pumpSheet(
+    WidgetTester tester, {
+    SoundPurpose purpose = SoundPurpose.rest,
+  }) async {
     final user = testUser();
     repository = _FakeProfileRepository(user);
     preview = SilentSoundPreview();
     await pumpLocalized(
       tester,
-      const LocalizedTestApp(home: Scaffold(body: SoundPickerSheet())),
+      LocalizedTestApp(
+        home: Scaffold(body: SoundPickerSheet(purpose: purpose)),
+      ),
       infra: testInfraOverrides(preview: preview),
       overrides: [
         sessionControllerProvider.overrideWith(() => FakeSession.user(user)),
@@ -112,8 +118,7 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(repository.updates.single.restSoundId, 'free-1');
-    expect(repository.updates.single.resetRestSound, isFalse);
+    expect(repository.updates.single.soundIds, {'restSoundId': 'free-1'});
     expect(find.byType(UpgradeCta), findsNothing);
   });
 
@@ -124,7 +129,24 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    expect(repository.updates.single.resetRestSound, isTrue);
+    expect(repository.updates.single.soundIds, {'restSoundId': null});
+  });
+
+  testWidgets('each purpose edits only its own preference', (tester) async {
+    await pumpSheet(tester, purpose: SoundPurpose.weighIn);
+
+    expect(find.text('Sonido del recordatorio de pesaje'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('sound-free-1')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(repository.updates.single.soundIds, {'weighInSoundId': 'free-1'});
+
+    await tester.tap(find.byKey(const ValueKey('sound-default')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(repository.updates.last.soundIds, {'weighInSoundId': null});
   });
 
   testWidgets('preview plays the sound without selecting it', (tester) async {

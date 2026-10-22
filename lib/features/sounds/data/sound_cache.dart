@@ -9,15 +9,16 @@ import 'package:saiyagym_mobile/features/sounds/domain/rest_sound.dart';
 
 typedef SoundDirectory = Future<Directory> Function();
 
-/// Downloads the selected sound and installs it where the OS notification
-/// can play it. Works offline once installed: [installed] never touches
-/// the network.
+/// Downloads the sounds the user picked (one per `SoundPurpose`, possibly
+/// the same one) and installs them where the OS notification can play them.
+/// Works offline once installed: [installed] never touches the network.
 ///
 /// Downloads go through the plain upload client (no JWT to Cloudinary).
-/// Only ONE sound is kept installed (the selected one); the record of
-/// what is installed lives in `app_meta` (`sounds.installed`, soundId ->
-/// [AlarmSound]) so it is wiped with the rest of the local data on logout
-/// (the leftover files are pruned on the next install).
+/// The record of what is installed lives in `app_meta` (`sounds.installed`,
+/// soundId -> [AlarmSound]) so it is wiped with the rest of the local data
+/// on logout; the leftover files are then purged (see [purgeAll]). Every
+/// operation that changes the record runs one at a time: two purposes
+/// prefetching in parallel would otherwise lose each other's update.
 class SoundCache {
   SoundCache({
     required this._dio,
@@ -37,6 +38,8 @@ class SoundCache {
   /// Android: app files; iOS: `Library/Sounds` (where notifications look).
   final SoundDirectory _directory;
 
+  Future<void> _tail = Future.value();
+
   /// The installed sound for [soundId], or `null` when there is none, it is
   /// not installed or the OS copy is gone (caller falls back to default).
   Future<AlarmSound?> installed(String? soundId) async {
@@ -46,10 +49,18 @@ class SoundCache {
     return await _platform.isAvailable(sound) ? sound : null;
   }
 
-  /// Makes [sound] ready for the alarm (download + install) and discards
-  /// any other installed sound. `null` = couldn't (locked, offline,
-  /// unsupported device, install failure): the default sound is used.
-  Future<AlarmSound?> ensure(RestSound sound) async {
+  /// Is there a record of installed sounds at all? (Absent after a logout
+  /// wipe, which is how leftover files are recognised as orphans.)
+  Future<bool> hasRecord() async => await _db.readMeta(installedKey) != null;
+
+  /// Makes [sound] ready for the alarm (download + install). Only its own
+  /// entry is added / replaced; other sounds stay until [retain] drops them.
+  /// `null` = couldn't (locked, offline, unsupported device, install
+  /// failure): the default sound is used.
+  Future<AlarmSound?> ensure(RestSound sound) =>
+      _serialized(() => _ensure(sound));
+
+  Future<AlarmSound?> _ensure(RestSound sound) async {
     if (_target == SoundTarget.none || sound.locked) return null;
     final key = sound.assetKey;
     final url = _target == SoundTarget.android ? sound.mp3Url : sound.wavUrl;
@@ -59,26 +70,31 @@ class SoundCache {
     if (current != null && current.assetKey == key) return current;
 
     try {
-      final file = await _download(url, key);
-      final alarm = switch (_target) {
-        SoundTarget.android => await _installAndroid(sound, key, file),
-        SoundTarget.ios => AlarmSound(
-          assetKey: key,
-          name: sound.name,
-          localPath: file.path,
-          iosFileName: _fileName(key),
-        ),
-        SoundTarget.none => null,
-      };
-      if (alarm == null) return null;
-      final previous = await _read();
-      await _db.writeMeta(installedKey, jsonEncode({sound.id: alarm.toJson()}));
-      for (final old in previous.values) {
-        if (old.assetKey != key && old.androidUri != null) {
-          await _platform.remove(old.androidUri!);
-        }
+      // Another sound with the same asset: already downloaded and installed.
+      final shared = await _sharedInstall(sound.id, key);
+      final AlarmSound? alarm;
+      if (shared != null) {
+        alarm = shared;
+      } else {
+        final file = await _download(url, key);
+        alarm = switch (_target) {
+          SoundTarget.android => await _installAndroid(sound, key, file),
+          SoundTarget.ios => AlarmSound(
+            assetKey: key,
+            name: sound.name,
+            localPath: file.path,
+            iosFileName: _fileName(key),
+          ),
+          SoundTarget.none => null,
+        };
       }
-      await _prune(keep: file.path);
+      if (alarm == null) return null;
+      final record = await _read();
+      final previous = record[sound.id];
+      record[sound.id] = alarm;
+      await _write(record);
+      if (previous != null) await _removeIfUnused(previous, record);
+      await _prune(keep: record.values.map((s) => s.localPath).toSet());
       return alarm;
     } on DioException {
       return null;
@@ -86,6 +102,32 @@ class SoundCache {
       return null;
     }
   }
+
+  /// Keeps only the sounds in [soundIds] (those some purpose still needs):
+  /// the rest lose their OS copy and file, unless a kept one shares it.
+  Future<void> retain(Set<String> soundIds) => _serialized(() async {
+    final record = await _read();
+    final dropped = {
+      for (final entry in record.entries)
+        if (!soundIds.contains(entry.key)) entry.key: entry.value,
+    };
+    if (dropped.isEmpty) return;
+    record.removeWhere((id, _) => dropped.containsKey(id));
+    for (final old in dropped.values) {
+      await _removeIfUnused(old, record);
+    }
+    await _write(record);
+    await _prune(keep: record.values.map((s) => s.localPath).toSet());
+  });
+
+  /// Removes EVERYTHING this app installed (logout / another user): every
+  /// MediaStore item under the app folder, the record and the downloaded
+  /// files. Works even when the record is already gone.
+  Future<void> purgeAll() => _serialized(() async {
+    await _platform.removeAll();
+    await _db.deleteMeta(installedKey);
+    await _prune();
+  });
 
   /// Local file of [sound] for the preview (downloads it if needed), or
   /// `null` when it can't be had (locked / offline / unsupported).
@@ -101,15 +143,6 @@ class SoundCache {
     } on FileSystemException {
       return null;
     }
-  }
-
-  /// Forgets the installed sound (the selection went back to the default).
-  Future<void> clear() async {
-    for (final old in (await _read()).values) {
-      if (old.androidUri != null) await _platform.remove(old.androidUri!);
-    }
-    await _db.deleteMeta(installedKey);
-    await _prune();
   }
 
   String _fileName(String key) =>
@@ -139,14 +172,50 @@ class SoundCache {
     return await partial.rename(file.path);
   }
 
-  /// Deletes downloaded files other than [keep] (and half downloads).
-  Future<void> _prune({String? keep}) async {
+  /// Runs [action] after every earlier serialized one finished.
+  Future<T> _serialized<T>(Future<T> Function() action) {
+    final result = _tail.then((_) => action());
+    _tail = result.then<void>((_) {}, onError: (_) {});
+    return result;
+  }
+
+  Future<AlarmSound?> _sharedInstall(String soundId, String key) async {
+    for (final entry in (await _read()).entries) {
+      if (entry.key != soundId &&
+          entry.value.assetKey == key &&
+          await _platform.isAvailable(entry.value)) {
+        return entry.value;
+      }
+    }
+    return null;
+  }
+
+  /// Drops the OS copy of [old] unless a sound still in [record] uses it.
+  Future<void> _removeIfUnused(
+    AlarmSound old,
+    Map<String, AlarmSound> record,
+  ) async {
+    final uri = old.androidUri;
+    if (uri == null) return;
+    if (record.values.any((s) => s.assetKey == old.assetKey)) return;
+    await _platform.remove(uri);
+  }
+
+  /// An empty record stays present (`{}`): "no record" means wiped.
+  Future<void> _write(Map<String, AlarmSound> record) => _db.writeMeta(
+    installedKey,
+    jsonEncode({for (final e in record.entries) e.key: e.value.toJson()}),
+  );
+
+  /// Deletes downloaded files not in [keep] (and half downloads). Only
+  /// `.mp3` / `.wav` / `.part`: never the whole iOS `Library/Sounds` dir.
+  Future<void> _prune({Set<String> keep = const {}}) async {
     try {
       final dir = await _directory();
       if (!dir.existsSync()) return;
       final extension = _target == SoundTarget.android ? '.mp3' : '.wav';
       for (final entity in dir.listSync()) {
-        if (entity is! File || entity.path == keep) continue;
+        if (entity is! File || keep.contains(entity.path)) continue;
         if (entity.path.endsWith(extension) || entity.path.endsWith('.part')) {
           entity.deleteSync();
         }

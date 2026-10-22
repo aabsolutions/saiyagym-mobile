@@ -60,6 +60,12 @@ class MainActivity : FlutterActivity() {
                             main.post { result.success(null) }
                         }
                     }
+                    "removeAll" -> {
+                        io.execute {
+                            val removed = runCatching { removeAll() }.getOrDefault(0)
+                            main.post { result.success(removed) }
+                        }
+                    }
                     "preview" -> {
                         val path = call.argument<String>("path")
                         if (path != null) preview(path)
@@ -88,7 +94,7 @@ class MainActivity : FlutterActivity() {
 
         val collection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         val displayName = "$assetKey.mp3"
-        val relativePath = "Notifications/SaiyaGym"
+        val relativePath = RELATIVE_PATH
 
         // Already inserted by a previous run: reuse it.
         contentResolver.query(
@@ -130,6 +136,37 @@ class MainActivity : FlutterActivity() {
         contentResolver.query(Uri.parse(uri), arrayOf(MediaStore.Audio.Media._ID), null, null, null)
             ?.use { it.moveToFirst() } ?: false
 
+    /**
+     * Deletes every MediaStore item under Notifications/SaiyaGym. Scoped
+     * storage only returns the items this app owns; one it can't delete (e.g.
+     * left by a previous install) is skipped. Returns how many were deleted.
+     */
+    private fun removeAll(): Int {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return 0
+        val collection = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        val uris = mutableListOf<Uri>()
+        contentResolver.query(
+            collection,
+            arrayOf(MediaStore.Audio.Media._ID),
+            "${MediaStore.Audio.Media.RELATIVE_PATH} LIKE ?",
+            arrayOf("$RELATIVE_PATH%"),
+            null,
+        )?.use { cursor ->
+            while (cursor.moveToNext()) {
+                uris.add(Uri.withAppendedPath(collection, cursor.getLong(0).toString()))
+            }
+        }
+        var removed = 0
+        for (uri in uris) {
+            try {
+                if (contentResolver.delete(uri, null, null) > 0) removed++
+            } catch (e: SecurityException) {
+                // Not ours (includes RecoverableSecurityException): skip it.
+            }
+        }
+        return removed
+    }
+
     private fun preview(path: String) {
         stopPreview()
         try {
@@ -161,5 +198,6 @@ class MainActivity : FlutterActivity() {
 
     companion object {
         const val CHANNEL = "saiyagym/alarm_sound"
+        const val RELATIVE_PATH = "Notifications/SaiyaGym"
     }
 }

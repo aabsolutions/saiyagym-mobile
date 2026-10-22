@@ -633,7 +633,9 @@ as TrainingGoal?,
 mixin _$UserPreferences {
 
  UnitSystem get units; ThemePreference get theme; String get language; int get defaultRestSeconds;/// ISO weekday: 1 = Monday … 7 = Sunday.
- int get firstDayOfWeek;
+ int get firstDayOfWeek;/// Rest-alarm sound. The API returns the EFFECTIVE id: `null` when none
+/// is chosen, it was deleted, or the plan no longer allows it.
+ String? get restSoundId;
 /// Create a copy of UserPreferences
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -645,20 +647,20 @@ $UserPreferencesCopyWith<UserPreferences> get copyWith => _$UserPreferencesCopyW
 @override
 bool operator ==(Object other) {
   final _this = this as UserPreferences;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserPreferences&&(identical(other.units, _this.units) || other.units == _this.units)&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.language, _this.language) || other.language == _this.language)&&(identical(other.defaultRestSeconds, _this.defaultRestSeconds) || other.defaultRestSeconds == _this.defaultRestSeconds)&&(identical(other.firstDayOfWeek, _this.firstDayOfWeek) || other.firstDayOfWeek == _this.firstDayOfWeek));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserPreferences&&(identical(other.units, _this.units) || other.units == _this.units)&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.language, _this.language) || other.language == _this.language)&&(identical(other.defaultRestSeconds, _this.defaultRestSeconds) || other.defaultRestSeconds == _this.defaultRestSeconds)&&(identical(other.firstDayOfWeek, _this.firstDayOfWeek) || other.firstDayOfWeek == _this.firstDayOfWeek)&&(identical(other.restSoundId, _this.restSoundId) || other.restSoundId == _this.restSoundId));
 }
 
 
 @override
 int get hashCode {
   final _this = this as UserPreferences;
-  return Object.hash(runtimeType,_this.units,_this.theme,_this.language,_this.defaultRestSeconds,_this.firstDayOfWeek);
+  return Object.hash(runtimeType,_this.units,_this.theme,_this.language,_this.defaultRestSeconds,_this.firstDayOfWeek,_this.restSoundId);
 }
 
 @override
 String toString() {
   final _this = this as UserPreferences;
-  return 'UserPreferences(units: ${_this.units}, theme: ${_this.theme}, language: ${_this.language}, defaultRestSeconds: ${_this.defaultRestSeconds}, firstDayOfWeek: ${_this.firstDayOfWeek})';
+  return 'UserPreferences(units: ${_this.units}, theme: ${_this.theme}, language: ${_this.language}, defaultRestSeconds: ${_this.defaultRestSeconds}, firstDayOfWeek: ${_this.firstDayOfWeek}, restSoundId: ${_this.restSoundId})';
 }
 
 
@@ -669,7 +671,7 @@ abstract mixin class $UserPreferencesCopyWith<$Res>  {
   factory $UserPreferencesCopyWith(UserPreferences value, $Res Function(UserPreferences) _then) = _$UserPreferencesCopyWithImpl;
 @useResult
 $Res call({
- UnitSystem units, ThemePreference theme, String language, int defaultRestSeconds, int firstDayOfWeek
+ UnitSystem units, ThemePreference theme, String language, int defaultRestSeconds, int firstDayOfWeek, String? restSoundId
 });
 
 
@@ -686,14 +688,15 @@ class _$UserPreferencesCopyWithImpl<$Res>
 
 /// Create a copy of UserPreferences
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,Object? restSoundId = freezed,}) {
   return _then(UserPreferences(
 units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
 as UnitSystem,theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
 as ThemePreference,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
 as String,defaultRestSeconds: null == defaultRestSeconds ? _self.defaultRestSeconds : defaultRestSeconds // ignore: cast_nullable_to_non_nullable
 as int,firstDayOfWeek: null == firstDayOfWeek ? _self.firstDayOfWeek : firstDayOfWeek // ignore: cast_nullable_to_non_nullable
-as int,
+as int,restSoundId: freezed == restSoundId ? _self.restSoundId : restSoundId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -778,10 +781,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UnitSystem units,  ThemePreference theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UnitSystem units,  ThemePreference theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserPreferences() when $default != null:
-return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek);case _:
+return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId);case _:
   return orElse();
 
 }
@@ -799,10 +802,10 @@ return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UnitSystem units,  ThemePreference theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UnitSystem units,  ThemePreference theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId)  $default,) {final _that = this;
 switch (_that) {
 case _UserPreferences():
-return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek);case _:
+return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -819,10 +822,10 @@ return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UnitSystem units,  ThemePreference theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UnitSystem units,  ThemePreference theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId)?  $default,) {final _that = this;
 switch (_that) {
 case _UserPreferences() when $default != null:
-return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek);case _:
+return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId);case _:
   return null;
 
 }
@@ -834,7 +837,7 @@ return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,
 
 
 class _UserPreferences implements UserPreferences {
-  const _UserPreferences({this.units = UnitSystem.metric, this.theme = ThemePreference.system, this.language = 'es', this.defaultRestSeconds = 90, this.firstDayOfWeek = 1});
+  const _UserPreferences({this.units = UnitSystem.metric, this.theme = ThemePreference.system, this.language = 'es', this.defaultRestSeconds = 90, this.firstDayOfWeek = 1, this.restSoundId});
   
 
 @override@JsonKey() final  UnitSystem units;
@@ -843,6 +846,9 @@ class _UserPreferences implements UserPreferences {
 @override@JsonKey() final  int defaultRestSeconds;
 /// ISO weekday: 1 = Monday … 7 = Sunday.
 @override@JsonKey() final  int firstDayOfWeek;
+/// Rest-alarm sound. The API returns the EFFECTIVE id: `null` when none
+/// is chosen, it was deleted, or the plan no longer allows it.
+@override final  String? restSoundId;
 
 /// Create a copy of UserPreferences
 /// with the given fields replaced by the non-null parameter values.
@@ -854,18 +860,18 @@ _$UserPreferencesCopyWith<_UserPreferences> get copyWith => __$UserPreferencesCo
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserPreferences&&(identical(other.units, units) || other.units == units)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.language, language) || other.language == language)&&(identical(other.defaultRestSeconds, defaultRestSeconds) || other.defaultRestSeconds == defaultRestSeconds)&&(identical(other.firstDayOfWeek, firstDayOfWeek) || other.firstDayOfWeek == firstDayOfWeek));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserPreferences&&(identical(other.units, units) || other.units == units)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.language, language) || other.language == language)&&(identical(other.defaultRestSeconds, defaultRestSeconds) || other.defaultRestSeconds == defaultRestSeconds)&&(identical(other.firstDayOfWeek, firstDayOfWeek) || other.firstDayOfWeek == firstDayOfWeek)&&(identical(other.restSoundId, restSoundId) || other.restSoundId == restSoundId));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,units,theme,language,defaultRestSeconds,firstDayOfWeek);
+    return Object.hash(runtimeType,units,theme,language,defaultRestSeconds,firstDayOfWeek,restSoundId);
 }
 
 @override
 String toString() {
-    return 'UserPreferences(units: $units, theme: $theme, language: $language, defaultRestSeconds: $defaultRestSeconds, firstDayOfWeek: $firstDayOfWeek)';
+    return 'UserPreferences(units: $units, theme: $theme, language: $language, defaultRestSeconds: $defaultRestSeconds, firstDayOfWeek: $firstDayOfWeek, restSoundId: $restSoundId)';
 }
 
 
@@ -876,7 +882,7 @@ abstract mixin class _$UserPreferencesCopyWith<$Res> implements $UserPreferences
   factory _$UserPreferencesCopyWith(_UserPreferences value, $Res Function(_UserPreferences) _then) = __$UserPreferencesCopyWithImpl;
 @override @useResult
 $Res call({
- UnitSystem units, ThemePreference theme, String language, int defaultRestSeconds, int firstDayOfWeek
+ UnitSystem units, ThemePreference theme, String language, int defaultRestSeconds, int firstDayOfWeek, String? restSoundId
 });
 
 
@@ -893,14 +899,15 @@ class __$UserPreferencesCopyWithImpl<$Res>
 
 /// Create a copy of UserPreferences
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,Object? restSoundId = freezed,}) {
   return _then(_UserPreferences(
 units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
 as UnitSystem,theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
 as ThemePreference,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
 as String,defaultRestSeconds: null == defaultRestSeconds ? _self.defaultRestSeconds : defaultRestSeconds // ignore: cast_nullable_to_non_nullable
 as int,firstDayOfWeek: null == firstDayOfWeek ? _self.firstDayOfWeek : firstDayOfWeek // ignore: cast_nullable_to_non_nullable
-as int,
+as int,restSoundId: freezed == restSoundId ? _self.restSoundId : restSoundId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

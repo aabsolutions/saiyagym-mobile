@@ -13,13 +13,14 @@ import 'package:saiyagym_mobile/features/profile/domain/profile_repository.dart'
 
 part 'preferences_providers.g.dart';
 
-@riverpod
+// Keep-alive (stateless): RestSoundController, kept alive, saves through it.
+@Riverpod(keepAlive: true)
 ProfileRepository profileRepository(Ref ref) => ProfileRepositoryImpl(
   remote: ProfileRemoteDataSource(ref.watch(apiClientProvider)),
   local: ref.watch(authLocalDataSourceProvider),
 );
 
-@riverpod
+@Riverpod(keepAlive: true)
 UpdatePreferencesUseCase updatePreferencesUseCase(Ref ref) =>
     UpdatePreferencesUseCase(ref.watch(profileRepositoryProvider));
 

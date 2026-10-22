@@ -10,6 +10,7 @@ enum PlanFeature {
   fullStats,
   fullNutrition,
   dataExport,
+  premiumSounds,
 }
 
 /// Keys of `PlanLimitsDto`.

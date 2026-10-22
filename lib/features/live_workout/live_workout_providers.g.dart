@@ -48,7 +48,7 @@ final class RestAlarmProvider
   }
 }
 
-String _$restAlarmHash() => r'cd023e6a4e71adfc43332b3d81f5bbb836fba33a';
+String _$restAlarmHash() => r'e273a5baf87d7d6ab53332bd682e22bf0b39df6a';
 
 @ProviderFor(screenAwake)
 final screenAwakeProvider = ScreenAwakeProvider._();

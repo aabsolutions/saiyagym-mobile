@@ -7,11 +7,13 @@ import 'package:saiyagym_mobile/features/live_workout/data/start_plans.dart';
 import 'package:saiyagym_mobile/features/live_workout/data/training_settings.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
 import 'package:saiyagym_mobile/features/records/data/records_service.dart';
+import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
 
 part 'live_workout_providers.g.dart';
 
 @Riverpod(keepAlive: true)
-RestAlarm restAlarm(Ref ref) => NotificationRestAlarm();
+RestAlarm restAlarm(Ref ref) =>
+    NotificationRestAlarm(platform: ref.watch(alarmSoundPlatformProvider));
 
 @Riverpod(keepAlive: true)
 ScreenAwake screenAwake(Ref ref) => WakelockScreenAwake();

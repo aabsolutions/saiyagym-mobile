@@ -17,6 +17,7 @@ import 'package:saiyagym_mobile/features/live_workout/presentation/widgets/numbe
 import 'package:saiyagym_mobile/features/live_workout/presentation/widgets/rest_timer_bar.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/widgets/ticker.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
+import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
 
 class LiveWorkoutPage extends ConsumerStatefulWidget {
   const LiveWorkoutPage({super.key});
@@ -43,13 +44,29 @@ class _LiveWorkoutPageState extends ConsumerState<LiveWorkoutPage> {
       ref.read(liveWorkoutControllerProvider.notifier).alarmTitle = context.tr(
         'live.rest.notification',
       );
-      unawaited(
-        ref
-            .read(restAlarmProvider)
-            .prepare(channelName: context.tr('live.rest.channel')),
-      );
+      unawaited(_prepareAlarm(context.tr('live.rest.channel')));
       unawaited(_applyScreenOn());
     });
+  }
+
+  /// Prepares the rest alarm with the installed custom sound (offline-safe).
+  /// If the selected sound isn't installed yet (new device, failed download),
+  /// it is fetched in the background and the alarm re-prepared once it is.
+  Future<void> _prepareAlarm(String channelName) async {
+    final alarm = ref.read(restAlarmProvider);
+    final sounds = ref.read(restSoundControllerProvider.notifier);
+    final installed = await ref.read(installedAlarmSoundProvider.future);
+    if (!mounted) return;
+    await alarm.prepare(channelName: channelName, sound: installed);
+    if (!mounted ||
+        installed != null ||
+        ref.read(selectedRestSoundIdProvider) == null) {
+      return;
+    }
+    final fetched = await sounds.ensureSelectedInstalled();
+    if (fetched != null && mounted) {
+      await alarm.prepare(channelName: channelName, sound: fetched);
+    }
   }
 
   Future<void> _applyScreenOn() async {

@@ -27,12 +27,21 @@ class PreferencesUpdate {
     this.theme,
     this.language,
     this.defaultRestSeconds,
+    this.restSoundId,
+    this.resetRestSound = false,
   });
 
   final UnitSystem? units;
   final ThemePreference? theme;
   final String? language;
   final int? defaultRestSeconds;
+
+  /// Sound to use (`null` = leave as is; to go back to the default sound set
+  /// [resetRestSound], because `null` already means "unchanged").
+  final String? restSoundId;
+
+  /// Sends `restSoundId: null` (default sound). Wins over [restSoundId].
+  final bool resetRestSound;
 }
 
 abstract interface class ProfileRepository {

@@ -234,3 +234,15 @@
 - ~~Recuperar contraseña y verificación de email en la UI.~~ Hecho (ver arriba).
 - Sincronización offline (`/sync/push`, `/sync/pull`, outbox en Drift) y registro de sesiones en vivo.
 - ~~Al cerrar sesión, borrar también las tablas sincronizadas del usuario.~~ Hecho: `AppDatabase.wipe` cubre todas las tablas.
+
+## 2026-10-22 — Sonidos personalizados del descanso (rest-alarm-sounds)
+
+### Hecho
+- Feature `sounds/`: catalogo `GET /sounds` (cache `app_meta` por idioma), `SoundCache` (descarga con el cliente Dio plano, sin JWT; un solo sonido instalado; registro en `app_meta` `sounds.installed`), selector en Perfil + hoja con vista previa; los premium se ven bloqueados y tocar uno muestra `UpgradeCta` sin enviar PATCH.
+- `PreferencesUpdate.restSoundId` + `resetRestSound` (`null` ya significa "sin cambios"); `PlanFeature.premiumSounds`.
+- `RestAlarm.prepare({channelName, sound})`: canal Android `rest_timer_<assetKey>` con `UriAndroidNotificationSound`, borra canales `rest_timer_*` viejos, vuelve al canal `rest_timer` si falta el archivo / uri / offline; iOS usa `DarwinNotificationDetails(sound: <assetKey>.wav)`.
+- Nativo: `MainActivity.kt` (MethodChannel `saiyagym/alarm_sound`: install en MediaStore `Notifications/SaiyaGym` API 29+, exists, remove, preview) y `AppDelegate.swift` (preview con AVAudioPlayer).
+
+### Pendiente de verificar en dispositivo (M1, spike)
+- Entrega por MediaStore en un Android real y en OEMs (Xiaomi/Samsung); tamano real del wav `af_22050` para iOS; sonido de la notificacion con la app cerrada. Ver checklist en el apply-progress de SDD.
+- No se ejecuto build, tests ni analyze en esta tanda.

@@ -26,7 +26,7 @@ final class ProfileRepositoryProvider
         argument: null,
         retry: null,
         name: r'profileRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -54,7 +54,7 @@ final class ProfileRepositoryProvider
   }
 }
 
-String _$profileRepositoryHash() => r'd3b4ed6520aca61f4d1a1e3f262814e5a77d5d7e';
+String _$profileRepositoryHash() => r'535b0ab1bf90e39aad98a413ebceb05b1eeb76aa';
 
 @ProviderFor(updatePreferencesUseCase)
 final updatePreferencesUseCaseProvider = UpdatePreferencesUseCaseProvider._();
@@ -73,7 +73,7 @@ final class UpdatePreferencesUseCaseProvider
         argument: null,
         retry: null,
         name: r'updatePreferencesUseCaseProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -102,7 +102,7 @@ final class UpdatePreferencesUseCaseProvider
 }
 
 String _$updatePreferencesUseCaseHash() =>
-    r'c7d889cb08aed72e77d2d4aaa9b47362889bb5f0';
+    r'813109678de55f993df603cfc7f19961a1922b65';
 
 @ProviderFor(updateProfileUseCase)
 final updateProfileUseCaseProvider = UpdateProfileUseCaseProvider._();

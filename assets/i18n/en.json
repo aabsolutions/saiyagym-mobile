@@ -86,6 +86,14 @@
       "subtitle": "The timer starts with this. You can tweak it per exercise."
     }
   },
+  "sounds": {
+    "entry": "Rest sound",
+    "title": "Rest sound",
+    "subtitle": "Plays when the rest ends, even with the app closed.",
+    "default": "Default",
+    "premium": "Premium",
+    "preview": "Preview"
+  },
   "today": {
     "title": "Today",
     "emptyTitle": "Nothing planned for today",
@@ -252,7 +260,8 @@
       "autoProgression": "Automatic progression",
       "fullStats": "Full statistics",
       "fullNutrition": "All meal suggestions",
-      "dataExport": "Export your data (CSV/JSON)"
+      "dataExport": "Export your data (CSV/JSON)",
+      "premiumSounds": "Premium rest sounds"
     },
     "limits": {
       "routines": "custom routines",

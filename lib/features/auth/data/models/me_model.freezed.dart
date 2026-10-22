@@ -645,7 +645,7 @@ as String?,
 /// @nodoc
 mixin _$PreferencesModel {
 
- String get units; String get theme; String get language; int get defaultRestSeconds; int get firstDayOfWeek;
+ String get units; String get theme; String get language; int get defaultRestSeconds; int get firstDayOfWeek; String? get restSoundId;
 /// Create a copy of PreferencesModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -659,20 +659,20 @@ $PreferencesModelCopyWith<PreferencesModel> get copyWith => _$PreferencesModelCo
 @override
 bool operator ==(Object other) {
   final _this = this as PreferencesModel;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PreferencesModel&&(identical(other.units, _this.units) || other.units == _this.units)&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.language, _this.language) || other.language == _this.language)&&(identical(other.defaultRestSeconds, _this.defaultRestSeconds) || other.defaultRestSeconds == _this.defaultRestSeconds)&&(identical(other.firstDayOfWeek, _this.firstDayOfWeek) || other.firstDayOfWeek == _this.firstDayOfWeek));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PreferencesModel&&(identical(other.units, _this.units) || other.units == _this.units)&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.language, _this.language) || other.language == _this.language)&&(identical(other.defaultRestSeconds, _this.defaultRestSeconds) || other.defaultRestSeconds == _this.defaultRestSeconds)&&(identical(other.firstDayOfWeek, _this.firstDayOfWeek) || other.firstDayOfWeek == _this.firstDayOfWeek)&&(identical(other.restSoundId, _this.restSoundId) || other.restSoundId == _this.restSoundId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as PreferencesModel;
-  return Object.hash(runtimeType,_this.units,_this.theme,_this.language,_this.defaultRestSeconds,_this.firstDayOfWeek);
+  return Object.hash(runtimeType,_this.units,_this.theme,_this.language,_this.defaultRestSeconds,_this.firstDayOfWeek,_this.restSoundId);
 }
 
 @override
 String toString() {
   final _this = this as PreferencesModel;
-  return 'PreferencesModel(units: ${_this.units}, theme: ${_this.theme}, language: ${_this.language}, defaultRestSeconds: ${_this.defaultRestSeconds}, firstDayOfWeek: ${_this.firstDayOfWeek})';
+  return 'PreferencesModel(units: ${_this.units}, theme: ${_this.theme}, language: ${_this.language}, defaultRestSeconds: ${_this.defaultRestSeconds}, firstDayOfWeek: ${_this.firstDayOfWeek}, restSoundId: ${_this.restSoundId})';
 }
 
 
@@ -683,7 +683,7 @@ abstract mixin class $PreferencesModelCopyWith<$Res>  {
   factory $PreferencesModelCopyWith(PreferencesModel value, $Res Function(PreferencesModel) _then) = _$PreferencesModelCopyWithImpl;
 @useResult
 $Res call({
- String units, String theme, String language, int defaultRestSeconds, int firstDayOfWeek
+ String units, String theme, String language, int defaultRestSeconds, int firstDayOfWeek, String? restSoundId
 });
 
 
@@ -700,14 +700,15 @@ class _$PreferencesModelCopyWithImpl<$Res>
 
 /// Create a copy of PreferencesModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,Object? restSoundId = freezed,}) {
   return _then(PreferencesModel(
 units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
 as String,theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
 as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
 as String,defaultRestSeconds: null == defaultRestSeconds ? _self.defaultRestSeconds : defaultRestSeconds // ignore: cast_nullable_to_non_nullable
 as int,firstDayOfWeek: null == firstDayOfWeek ? _self.firstDayOfWeek : firstDayOfWeek // ignore: cast_nullable_to_non_nullable
-as int,
+as int,restSoundId: freezed == restSoundId ? _self.restSoundId : restSoundId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -792,10 +793,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PreferencesModel() when $default != null:
-return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek);case _:
+return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId);case _:
   return orElse();
 
 }
@@ -813,10 +814,10 @@ return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId)  $default,) {final _that = this;
 switch (_that) {
 case _PreferencesModel():
-return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek);case _:
+return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -833,10 +834,10 @@ return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String units,  String theme,  String language,  int defaultRestSeconds,  int firstDayOfWeek,  String? restSoundId)?  $default,) {final _that = this;
 switch (_that) {
 case _PreferencesModel() when $default != null:
-return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek);case _:
+return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,_that.firstDayOfWeek,_that.restSoundId);case _:
   return null;
 
 }
@@ -848,7 +849,7 @@ return $default(_that.units,_that.theme,_that.language,_that.defaultRestSeconds,
 @JsonSerializable()
 
 class _PreferencesModel implements PreferencesModel {
-  const _PreferencesModel({required this.units, required this.theme, required this.language, required this.defaultRestSeconds, required this.firstDayOfWeek});
+  const _PreferencesModel({required this.units, required this.theme, required this.language, required this.defaultRestSeconds, required this.firstDayOfWeek, this.restSoundId});
   factory _PreferencesModel.fromJson(Map<String, dynamic> json) => _$PreferencesModelFromJson(json);
 
 @override final  String units;
@@ -856,6 +857,7 @@ class _PreferencesModel implements PreferencesModel {
 @override final  String language;
 @override final  int defaultRestSeconds;
 @override final  int firstDayOfWeek;
+@override final  String? restSoundId;
 
 /// Create a copy of PreferencesModel
 /// with the given fields replaced by the non-null parameter values.
@@ -870,18 +872,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PreferencesModel&&(identical(other.units, units) || other.units == units)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.language, language) || other.language == language)&&(identical(other.defaultRestSeconds, defaultRestSeconds) || other.defaultRestSeconds == defaultRestSeconds)&&(identical(other.firstDayOfWeek, firstDayOfWeek) || other.firstDayOfWeek == firstDayOfWeek));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PreferencesModel&&(identical(other.units, units) || other.units == units)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.language, language) || other.language == language)&&(identical(other.defaultRestSeconds, defaultRestSeconds) || other.defaultRestSeconds == defaultRestSeconds)&&(identical(other.firstDayOfWeek, firstDayOfWeek) || other.firstDayOfWeek == firstDayOfWeek)&&(identical(other.restSoundId, restSoundId) || other.restSoundId == restSoundId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,units,theme,language,defaultRestSeconds,firstDayOfWeek);
+    return Object.hash(runtimeType,units,theme,language,defaultRestSeconds,firstDayOfWeek,restSoundId);
 }
 
 @override
 String toString() {
-    return 'PreferencesModel(units: $units, theme: $theme, language: $language, defaultRestSeconds: $defaultRestSeconds, firstDayOfWeek: $firstDayOfWeek)';
+    return 'PreferencesModel(units: $units, theme: $theme, language: $language, defaultRestSeconds: $defaultRestSeconds, firstDayOfWeek: $firstDayOfWeek, restSoundId: $restSoundId)';
 }
 
 
@@ -892,7 +894,7 @@ abstract mixin class _$PreferencesModelCopyWith<$Res> implements $PreferencesMod
   factory _$PreferencesModelCopyWith(_PreferencesModel value, $Res Function(_PreferencesModel) _then) = __$PreferencesModelCopyWithImpl;
 @override @useResult
 $Res call({
- String units, String theme, String language, int defaultRestSeconds, int firstDayOfWeek
+ String units, String theme, String language, int defaultRestSeconds, int firstDayOfWeek, String? restSoundId
 });
 
 
@@ -909,14 +911,15 @@ class __$PreferencesModelCopyWithImpl<$Res>
 
 /// Create a copy of PreferencesModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? units = null,Object? theme = null,Object? language = null,Object? defaultRestSeconds = null,Object? firstDayOfWeek = null,Object? restSoundId = freezed,}) {
   return _then(_PreferencesModel(
 units: null == units ? _self.units : units // ignore: cast_nullable_to_non_nullable
 as String,theme: null == theme ? _self.theme : theme // ignore: cast_nullable_to_non_nullable
 as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
 as String,defaultRestSeconds: null == defaultRestSeconds ? _self.defaultRestSeconds : defaultRestSeconds // ignore: cast_nullable_to_non_nullable
 as int,firstDayOfWeek: null == firstDayOfWeek ? _self.firstDayOfWeek : firstDayOfWeek // ignore: cast_nullable_to_non_nullable
-as int,
+as int,restSoundId: freezed == restSoundId ? _self.restSoundId : restSoundId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

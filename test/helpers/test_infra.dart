@@ -18,7 +18,11 @@ import 'package:saiyagym_mobile/features/live_workout/data/device_services.dart'
 import 'package:saiyagym_mobile/features/live_workout/live_workout_providers.dart';
 import 'package:saiyagym_mobile/features/reminders/data/reminder_scheduler.dart';
 import 'package:saiyagym_mobile/features/reminders/reminders_providers.dart';
+import 'package:saiyagym_mobile/features/sounds/data/alarm_sound_platform.dart';
+import 'package:saiyagym_mobile/features/sounds/data/sound_preview.dart';
+import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
 
+import 'fake_alarm_sound_platform.dart';
 import 'fake_sync_api.dart';
 import 'in_memory_token_storage.dart';
 
@@ -72,6 +76,7 @@ List<Override> testInfraOverrides({
   AppDatabase? database,
   SilentDeviceServices? device,
   ReminderScheduler? reminders,
+  SilentSoundPreview? preview,
 }) {
   final db = database ?? testDatabase();
   final services = device ?? SilentDeviceServices();
@@ -85,6 +90,10 @@ List<Override> testInfraOverrides({
     ),
     appDatabaseProvider.overrideWithValue(db),
     restAlarmProvider.overrideWithValue(services),
+    // No native audio / MediaStore and no device-specific target in tests.
+    alarmSoundPlatformProvider.overrideWithValue(FakeAlarmSoundPlatform()),
+    soundTargetProvider.overrideWithValue(SoundTarget.none),
+    soundPreviewProvider.overrideWithValue(preview ?? SilentSoundPreview()),
     hapticsProvider.overrideWithValue(services),
     screenAwakeProvider.overrideWithValue(services),
     tokenStorageProvider.overrideWithValue(storage),

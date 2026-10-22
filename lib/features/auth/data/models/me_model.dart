@@ -45,6 +45,7 @@ abstract class MeModel with _$MeModel {
       language: preferences.language,
       defaultRestSeconds: preferences.defaultRestSeconds,
       firstDayOfWeek: preferences.firstDayOfWeek,
+      restSoundId: preferences.restSoundId,
     ),
   );
 }
@@ -94,6 +95,7 @@ abstract class PreferencesModel with _$PreferencesModel {
     required String language,
     required int defaultRestSeconds,
     required int firstDayOfWeek,
+    String? restSoundId,
   }) = _PreferencesModel;
 
   factory PreferencesModel.fromJson(Map<String, dynamic> json) =>

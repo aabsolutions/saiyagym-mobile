@@ -12,7 +12,7 @@ class ProfileRemoteDataSource {
   final Dio _dio;
 
   /// `PATCH /users/me` with an `UpdateMeDto`.
-  Future<MeModel> updateMe(Map<String, Object> body) => guardApi(() async {
+  Future<MeModel> updateMe(Map<String, Object?> body) => guardApi(() async {
     final response = await _dio.patch<Map<String, dynamic>>(
       '/users/me',
       data: body,
@@ -78,12 +78,17 @@ class ProfileRepositoryImpl implements ProfileRepository {
     'goal': ?profile.goal?.name,
   };
 
-  static Map<String, Object> _preferencesJson(PreferencesUpdate preferences) =>
+  static Map<String, Object?> _preferencesJson(PreferencesUpdate preferences) =>
       {
         'units': ?preferences.units?.name,
         'theme': ?preferences.theme?.name,
         'language': ?preferences.language,
         'defaultRestSeconds': ?preferences.defaultRestSeconds,
+        // `null` is a real value here: it clears the choice (default sound).
+        if (preferences.resetRestSound)
+          'restSoundId': null
+        else
+          'restSoundId': ?preferences.restSoundId,
       };
 
   static String _isoDate(DateTime date) =>

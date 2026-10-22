@@ -55,6 +55,7 @@ _PreferencesModel _$PreferencesModelFromJson(Map<String, dynamic> json) =>
       language: json['language'] as String,
       defaultRestSeconds: (json['defaultRestSeconds'] as num).toInt(),
       firstDayOfWeek: (json['firstDayOfWeek'] as num).toInt(),
+      restSoundId: json['restSoundId'] as String?,
     );
 
 Map<String, dynamic> _$PreferencesModelToJson(_PreferencesModel instance) =>
@@ -64,6 +65,7 @@ Map<String, dynamic> _$PreferencesModelToJson(_PreferencesModel instance) =>
       'language': instance.language,
       'defaultRestSeconds': instance.defaultRestSeconds,
       'firstDayOfWeek': instance.firstDayOfWeek,
+      'restSoundId': instance.restSoundId,
     };
 
 _PlanModel _$PlanModelFromJson(Map<String, dynamic> json) => _PlanModel(

@@ -61,6 +61,28 @@ void main() {
     },
   );
 
+  test('restSoundId: id is sent, reset sends an explicit null', () async {
+    await repository.updateMe(
+      preferences: const PreferencesUpdate(restSoundId: 'sound-1'),
+    );
+    await repository.updateMe(
+      preferences: const PreferencesUpdate(resetRestSound: true),
+    );
+    await repository.updateMe(
+      preferences: const PreferencesUpdate(defaultRestSeconds: 60),
+    );
+
+    final bodies = [for (final r in api.requests) r.data as Map];
+    expect(bodies[0]['preferences'], {'restSoundId': 'sound-1'});
+    expect(bodies[1]['preferences'], containsPair('restSoundId', null));
+    expect(
+      (bodies[1]['preferences'] as Map).containsKey('restSoundId'),
+      isTrue,
+    );
+    // Unchanged when neither is set.
+    expect(bodies[2]['preferences'], {'defaultRestSeconds': 60});
+  });
+
   test('the updated user is cached for offline starts', () async {
     await repository.updateMe(
       preferences: const PreferencesUpdate(defaultRestSeconds: 180),

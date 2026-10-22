@@ -28,6 +28,14 @@ void main() {
       expect(premium.statsHistoryDays, isNull);
     });
 
+    test('premiumSounds is a known feature', () {
+      final entitlements = EntitlementsModel.fromJson(const {
+        'features': {'premiumSounds': true},
+      }).toEntity();
+
+      expect(entitlements.has(PlanFeature.premiumSounds), isTrue);
+    });
+
     test('ignores features and limits this app version does not know', () {
       final entitlements = EntitlementsModel.fromJson(const {
         'statsHistoryDays': 30,

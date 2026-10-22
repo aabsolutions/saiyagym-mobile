@@ -86,6 +86,14 @@
       "subtitle": "El temporizador arrancará con este tiempo. Puedes ajustarlo en cada ejercicio."
     }
   },
+  "sounds": {
+    "entry": "Sonido del descanso",
+    "title": "Sonido del descanso",
+    "subtitle": "Suena cuando termina el descanso, incluso con la app cerrada.",
+    "default": "Predeterminado",
+    "premium": "Premium",
+    "preview": "Escuchar"
+  },
   "today": {
     "title": "Hoy",
     "emptyTitle": "Nada planificado para hoy",
@@ -252,7 +260,8 @@
       "autoProgression": "Progresión automática",
       "fullStats": "Estadísticas completas",
       "fullNutrition": "Todas las sugerencias de comidas",
-      "dataExport": "Exportar tus datos (CSV/JSON)"
+      "dataExport": "Exportar tus datos (CSV/JSON)",
+      "premiumSounds": "Sonidos premium para el descanso"
     },
     "limits": {
       "routines": "rutinas propias",

@@ -58,6 +58,10 @@ abstract class UserPreferences with _$UserPreferences {
 
     /// ISO weekday: 1 = Monday … 7 = Sunday.
     @Default(1) int firstDayOfWeek,
+
+    /// Rest-alarm sound. The API returns the EFFECTIVE id: `null` when none
+    /// is chosen, it was deleted, or the plan no longer allows it.
+    String? restSoundId,
   }) = _UserPreferences;
 }
 

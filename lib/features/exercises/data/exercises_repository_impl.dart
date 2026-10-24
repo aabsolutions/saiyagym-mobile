@@ -27,8 +27,10 @@ class ExercisesRepositoryImpl implements ExercisesRepository {
 
   Exercise _decode(LocalDoc doc) => Exercise.fromJson({
     ...doc.json,
-    // Custom exercises keep their `{es, en}` map.
+    // Custom exercises keep their `{es, en}` maps.
     'name': localizedName(doc.json['name'], _languageCode()),
+    'description': localizedName(doc.json['description'], _languageCode()),
+    'instructions': localizedName(doc.json['instructions'], _languageCode()),
   });
 
   @override

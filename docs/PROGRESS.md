@@ -1,5 +1,22 @@
 # Progress — gymapp-mobile
 
+## 2026-10-24 — Biblioteca e instrucciones de ejecución
+
+### Hecho
+- **Navegación**: Hoy · Entrenar · **Biblioteca** · Progreso · Perfil. Biblioteca tiene pestañas primarias Ejercicios | Nutrición y cada sección conserva sus pestañas secundarias (`TabBar.secondary`): Lista | Tier list y Calculadora · Comidas · Guías · Alimentos. El atajo de Nutrición en Hoy abre `/library?section=nutrition`.
+- **Historial** pasa a Progreso (`/progress/history/...`), como primera tarjeta.
+- `ExercisesPage`/`NutritionPage` → `ExercisesView`/`NutritionView` (sin AppBar propio; el de la Biblioteca manda).
+- **Detalle de ejercicio**: sección "Cómo hacerlo" con la descripción y los pasos numerados, debajo de la guía. `Exercise.description`/`instructions` + `steps` (un paso por línea, sin numeración escrita a mano).
+- **Catálogo offline con textos**: la descarga pide `withText=true`; `catalog.version` en `app_meta` hace que una copia de la versión anterior (sin textos) se baje de nuevo al momento, sin esperar 24 h.
+
+### Verificación
+- `dart analyze` ✅ · `check_i18n` ✅ · `flutter test` 299/299 ✅ (nuevos: textos y versión del catálogo; Biblioteca → detalle con pasos → Nutrición; tests de navegación actualizados).
+
+### Decisiones y gotchas
+- Pestañas primarias + secundarias en vez de 6 destinos abajo (Material: máximo 5).
+- El `TabBarView` de la Biblioteca no se desliza (`NeverScrollableScrollPhysics`): el gesto es de las pestañas internas.
+- Un test de navegación que no encuentra la pestaña puede quedar colgado 10 min: correr la suite con `timeout`.
+
 ## 2026-10-23 — Guías de ejecución de ejercicios
 
 ### Hecho

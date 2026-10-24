@@ -101,6 +101,24 @@ class ExerciseDetailPage extends ConsumerWidget {
             const SizedBox(height: 8),
             GuideSection(status: guide),
           ],
+          if (exercise.description.isNotEmpty || exercise.steps.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(
+              context.tr('exercises.howTo'),
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            if (exercise.description.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  exercise.description,
+                  style: theme.textTheme.bodyLarge,
+                ),
+              ),
+            for (final (index, step) in exercise.steps.indexed)
+              _Step(number: index + 1, text: step),
+          ],
           const SizedBox(height: 16),
           Text(
             context.tr('exercises.tiers.title'),
@@ -158,6 +176,40 @@ class ExerciseDetailPage extends ConsumerWidget {
               exerciseId: exerciseId,
               formatter: formatter,
             ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One numbered execution step.
+class _Step extends StatelessWidget {
+  const _Step({required this.number, required this.text});
+
+  final int number;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 14,
+            backgroundColor: scheme.primaryContainer,
+            child: Text(
+              '$number',
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: scheme.onPrimaryContainer,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text, style: theme.textTheme.bodyLarge)),
         ],
       ),
     );

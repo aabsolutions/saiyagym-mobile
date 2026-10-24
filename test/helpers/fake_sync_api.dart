@@ -37,6 +37,7 @@ class FakeSyncApi {
   final pushes = <List<Map<String, dynamic>>>[];
   final pulls = <String?>[];
   final catalogPages = <int>[];
+  final catalogQueries = <Map<String, dynamic>>[];
 
   static List<Map<String, Object?>> applyAll(
     List<Map<String, dynamic>> changes,
@@ -80,6 +81,7 @@ class FakeSyncApi {
         final page = options.queryParameters['page'] as int;
         final limit = options.queryParameters['limit'] as int;
         catalogPages.add(page);
+        catalogQueries.add(options.queryParameters);
         return jsonBody({
           'items': catalog.skip((page - 1) * limit).take(limit).toList(),
           'meta': {'page': page, 'limit': limit, 'total': catalog.length},

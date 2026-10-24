@@ -53,12 +53,18 @@ void main() {
       await settle(tester);
 
       await checkGuidelines(tester); // Today
-      for (final tab in ['Entrenar', 'Historial', 'Progreso', 'Perfil']) {
+      for (final tab in ['Entrenar', 'Biblioteca', 'Progreso', 'Perfil']) {
         await openTab(tester, tab);
         await checkGuidelines(tester);
       }
+      // Today's shortcut opens the Library on its nutrition section.
       await openTab(tester, 'Hoy');
       await tester.tap(find.text('Nutrición'));
+      await settle(tester);
+      await checkGuidelines(tester);
+      // History now lives inside Progress.
+      await openTab(tester, 'Progreso');
+      await tester.tap(find.text('Historial'));
       await settle(tester);
       await checkGuidelines(tester);
 

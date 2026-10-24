@@ -12,6 +12,7 @@
   "nav": {
     "today": "Hoy",
     "train": "Entrenar",
+    "library": "Biblioteca",
     "history": "Historial",
     "progress": "Progreso",
     "profile": "Perfil"
@@ -175,7 +176,8 @@
     },
     "liftValue": "{lift}: {value}",
     "chartSummary": "{count} registros, de {first} a {last}",
-    "barSummary": "{count} semanas, la última: {last}"
+    "barSummary": "{count} semanas, la última: {last}",
+    "historyHint": "Tus sesiones anteriores"
   },
   "profile": {
     "title": "Perfil",
@@ -562,7 +564,8 @@
       "muscle": "Músculo principal",
       "equipment": "Equipo",
       "onlineHint": "Crear un ejercicio necesita conexión; después funciona sin red."
-    }
+    },
+    "howTo": "Cómo hacerlo"
   },
   "records": {
     "title": "Récords personales",
@@ -756,5 +759,10 @@
       "title": "Guía disponible con Premium",
       "message": "Tu plan muestra las guías de los primeros ejercicios de cada rutina. Con Premium ves todas."
     }
+  },
+  "library": {
+    "title": "Biblioteca",
+    "exercises": "Ejercicios",
+    "nutrition": "Nutrición"
   }
 }

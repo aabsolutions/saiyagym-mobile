@@ -49,6 +49,16 @@ class ProgressPage extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            Card(
+              margin: const EdgeInsets.only(bottom: 16),
+              child: ListTile(
+                leading: const Icon(Icons.history),
+                title: Text(context.tr('history.title')),
+                subtitle: Text(context.tr('progress.historyHint')),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => unawaited(context.push(AppRoutes.history)),
+              ),
+            ),
             const _BodyWeightCard(),
             const _ExerciseProgressCard(),
             const _MuscleVolumeCard(),

@@ -12,6 +12,7 @@
   "nav": {
     "today": "Today",
     "train": "Train",
+    "library": "Library",
     "history": "History",
     "progress": "Progress",
     "profile": "Profile"
@@ -175,7 +176,8 @@
     },
     "liftValue": "{lift}: {value}",
     "chartSummary": "{count} entries, from {first} to {last}",
-    "barSummary": "{count} weeks, latest: {last}"
+    "barSummary": "{count} weeks, latest: {last}",
+    "historyHint": "Your past sessions"
   },
   "profile": {
     "title": "Profile",
@@ -562,7 +564,8 @@
       "muscle": "Primary muscle",
       "equipment": "Equipment",
       "onlineHint": "Creating an exercise needs a connection; afterwards it works offline."
-    }
+    },
+    "howTo": "How to do it"
   },
   "records": {
     "title": "Personal records",
@@ -756,5 +759,10 @@
       "title": "Guide available with Premium",
       "message": "Your plan shows the guides of the first exercises of each routine. Premium shows them all."
     }
+  },
+  "library": {
+    "title": "Library",
+    "exercises": "Exercises",
+    "nutrition": "Nutrition"
   }
 }

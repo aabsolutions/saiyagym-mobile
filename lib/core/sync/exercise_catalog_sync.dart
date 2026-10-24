@@ -24,6 +24,11 @@ class ExerciseCatalogSync {
 
   static const languageKey = 'catalog.language';
   static const syncedAtKey = 'catalog.syncedAt';
+  static const versionKey = 'catalog.version';
+
+  /// Bump when the downloaded shape changes: older copies are re-downloaded
+  /// at once instead of waiting [maxAge]. 2 = with description/instructions.
+  static const version = '2';
 
   final Dio _dio;
   final AppDatabase _db;
@@ -36,6 +41,7 @@ class ExerciseCatalogSync {
     final language = await _db.readMeta(languageKey);
     final syncedAt = parseUtc(await _db.readMeta(syncedAtKey));
     return language != _languageCode() ||
+        await _db.readMeta(versionKey) != version ||
         syncedAt == null ||
         clock.now().toUtc().difference(syncedAt) > maxAge;
   }
@@ -69,6 +75,7 @@ class ExerciseCatalogSync {
       }
       await _db.writeMeta(languageKey, language);
       await _db.writeMeta(syncedAtKey, now.toIso8601String());
+      await _db.writeMeta(versionKey, version);
     });
     return items.length;
   }
@@ -79,7 +86,8 @@ class ExerciseCatalogSync {
       final body = await guardApi(() async {
         final response = await _dio.get<Map<String, dynamic>>(
           '/exercises',
-          queryParameters: {'page': page, 'limit': pageSize},
+          // Texts too: the detail page works offline.
+          queryParameters: {'page': page, 'limit': pageSize, 'withText': true},
         );
         return response.data!;
       });

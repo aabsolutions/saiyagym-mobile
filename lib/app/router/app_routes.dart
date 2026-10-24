@@ -1,5 +1,14 @@
 import 'package:saiyagym_mobile/features/progress_photos/domain/progress_photo.dart';
 
+/// Top tabs of the Library page (`?section=` query parameter).
+enum LibrarySection {
+  exercises,
+  nutrition;
+
+  static LibrarySection parse(String? name) =>
+      name == nutrition.name ? nutrition : exercises;
+}
+
 abstract final class AppRoutes {
   static const splash = '/splash';
   static const welcome = '/welcome';
@@ -11,11 +20,15 @@ abstract final class AppRoutes {
   // Bottom navigation tabs, in order.
   static const today = '/today';
   static const train = '/train';
-  static const history = '/history';
+  static const library = '/library';
   static const progress = '/progress';
   static const profile = '/profile';
 
-  static const nutrition = '/today/nutrition';
+  // Inside the Library tab: exercise catalog and nutrition, as top tabs.
+  static const String exercises = library;
+  static const nutrition = '/library?section=nutrition';
+  static const newExercise = '/library/exercises/new';
+  static String exercise(String id) => '/library/exercises/$id';
 
   static const editProfile = '/profile/edit';
   static const reminders = '/profile/reminders';
@@ -33,13 +46,11 @@ abstract final class AppRoutes {
   static String routine(String id) => '/train/routines/$id';
   static const newRoutine = '/train/routines/new';
   static String program(String id) => '/train/programs/$id';
-  static const exercises = '/train/exercises';
-  static const newExercise = '/train/exercises/new';
-  static String exercise(String id) => '/train/exercises/$id';
 
-  // Inside the History tab.
-  static String workoutDetail(String id) => '/history/workouts/$id';
-  static String workoutEdit(String id) => '/history/workouts/$id/edit';
+  // Session history lives inside the Progress tab.
+  static const history = '/progress/history';
+  static String workoutDetail(String id) => '/progress/history/workouts/$id';
+  static String workoutEdit(String id) => '/progress/history/workouts/$id/edit';
 
   /// Full screen, outside the tabs.
   static const workout = '/workout';

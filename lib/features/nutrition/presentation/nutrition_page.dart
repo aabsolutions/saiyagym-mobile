@@ -5,27 +5,25 @@ import 'package:saiyagym_mobile/features/nutrition/presentation/foods_tab.dart';
 import 'package:saiyagym_mobile/features/nutrition/presentation/guidelines_tab.dart';
 import 'package:saiyagym_mobile/features/nutrition/presentation/meals_tab.dart';
 
-/// Calculator · Meals · Guides · Foods, under an always-visible
-/// "orientative, consult a professional" notice (SPEC).
-class NutritionPage extends StatelessWidget {
-  const NutritionPage({super.key});
+/// Calculator · Meals · Guides · Foods (secondary tabs inside the Library),
+/// under an always-visible "orientative, consult a professional" notice
+/// (SPEC).
+class NutritionView extends StatelessWidget {
+  const NutritionView({super.key});
 
   @override
   Widget build(BuildContext context) => DefaultTabController(
     length: 4,
     child: Scaffold(
-      appBar: AppBar(
-        title: Text(context.tr('nutrition.title')),
-        bottom: TabBar(
-          isScrollable: true,
-          tabAlignment: TabAlignment.start,
-          tabs: [
-            Tab(text: context.tr('nutrition.tabs.calculator')),
-            Tab(text: context.tr('nutrition.tabs.meals')),
-            Tab(text: context.tr('nutrition.tabs.guides')),
-            Tab(text: context.tr('nutrition.tabs.foods')),
-          ],
-        ),
+      appBar: TabBar.secondary(
+        isScrollable: true,
+        tabAlignment: TabAlignment.start,
+        tabs: [
+          Tab(text: context.tr('nutrition.tabs.calculator')),
+          Tab(text: context.tr('nutrition.tabs.meals')),
+          Tab(text: context.tr('nutrition.tabs.guides')),
+          Tab(text: context.tr('nutrition.tabs.foods')),
+        ],
       ),
       body: const Column(
         children: [

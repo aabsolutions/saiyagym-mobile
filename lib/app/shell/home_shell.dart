@@ -14,7 +14,7 @@ class HomeShell extends StatelessWidget {
   static const List<(IconData, IconData, String)> _tabs = [
     (Icons.today_outlined, Icons.today, 'nav.today'),
     (Icons.fitness_center_outlined, Icons.fitness_center, 'nav.train'),
-    (Icons.history_outlined, Icons.history, 'nav.history'),
+    (Icons.menu_book_outlined, Icons.menu_book, 'nav.library'),
     (Icons.insights_outlined, Icons.insights, 'nav.progress'),
     (Icons.person_outline, Icons.person, 'nav.profile'),
   ];

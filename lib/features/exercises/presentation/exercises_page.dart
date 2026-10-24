@@ -18,16 +18,17 @@ import 'package:saiyagym_mobile/features/guides/guides_providers.dart';
 
 String tierLabel(Tier tier) => tier.name.toUpperCase();
 
-/// Catalog list with filters, and the S/A/B/C tier board. Offline: it is
-/// the local copy of the catalog plus the user's custom exercises.
-class ExercisesPage extends ConsumerStatefulWidget {
-  const ExercisesPage({super.key});
+/// Catalog list with filters, and the S/A/B/C tier board (secondary tabs
+/// inside the Library). Offline: it is the local copy of the catalog plus
+/// the user's custom exercises.
+class ExercisesView extends ConsumerStatefulWidget {
+  const ExercisesView({super.key});
 
   @override
-  ConsumerState<ExercisesPage> createState() => _ExercisesPageState();
+  ConsumerState<ExercisesView> createState() => _ExercisesViewState();
 }
 
-class _ExercisesPageState extends ConsumerState<ExercisesPage> {
+class _ExercisesViewState extends ConsumerState<ExercisesView> {
   ExerciseFilter _filter = const ExerciseFilter();
   late Goal _goal;
   TierSource _source = TierSource.global;
@@ -52,20 +53,19 @@ class _ExercisesPageState extends ConsumerState<ExercisesPage> {
 
     return DefaultTabController(
       length: 2,
+      // A Scaffold of its own for the "create" button (it lives in the
+      // Library page, which owns the app bar).
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(context.tr('exercises.title')),
-          bottom: TabBar(
-            tabs: [
-              Tab(text: context.tr('exercises.tabs.list')),
-              Tab(text: context.tr('exercises.tabs.tiers')),
-            ],
-          ),
-        ),
         floatingActionButton: FloatingActionButton.extended(
           icon: const Icon(Icons.add),
           label: Text(context.tr('exercises.create')),
           onPressed: () => context.go(AppRoutes.newExercise),
+        ),
+        appBar: TabBar.secondary(
+          tabs: [
+            Tab(text: context.tr('exercises.tabs.list')),
+            Tab(text: context.tr('exercises.tabs.tiers')),
+          ],
         ),
         body: AsyncBody(
           value: catalog,

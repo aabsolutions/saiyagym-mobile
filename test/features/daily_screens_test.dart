@@ -169,10 +169,49 @@ void main() {
     expect(find.text('Todavía no lo has entrenado.'), findsOneWidget);
   });
 
+  testWidgets('library: exercise with its execution steps, then nutrition', (
+    tester,
+  ) async {
+    await Seed(db).exercise(
+      'ex-bench',
+      'Press de banca',
+      description: 'Empuje horizontal en banco.',
+      instructions: 'Túmbate en el banco\n2. Baja al pecho\nEmpuja arriba',
+    );
+    await pumpApp(tester);
+    await openTab(tester, 'Biblioteca');
+    await tester.tap(find.text('Press de banca'));
+    await settle(tester);
+
+    expect(find.text('Cómo hacerlo'), findsOneWidget);
+    expect(find.text('Empuje horizontal en banco.'), findsOneWidget);
+    for (final step in [
+      'Túmbate en el banco',
+      'Baja al pecho',
+      'Empuja arriba',
+    ]) {
+      expect(find.text(step), findsOneWidget, reason: step);
+    }
+
+    // Tapping the current tab goes back to the Library, then Nutrition.
+    await openTab(tester, 'Biblioteca');
+    await tester.tap(
+      find.descendant(
+        of: find.byType(TabBar),
+        matching: find.text('Nutrición'),
+      ),
+    );
+    await settle(tester);
+    expect(find.text('Calculadora'), findsOneWidget);
+  });
+
   testWidgets('history: detail, calendar and delete', (tester) async {
     await Seed(db).workout(squatSession('w1', DateTime(2026, 10, 14, 18), 100));
     await pumpApp(tester);
-    await openTab(tester, 'Historial');
+    // History lives inside Progress.
+    await openTab(tester, 'Progreso');
+    await tester.tap(find.text('Historial'));
+    await settle(tester);
 
     await tester.tap(find.text('Calendario'));
     await settle(tester);

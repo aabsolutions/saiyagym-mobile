@@ -4,6 +4,8 @@ import 'package:saiyagym_mobile/core/training/training_types.dart';
 part 'exercise.freezed.dart';
 part 'exercise.g.dart';
 
+final _bullet = RegExp(r'^(?:\d+[.)]|[-•*])\s+');
+
 // Entities mirror the API documents on purpose: the sync wire format IS
 // the domain shape here, so they carry their own JSON mapping. What may be
 // SENT back is decided by the sync codecs, not by these classes.
@@ -45,10 +47,27 @@ abstract class Exercise with _$Exercise {
     @Default(Tiers()) Tiers tiers,
     @Default(false) bool isGlobal,
     @Default(false) bool isCustom,
+
+    /// In the UI language; '' when there is none.
+    @Default('') String description,
+
+    /// Execution steps, one per line, in the UI language.
+    @Default('') String instructions,
   }) = _Exercise;
+
+  const Exercise._();
 
   factory Exercise.fromJson(Map<String, dynamic> json) =>
       _$ExerciseFromJson(json);
+
+  /// The instructions as steps; a hand-typed "1." or "-" is dropped (the UI
+  /// numbers them).
+  List<String> get steps => [
+    for (final line in instructions.split('\n'))
+      if (line.trim().replaceFirst(_bullet, '') case final step
+          when step.isNotEmpty)
+        step,
+  ];
 }
 
 /// Favorite + personal tier per goal (`null` = use the global tier).

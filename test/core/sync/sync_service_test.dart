@@ -688,6 +688,41 @@ void main() {
     });
 
     test(
+      'texts come with the catalog; a copy from an older app is replaced',
+      () async {
+        await at(() async {
+          api.catalog = [
+            {
+              ...catalog(1).single,
+              'description': 'Empuje horizontal.',
+              'instructions': '1. Túmbate\nBaja\n\n- Empuja',
+            },
+          ];
+          await service.sync();
+          expect(api.catalogQueries.single['withText'], isTrue);
+
+          final exercises = ExercisesRepositoryImpl(
+            stores: stores,
+            writer: SyncWriter(db, queue),
+            languageCode: () => language,
+            dio: Dio(),
+          );
+          final exercise = (await exercises.find('g-0'))!;
+          expect(exercise.description, 'Empuje horizontal.');
+          // One step per line; hand-typed numbering/bullets dropped.
+          expect(exercise.steps, ['Túmbate', 'Baja', 'Empuja']);
+
+          // Stored by a version without texts: stale even if recent.
+          await db.deleteMeta(ExerciseCatalogSync.versionKey);
+          await service.sync();
+          expect(api.catalogPages, [1, 1]);
+          await service.sync();
+          expect(api.catalogPages, [1, 1], reason: 'fresh again');
+        });
+      },
+    );
+
+    test(
       'a new UI language downloads it again; removed ones are hidden',
       () async {
         await at(() async {

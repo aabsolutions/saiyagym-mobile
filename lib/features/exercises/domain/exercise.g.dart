@@ -48,6 +48,8 @@ _Exercise _$ExerciseFromJson(Map<String, dynamic> json) => _Exercise(
       : Tiers.fromJson(json['tiers'] as Map<String, dynamic>),
   isGlobal: json['isGlobal'] as bool? ?? false,
   isCustom: json['isCustom'] as bool? ?? false,
+  description: json['description'] as String? ?? '',
+  instructions: json['instructions'] as String? ?? '',
 );
 
 Map<String, dynamic> _$ExerciseToJson(_Exercise instance) => <String, dynamic>{
@@ -64,6 +66,8 @@ Map<String, dynamic> _$ExerciseToJson(_Exercise instance) => <String, dynamic>{
   'tiers': instance.tiers.toJson(),
   'isGlobal': instance.isGlobal,
   'isCustom': instance.isCustom,
+  'description': instance.description,
+  'instructions': instance.instructions,
 };
 
 _ExercisePref _$ExercisePrefFromJson(Map<String, dynamic> json) =>

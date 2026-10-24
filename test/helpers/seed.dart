@@ -17,6 +17,8 @@ class Seed {
     String name, {
     String muscle = 'quads',
     String? hypertrophyTier,
+    String? description,
+    String? instructions,
   }) => _stores.exercises.put(
     {
       'id': id,
@@ -25,6 +27,8 @@ class Seed {
       'equipment': 'barbell',
       'isGlobal': true,
       'tiers': {'hypertrophy': hypertrophyTier, 'powerlifting': null},
+      'description': ?description,
+      'instructions': ?instructions,
     },
     id: id,
     updatedAt: _at,

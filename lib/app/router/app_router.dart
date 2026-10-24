@@ -14,14 +14,13 @@ import 'package:saiyagym_mobile/features/body_metrics/presentation/body_metric_f
 import 'package:saiyagym_mobile/features/body_metrics/presentation/body_metrics_page.dart';
 import 'package:saiyagym_mobile/features/exercises/presentation/custom_exercise_page.dart';
 import 'package:saiyagym_mobile/features/exercises/presentation/exercise_detail_page.dart';
-import 'package:saiyagym_mobile/features/exercises/presentation/exercises_page.dart';
 import 'package:saiyagym_mobile/features/history/presentation/history_page.dart';
 import 'package:saiyagym_mobile/features/history/presentation/workout_detail_page.dart';
 import 'package:saiyagym_mobile/features/history/presentation/workout_edit_page.dart';
+import 'package:saiyagym_mobile/features/library/library_page.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_controller.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_page.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/workout_summary_page.dart';
-import 'package:saiyagym_mobile/features/nutrition/presentation/nutrition_page.dart';
 import 'package:saiyagym_mobile/features/onboarding/presentation/onboarding_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/edit_profile_page.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/profile_page.dart';
@@ -120,12 +119,6 @@ GoRouter appRouter(Ref ref) {
               GoRoute(
                 path: AppRoutes.today,
                 builder: (_, _) => const TodayPage(),
-                routes: [
-                  GoRoute(
-                    path: 'nutrition',
-                    builder: (_, _) => const NutritionPage(),
-                  ),
-                ],
               ),
             ],
           ),
@@ -149,23 +142,6 @@ GoRouter appRouter(Ref ref) {
                       programId: state.pathParameters['id']!,
                     ),
                   ),
-                  GoRoute(
-                    path: 'exercises',
-                    builder: (_, _) => const ExercisesPage(),
-                    routes: [
-                      // Before ':id', or 'new' would be read as an id.
-                      GoRoute(
-                        path: 'new',
-                        builder: (_, _) => const CustomExercisePage(),
-                      ),
-                      GoRoute(
-                        path: ':id',
-                        builder: (_, state) => ExerciseDetailPage(
-                          exerciseId: state.pathParameters['id']!,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ],
@@ -173,22 +149,23 @@ GoRouter appRouter(Ref ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.history,
-                builder: (_, _) => const HistoryPage(),
+                path: AppRoutes.library,
+                builder: (_, state) => LibraryPage(
+                  section: LibrarySection.parse(
+                    state.uri.queryParameters['section'],
+                  ),
+                ),
                 routes: [
+                  // Before ':id', or 'new' would be read as an id.
                   GoRoute(
-                    path: 'workouts/:id',
-                    builder: (_, state) => WorkoutDetailPage(
-                      workoutId: state.pathParameters['id']!,
+                    path: 'exercises/new',
+                    builder: (_, _) => const CustomExercisePage(),
+                  ),
+                  GoRoute(
+                    path: 'exercises/:id',
+                    builder: (_, state) => ExerciseDetailPage(
+                      exerciseId: state.pathParameters['id']!,
                     ),
-                    routes: [
-                      GoRoute(
-                        path: 'edit',
-                        builder: (_, state) => WorkoutEditPage(
-                          workoutId: state.pathParameters['id']!,
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
@@ -200,6 +177,26 @@ GoRouter appRouter(Ref ref) {
                 path: AppRoutes.progress,
                 builder: (_, _) => const ProgressPage(),
                 routes: [
+                  GoRoute(
+                    path: 'history',
+                    builder: (_, _) => const HistoryPage(),
+                    routes: [
+                      GoRoute(
+                        path: 'workouts/:id',
+                        builder: (_, state) => WorkoutDetailPage(
+                          workoutId: state.pathParameters['id']!,
+                        ),
+                        routes: [
+                          GoRoute(
+                            path: 'edit',
+                            builder: (_, state) => WorkoutEditPage(
+                              workoutId: state.pathParameters['id']!,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   GoRoute(
                     path: 'records',
                     builder: (_, _) => const RecordsPage(),

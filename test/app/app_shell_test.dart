@@ -33,7 +33,7 @@ void main() {
     for (final label in [
       'Hoy',
       'Entrenar',
-      'Historial',
+      'Biblioteca',
       'Progreso',
       'Perfil',
     ]) {

@@ -9,6 +9,7 @@ part of 'plan_models.dart';
 _EntitlementsModel _$EntitlementsModelFromJson(Map<String, dynamic> json) =>
     _EntitlementsModel(
       statsHistoryDays: (json['statsHistoryDays'] as num?)?.toInt(),
+      guidesPerRoutine: (json['guidesPerRoutine'] as num?)?.toInt(),
       limits:
           (json['limits'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, (e as num?)?.toInt()),
@@ -24,6 +25,7 @@ _EntitlementsModel _$EntitlementsModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$EntitlementsModelToJson(_EntitlementsModel instance) =>
     <String, dynamic>{
       'statsHistoryDays': instance.statsHistoryDays,
+      'guidesPerRoutine': instance.guidesPerRoutine,
       'limits': instance.limits,
       'features': instance.features,
     };

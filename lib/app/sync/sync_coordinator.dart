@@ -7,6 +7,7 @@ import 'package:saiyagym_mobile/app/sync/background_sync.dart';
 import 'package:saiyagym_mobile/core/sync/sync_providers.dart';
 import 'package:saiyagym_mobile/core/sync/sync_state.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
+import 'package:saiyagym_mobile/features/guides/guides_providers.dart';
 import 'package:saiyagym_mobile/features/progress_photos/progress_photos_providers.dart';
 import 'package:saiyagym_mobile/features/reminders/reminders_providers.dart';
 import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
@@ -52,6 +53,17 @@ class SyncCoordinator extends _$SyncCoordinator {
           ),
         );
       }, fireImmediately: true)
+      // Guide unlocks follow the routines the API has: ask again after
+      // every sync that reached it.
+      ..listen(syncStatusProvider.select((s) => s.lastSyncedAt), (
+        previous,
+        syncedAt,
+      ) {
+        if (syncedAt == null || syncedAt == previous || !_active) return;
+        unawaited(
+          _guard(ref.read(guidesControllerProvider.notifier).refresh()),
+        );
+      })
       ..onDispose(_detach);
   }
 
@@ -121,6 +133,9 @@ class SyncCoordinator extends _$SyncCoordinator {
     unawaited(
       _guard(ref.read(remindersControllerProvider.notifier).cancelIfWiped()),
     );
+    // Guide files: purged here on logout; on sign-in the first refresh
+    // purges before downloading anything.
+    unawaited(_guard(ref.read(guideFilesProvider).purgeIfWiped()));
     final sounds = ref.read(soundHousekeepingProvider);
     unawaited(
       _guard(() async {

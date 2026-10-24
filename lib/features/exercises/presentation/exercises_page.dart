@@ -13,6 +13,8 @@ import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_c
 import 'package:saiyagym_mobile/features/exercises/domain/exercise.dart';
 import 'package:saiyagym_mobile/features/exercises/domain/exercise_catalog.dart';
 import 'package:saiyagym_mobile/features/exercises/exercises_providers.dart';
+import 'package:saiyagym_mobile/features/guides/domain/exercise_guide.dart';
+import 'package:saiyagym_mobile/features/guides/guides_providers.dart';
 
 String tierLabel(Tier tier) => tier.name.toUpperCase();
 
@@ -115,6 +117,8 @@ class _ListTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final repository = ref.read(exercisesRepositoryProvider);
+    final guides =
+        ref.watch(guidesControllerProvider).value ?? GuideAccess.empty;
     return Column(
       children: [
         Padding(
@@ -188,6 +192,8 @@ class _ListTab extends ConsumerWidget {
                           context.tr('equipment.${exercise.equipment}'),
                           if (!exercise.isGlobal)
                             context.tr('exercises.customTag'),
+                          if (guides.statusOf(exercise.id) is! NoGuide)
+                            context.tr('guides.tag'),
                         ].join(' · '),
                       ),
                       trailing: IconButton(

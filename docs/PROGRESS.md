@@ -1,5 +1,30 @@
 # Progress — gymapp-mobile
 
+## 2026-10-23 — Guías de ejecución de ejercicios
+
+### Hecho
+- **Feature `guides`** (`domain` puro · `data` · `presentation` + `guides_providers.dart`):
+  - `GuidesApi`: `GET /guides` cacheado por idioma en `app_meta` (`JsonCache`, los textos vienen localizados) y `POST /guides/resolve` (solo online).
+  - `GuidesController` (keep-alive): arranca con la última respuesta guardada (offline) y `refresh()` se llama después de cada sync que llegó a la API (`SyncCoordinator`, `lastSyncedAt`), porque los desbloqueos dependen de las rutinas que tiene el servidor. Las llamadas se agrupan (una en curso + a lo sumo una más). En cada refresh: purga (si un logout borró la marca) → `retain` de lo desbloqueado → descarga previa de las guías de los ejercicios de las rutinas activas (Premium no baja el catálogo entero).
+  - `GuideFiles`: copias en `exercise_guides/<guideId>.<ext>` bajadas con el cliente sin JWT; una sola descarga por archivo aunque la pidan dos widgets; `.part` hasta completar; marca `guides.files` en `app_meta` para reconocer archivos huérfanos tras un logout (una sesión expirada los conserva).
+  - Sesión sin rutina (`routineId == null`): `sessionGuidesProvider` pide `resolve` con los ejercicios en el orden de la sesión y lo suma a lo guardado; sin red usa solo lo guardado.
+- **UI**:
+  - Catálogo: "Con guía" en el subtítulo de la lista; en el detalle, sección "Guía de ejecución" con carrusel (GIF animado nativo, puntos, texto) o la tarjeta de bloqueo con "Ver planes".
+  - Sesión en vivo: botón en la tarjeta del ejercicio (▶ o candado), que abre la hoja con la guía: 1 toque.
+  - Hoja de planes: "Guías de ejecución de N ejercicios por rutina" / "de todos los ejercicios" (`entitlements.guidesPerRoutine`, solo para mostrar).
+- `RoutinesRepository.active()` (lectura única, sin `watch().first`).
+- i18n es/en: `guides.*`, `plans.sheet.guidesAll` / `guidesPerRoutine`.
+
+### Verificación
+- `dart analyze` ✅ · `dart run tool/check_i18n.dart` ✅ · `flutter test` ✅ (nuevos: dominio, API + archivos, controller, widgets de guía y 2 casos en `live_workout_flow_test`).
+- **No ejecutado**: build ni dispositivo real (la animación de un GIF real y la descarga desde Cloudinary quedan por probar a mano).
+
+### Decisiones y gotchas
+- **Deadlock encontrado por los tests**: `future.whenComplete(() => _inFlight.remove(key))` devuelve el future removido (que es el mismo), y `whenComplete` se queda esperándose a sí mismo para siempre. Ahora se limpia en un `finally` con `removeWhere`.
+- La clave de los providers por archivo es un record `({id, url})` (igualdad por valor) en vez de `==` a mano: el dominio es Dart puro y no usa `meta`/`@immutable`.
+- El dispositivo nunca calcula desbloqueos: muestra lo que manda la API. `merge` de la respuesta de `resolve` solo puede SUMAR desbloqueos.
+- Lo que deja de estar desbloqueado se borra en el siguiente refresh (cambio del admin o de plan). Lo bajado antes de un downgrade no se puede revocar del todo porque las URLs son públicas; es un compromiso aceptado.
+
 ## 2026-10-22 — Sonidos en recordatorios y limpieza de sonidos (cambio `reminder-sounds-cleanup`)
 
 ### Hecho

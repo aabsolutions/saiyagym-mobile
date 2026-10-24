@@ -279,6 +279,8 @@
       "upTo": "Hasta {max} {resource}",
       "statsFull": "Historial de estadísticas completo",
       "statsDays": "Estadísticas de los últimos {days} días",
+      "guidesAll": "Guías de ejecución de todos los ejercicios",
+      "guidesPerRoutine": "Guías de ejecución de {max} ejercicios por rutina",
       "manual": "Por ahora el cambio de plan lo gestiona el administrador. Pronto podrás suscribirte desde la app."
     }
   },
@@ -742,6 +744,17 @@
       "fats_oils": "Grasas y aceites",
       "supplements": "Suplementos",
       "other": "Otros"
+    }
+  },
+  "guides": {
+    "title": "Guía de ejecución",
+    "tag": "Con guía",
+    "view": "Ver guía de ejecución",
+    "imageLabel": "Guía {n} de {total}",
+    "offline": "Conéctate a internet para descargar esta guía.",
+    "locked": {
+      "title": "Guía disponible con Premium",
+      "message": "Tu plan muestra las guías de los primeros ejercicios de cada rutina. Con Premium ves todas."
     }
   }
 }

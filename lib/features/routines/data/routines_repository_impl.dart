@@ -20,6 +20,12 @@ class RoutinesRepositoryImpl implements RoutinesRepository {
       );
 
   @override
+  Future<List<Routine>> active() async => [
+    for (final doc in await _store.active())
+      if (doc.json['archivedAt'] == null) Routine.fromJson(doc.json),
+  ];
+
+  @override
   Future<Routine?> find(String id) async {
     final doc = await _store.find(id);
     return doc == null || doc.isDeleted ? null : Routine.fromJson(doc.json);

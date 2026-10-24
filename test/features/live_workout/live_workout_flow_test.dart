@@ -4,6 +4,8 @@ import 'package:saiyagym_mobile/app/app.dart';
 import 'package:saiyagym_mobile/core/database/app_database.dart';
 import 'package:saiyagym_mobile/core/sync/stores.dart';
 import 'package:saiyagym_mobile/features/auth/presentation/controllers/session_controller.dart';
+import 'package:saiyagym_mobile/features/guides/domain/exercise_guide.dart';
+import 'package:saiyagym_mobile/features/guides/guides_providers.dart';
 import 'package:saiyagym_mobile/features/live_workout/data/device_services.dart';
 import 'package:saiyagym_mobile/features/live_workout/presentation/live_workout_page.dart';
 import 'package:saiyagym_mobile/features/workouts/domain/workout.dart';
@@ -14,6 +16,19 @@ import '../../helpers/pump_app.dart';
 import '../../helpers/seed.dart';
 import '../../helpers/test_infra.dart';
 
+/// Fixed guide access: no API call, no downloads.
+class _FixedGuides extends GuidesController {
+  _FixedGuides(this._access);
+
+  final GuideAccess _access;
+
+  @override
+  Future<GuideAccess> build() async => _access;
+
+  @override
+  Future<void> refresh() async {}
+}
+
 void main() {
   late AppDatabase db;
   late SilentDeviceServices device;
@@ -23,7 +38,10 @@ void main() {
     device = SilentDeviceServices();
   });
 
-  Future<void> pumpApp(WidgetTester tester) => pumpLocalized(
+  Future<void> pumpApp(
+    WidgetTester tester, {
+    GuideAccess guides = GuideAccess.empty,
+  }) => pumpLocalized(
     tester,
     const SaiyaGymApp(),
     infra: testInfraOverrides(database: db, device: device),
@@ -31,6 +49,7 @@ void main() {
       sessionControllerProvider.overrideWith(
         () => FakeSession.user(testUser()),
       ),
+      guidesControllerProvider.overrideWith(() => _FixedGuides(guides)),
     ],
   );
 
@@ -184,5 +203,35 @@ void main() {
       languageCode: () => 'es',
     ).workouts.active();
     expect(running.where((d) => d.json['finishedAt'] == null), isEmpty);
+  });
+
+  testWidgets('an exercise with a locked guide: one tap explains why', (
+    tester,
+  ) async {
+    await seedLegDay();
+    await pumpApp(
+      tester,
+      guides: const GuideAccess(guidesPerRoutine: 5, locked: {'ex-squat'}),
+    );
+    await tester.tap(find.text('Entrenar'));
+    await settle(tester);
+    await tester.tap(find.text('Pierna'));
+    await settle(tester);
+
+    await tester.tap(find.byTooltip('Ver guía de ejecución'));
+    await settle(tester, 5);
+    expect(find.text('Guía disponible con Premium'), findsOneWidget);
+  });
+
+  testWidgets('no guides: no guide button', (tester) async {
+    await seedLegDay();
+    await pumpApp(tester);
+    await tester.tap(find.text('Entrenar'));
+    await settle(tester);
+    await tester.tap(find.text('Pierna'));
+    await settle(tester);
+
+    expect(find.byType(LiveWorkoutPage), findsOneWidget);
+    expect(find.byTooltip('Ver guía de ejecución'), findsNothing);
   });
 }

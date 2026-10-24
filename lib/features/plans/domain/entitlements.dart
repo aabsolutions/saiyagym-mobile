@@ -30,6 +30,10 @@ abstract class Entitlements with _$Entitlements {
 
     /// `null` = full history.
     int? statsHistoryDays,
+
+    /// Exercises per routine with visible execution guides; `null` = all.
+    /// Display only: the API decides which guides it sends (`GET /guides`).
+    int? guidesPerRoutine,
   }) = _Entitlements;
 
   const Entitlements._();

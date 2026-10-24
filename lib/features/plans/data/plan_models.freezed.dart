@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EntitlementsModel {
 
- int? get statsHistoryDays; Map<String, int?> get limits; Map<String, bool> get features;
+ int? get statsHistoryDays; int? get guidesPerRoutine; Map<String, int?> get limits; Map<String, bool> get features;
 /// Create a copy of EntitlementsModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $EntitlementsModelCopyWith<EntitlementsModel> get copyWith => _$EntitlementsMode
 @override
 bool operator ==(Object other) {
   final _this = this as EntitlementsModel;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EntitlementsModel&&(identical(other.statsHistoryDays, _this.statsHistoryDays) || other.statsHistoryDays == _this.statsHistoryDays)&&const DeepCollectionEquality().equals(other.limits, _this.limits)&&const DeepCollectionEquality().equals(other.features, _this.features));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EntitlementsModel&&(identical(other.statsHistoryDays, _this.statsHistoryDays) || other.statsHistoryDays == _this.statsHistoryDays)&&(identical(other.guidesPerRoutine, _this.guidesPerRoutine) || other.guidesPerRoutine == _this.guidesPerRoutine)&&const DeepCollectionEquality().equals(other.limits, _this.limits)&&const DeepCollectionEquality().equals(other.features, _this.features));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as EntitlementsModel;
-  return Object.hash(runtimeType,_this.statsHistoryDays,const DeepCollectionEquality().hash(_this.limits),const DeepCollectionEquality().hash(_this.features));
+  return Object.hash(runtimeType,_this.statsHistoryDays,_this.guidesPerRoutine,const DeepCollectionEquality().hash(_this.limits),const DeepCollectionEquality().hash(_this.features));
 }
 
 @override
 String toString() {
   final _this = this as EntitlementsModel;
-  return 'EntitlementsModel(statsHistoryDays: ${_this.statsHistoryDays}, limits: ${_this.limits}, features: ${_this.features})';
+  return 'EntitlementsModel(statsHistoryDays: ${_this.statsHistoryDays}, guidesPerRoutine: ${_this.guidesPerRoutine}, limits: ${_this.limits}, features: ${_this.features})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $EntitlementsModelCopyWith<$Res>  {
   factory $EntitlementsModelCopyWith(EntitlementsModel value, $Res Function(EntitlementsModel) _then) = _$EntitlementsModelCopyWithImpl;
 @useResult
 $Res call({
- int? statsHistoryDays, Map<String, int?> limits, Map<String, bool> features
+ int? statsHistoryDays, int? guidesPerRoutine, Map<String, int?> limits, Map<String, bool> features
 });
 
 
@@ -71,9 +71,10 @@ class _$EntitlementsModelCopyWithImpl<$Res>
 
 /// Create a copy of EntitlementsModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? statsHistoryDays = freezed,Object? limits = null,Object? features = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? statsHistoryDays = freezed,Object? guidesPerRoutine = freezed,Object? limits = null,Object? features = null,}) {
   return _then(EntitlementsModel(
 statsHistoryDays: freezed == statsHistoryDays ? _self.statsHistoryDays : statsHistoryDays // ignore: cast_nullable_to_non_nullable
+as int?,guidesPerRoutine: freezed == guidesPerRoutine ? _self.guidesPerRoutine : guidesPerRoutine // ignore: cast_nullable_to_non_nullable
 as int?,limits: null == limits ? _self.limits : limits // ignore: cast_nullable_to_non_nullable
 as Map<String, int?>,features: null == features ? _self.features : features // ignore: cast_nullable_to_non_nullable
 as Map<String, bool>,
@@ -161,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? statsHistoryDays,  Map<String, int?> limits,  Map<String, bool> features)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? statsHistoryDays,  int? guidesPerRoutine,  Map<String, int?> limits,  Map<String, bool> features)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EntitlementsModel() when $default != null:
-return $default(_that.statsHistoryDays,_that.limits,_that.features);case _:
+return $default(_that.statsHistoryDays,_that.guidesPerRoutine,_that.limits,_that.features);case _:
   return orElse();
 
 }
@@ -182,10 +183,10 @@ return $default(_that.statsHistoryDays,_that.limits,_that.features);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? statsHistoryDays,  Map<String, int?> limits,  Map<String, bool> features)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? statsHistoryDays,  int? guidesPerRoutine,  Map<String, int?> limits,  Map<String, bool> features)  $default,) {final _that = this;
 switch (_that) {
 case _EntitlementsModel():
-return $default(_that.statsHistoryDays,_that.limits,_that.features);case _:
+return $default(_that.statsHistoryDays,_that.guidesPerRoutine,_that.limits,_that.features);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +203,10 @@ return $default(_that.statsHistoryDays,_that.limits,_that.features);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? statsHistoryDays,  Map<String, int?> limits,  Map<String, bool> features)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? statsHistoryDays,  int? guidesPerRoutine,  Map<String, int?> limits,  Map<String, bool> features)?  $default,) {final _that = this;
 switch (_that) {
 case _EntitlementsModel() when $default != null:
-return $default(_that.statsHistoryDays,_that.limits,_that.features);case _:
+return $default(_that.statsHistoryDays,_that.guidesPerRoutine,_that.limits,_that.features);case _:
   return null;
 
 }
@@ -217,10 +218,11 @@ return $default(_that.statsHistoryDays,_that.limits,_that.features);case _:
 @JsonSerializable()
 
 class _EntitlementsModel extends EntitlementsModel {
-  const _EntitlementsModel({this.statsHistoryDays,  Map<String, int?> limits = const {},  Map<String, bool> features = const {}}): _limits = limits,_features = features,super._();
+  const _EntitlementsModel({this.statsHistoryDays, this.guidesPerRoutine,  Map<String, int?> limits = const {},  Map<String, bool> features = const {}}): _limits = limits,_features = features,super._();
   factory _EntitlementsModel.fromJson(Map<String, dynamic> json) => _$EntitlementsModelFromJson(json);
 
 @override final  int? statsHistoryDays;
+@override final  int? guidesPerRoutine;
  final  Map<String, int?> _limits;
 @override@JsonKey() Map<String, int?> get limits {
   if (_limits is EqualUnmodifiableMapView) return _limits;
@@ -249,18 +251,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EntitlementsModel&&(identical(other.statsHistoryDays, statsHistoryDays) || other.statsHistoryDays == statsHistoryDays)&&const DeepCollectionEquality().equals(other.limits, _limits)&&const DeepCollectionEquality().equals(other.features, _features));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EntitlementsModel&&(identical(other.statsHistoryDays, statsHistoryDays) || other.statsHistoryDays == statsHistoryDays)&&(identical(other.guidesPerRoutine, guidesPerRoutine) || other.guidesPerRoutine == guidesPerRoutine)&&const DeepCollectionEquality().equals(other.limits, _limits)&&const DeepCollectionEquality().equals(other.features, _features));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,statsHistoryDays,const DeepCollectionEquality().hash(_limits),const DeepCollectionEquality().hash(_features));
+    return Object.hash(runtimeType,statsHistoryDays,guidesPerRoutine,const DeepCollectionEquality().hash(_limits),const DeepCollectionEquality().hash(_features));
 }
 
 @override
 String toString() {
-    return 'EntitlementsModel(statsHistoryDays: $statsHistoryDays, limits: $limits, features: $features)';
+    return 'EntitlementsModel(statsHistoryDays: $statsHistoryDays, guidesPerRoutine: $guidesPerRoutine, limits: $limits, features: $features)';
 }
 
 
@@ -271,7 +273,7 @@ abstract mixin class _$EntitlementsModelCopyWith<$Res> implements $EntitlementsM
   factory _$EntitlementsModelCopyWith(_EntitlementsModel value, $Res Function(_EntitlementsModel) _then) = __$EntitlementsModelCopyWithImpl;
 @override @useResult
 $Res call({
- int? statsHistoryDays, Map<String, int?> limits, Map<String, bool> features
+ int? statsHistoryDays, int? guidesPerRoutine, Map<String, int?> limits, Map<String, bool> features
 });
 
 
@@ -288,9 +290,10 @@ class __$EntitlementsModelCopyWithImpl<$Res>
 
 /// Create a copy of EntitlementsModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? statsHistoryDays = freezed,Object? limits = null,Object? features = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? statsHistoryDays = freezed,Object? guidesPerRoutine = freezed,Object? limits = null,Object? features = null,}) {
   return _then(_EntitlementsModel(
 statsHistoryDays: freezed == statsHistoryDays ? _self.statsHistoryDays : statsHistoryDays // ignore: cast_nullable_to_non_nullable
+as int?,guidesPerRoutine: freezed == guidesPerRoutine ? _self.guidesPerRoutine : guidesPerRoutine // ignore: cast_nullable_to_non_nullable
 as int?,limits: null == limits ? _self._limits : limits // ignore: cast_nullable_to_non_nullable
 as Map<String, int?>,features: null == features ? _self._features : features // ignore: cast_nullable_to_non_nullable
 as Map<String, bool>,

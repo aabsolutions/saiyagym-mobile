@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:saiyagym_mobile/core/training/training_types.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
+import 'package:saiyagym_mobile/features/guides/domain/exercise_guide.dart';
 import 'package:saiyagym_mobile/features/live_workout/domain/live_session.dart';
 import 'package:saiyagym_mobile/features/workouts/domain/workout.dart';
 
@@ -39,6 +40,8 @@ class ExerciseCard extends StatelessWidget {
     required this.onAddSet,
     required this.onRemoveSet,
     required this.onAction,
+    this.guide = const NoGuide(),
+    this.onGuide,
     super.key,
   });
 
@@ -58,6 +61,11 @@ class ExerciseCard extends StatelessWidget {
   final VoidCallback onAddSet;
   final ValueChanged<String> onRemoveSet;
   final ValueChanged<ExerciseAction> onAction;
+
+  /// Shown as a button when the exercise has guides (locked ones too: the
+  /// sheet explains why).
+  final GuideStatus guide;
+  final VoidCallback? onGuide;
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +104,16 @@ class ExerciseCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (guide is! NoGuide && onGuide != null)
+                    IconButton(
+                      tooltip: context.tr('guides.view'),
+                      icon: Icon(
+                        guide is GuideLocked
+                            ? Icons.lock_outline
+                            : Icons.play_circle_outline,
+                      ),
+                      onPressed: onGuide,
+                    ),
                   PopupMenuButton<ExerciseAction>(
                     tooltip: context.tr('live.exerciseMenu'),
                     onSelected: onAction,

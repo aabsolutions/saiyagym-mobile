@@ -6,6 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saiyagym_mobile/app/router/app_routes.dart';
 import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
+import 'package:saiyagym_mobile/features/guides/domain/exercise_guide.dart';
+import 'package:saiyagym_mobile/features/guides/guides_providers.dart';
+import 'package:saiyagym_mobile/features/guides/presentation/guide_view.dart';
 import 'package:saiyagym_mobile/features/live_workout/data/device_services.dart';
 import 'package:saiyagym_mobile/features/live_workout/domain/live_session.dart';
 import 'package:saiyagym_mobile/features/live_workout/domain/workout_editing.dart';
@@ -19,6 +22,7 @@ import 'package:saiyagym_mobile/features/live_workout/presentation/widgets/ticke
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
 import 'package:saiyagym_mobile/features/sounds/domain/sound_purpose.dart';
 import 'package:saiyagym_mobile/features/sounds/sounds_providers.dart';
+import 'package:saiyagym_mobile/features/workouts/domain/workout.dart';
 
 class LiveWorkoutPage extends ConsumerStatefulWidget {
   const LiveWorkoutPage({super.key});
@@ -291,6 +295,16 @@ class _LiveWorkoutPageState extends ConsumerState<LiveWorkoutPage> {
     context.go(AppRoutes.workoutSummary, extra: outcome);
   }
 
+  /// From a routine (or a program day): what the routines unlock. Without
+  /// one, the API also unlocks the session's first N guided exercises.
+  GuideAccess _guidesFor(Workout workout) {
+    final stored =
+        ref.watch(guidesControllerProvider).value ?? GuideAccess.empty;
+    if (workout.routineId != null) return stored;
+    final ids = {for (final e in workout.exercises) e.exerciseId}.join(',');
+    return ref.watch(sessionGuidesProvider(ids)).value ?? stored;
+  }
+
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(liveWorkoutControllerProvider);
@@ -305,6 +319,7 @@ class _LiveWorkoutPageState extends ConsumerState<LiveWorkoutPage> {
     final rest = session.meta.rest;
     final editing = _editing;
     final imperial = formatter.system == UnitSystem.imperial;
+    final guides = _guidesFor(workout);
 
     return Scaffold(
       appBar: AppBar(
@@ -442,6 +457,14 @@ class _LiveWorkoutPageState extends ConsumerState<LiveWorkoutPage> {
                 onRemoveSet: (setId) =>
                     unawaited(_controller.removeSet(exercise.id, setId)),
                 onAction: (action) => _onAction(session, exercise.id, action),
+                guide: guides.statusOf(exercise.exerciseId),
+                onGuide: () => unawaited(
+                  showGuideSheet(
+                    context,
+                    exerciseName: session.names[exercise.exerciseId] ?? '',
+                    status: guides.statusOf(exercise.exerciseId),
+                  ),
+                ),
               ),
             OutlinedButton.icon(
               icon: const Icon(Icons.add),

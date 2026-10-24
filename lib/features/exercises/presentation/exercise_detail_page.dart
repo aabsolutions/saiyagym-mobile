@@ -9,6 +9,9 @@ import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
 import 'package:saiyagym_mobile/features/exercises/domain/exercise.dart';
 import 'package:saiyagym_mobile/features/exercises/exercises_providers.dart';
 import 'package:saiyagym_mobile/features/exercises/presentation/exercises_page.dart';
+import 'package:saiyagym_mobile/features/guides/domain/exercise_guide.dart';
+import 'package:saiyagym_mobile/features/guides/guides_providers.dart';
+import 'package:saiyagym_mobile/features/guides/presentation/guide_view.dart';
 import 'package:saiyagym_mobile/features/profile/presentation/preferences_providers.dart';
 import 'package:saiyagym_mobile/features/records/data/records_service.dart';
 import 'package:saiyagym_mobile/features/records/domain/personal_records.dart';
@@ -34,6 +37,7 @@ class ExerciseDetailPage extends ConsumerWidget {
         (ref.watch(workoutHistoryProvider).value ?? const <Workout>[])
             .where((w) => w.exercises.any((e) => e.exerciseId == exerciseId))
             .toList();
+    final guide = ref.watch(guideStatusProvider(exerciseId));
     final formatter = ref.unitFormatter(context);
     final repository = ref.read(exercisesRepositoryProvider);
     final theme = Theme.of(context);
@@ -88,6 +92,15 @@ class ExerciseDetailPage extends ConsumerWidget {
                 Chip(label: Text(context.tr('exercises.customTag'))),
             ],
           ),
+          if (guide is! NoGuide) ...[
+            const SizedBox(height: 16),
+            Text(
+              context.tr('guides.title'),
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            GuideSection(status: guide),
+          ],
           const SizedBox(height: 16),
           Text(
             context.tr('exercises.tiers.title'),

@@ -128,6 +128,15 @@ class _PlanCard extends StatelessWidget {
                     ),
               included: true,
             ),
+            _Benefit(
+              text: entitlements.guidesPerRoutine == null
+                  ? context.tr('plans.sheet.guidesAll')
+                  : context.tr(
+                      'plans.sheet.guidesPerRoutine',
+                      namedArgs: {'max': '${entitlements.guidesPerRoutine}'},
+                    ),
+              included: entitlements.guidesPerRoutine != 0,
+            ),
             for (final feature in PlanFeature.values)
               _Benefit(
                 text: context.tr('plans.features.${feature.name}'),

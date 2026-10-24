@@ -61,6 +61,9 @@ abstract interface class RoutinesRepository {
   /// Not archived, by name. Works offline.
   Stream<List<Routine>> watchActive();
 
+  /// One-shot read of [watchActive] (no order).
+  Future<List<Routine>> active();
+
   Future<Routine?> find(String id);
 
   Future<Routine> save(Routine routine);

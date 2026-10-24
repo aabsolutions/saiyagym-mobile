@@ -279,6 +279,8 @@
       "upTo": "Up to {max} {resource}",
       "statsFull": "Full statistics history",
       "statsDays": "Statistics for the last {days} days",
+      "guidesAll": "Execution guides for every exercise",
+      "guidesPerRoutine": "Execution guides for {max} exercises per routine",
       "manual": "For now plan changes are handled by an administrator. In-app subscriptions are coming soon."
     }
   },
@@ -742,6 +744,17 @@
       "fats_oils": "Fats and oils",
       "supplements": "Supplements",
       "other": "Other"
+    }
+  },
+  "guides": {
+    "title": "Execution guide",
+    "tag": "With guide",
+    "view": "View execution guide",
+    "imageLabel": "Guide {n} of {total}",
+    "offline": "Connect to the internet to download this guide.",
+    "locked": {
+      "title": "Guide available with Premium",
+      "message": "Your plan shows the guides of the first exercises of each routine. Premium shows them all."
     }
   }
 }

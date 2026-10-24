@@ -11,6 +11,7 @@ part 'plan_models.g.dart';
 abstract class EntitlementsModel with _$EntitlementsModel {
   const factory EntitlementsModel({
     int? statsHistoryDays,
+    int? guidesPerRoutine,
     @Default({}) Map<String, int?> limits,
     @Default({}) Map<String, bool> features,
   }) = _EntitlementsModel;
@@ -25,6 +26,7 @@ abstract class EntitlementsModel with _$EntitlementsModel {
     final limitByName = PlanLimit.values.asNameMap();
     return Entitlements(
       statsHistoryDays: statsHistoryDays,
+      guidesPerRoutine: guidesPerRoutine,
       features: {
         for (final MapEntry(:key, :value) in features.entries)
           if (value && featureByName[key] != null) featureByName[key]!,

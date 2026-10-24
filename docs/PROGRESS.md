@@ -1,5 +1,16 @@
 # Progress — gymapp-mobile
 
+## 2026-10-24 — Fix: sync rechazado tras cambiar a lb/in
+
+### Hecho
+- **Causa**: `UnitFormatter.weightToKg`/`lengthToCm` no redondeaban (`225 lb` → `102.05828325` kg); la API rechaza > 3 decimales y, como sets van embebidos, cada edición posterior del workout/rutina quedaba en `failed`.
+- `UnitFormatter` redondea al convertir: kg a 3 decimales (2 no hace ida y vuelta en lb), cm a 2. También aplica en métrico (`100.12345` → `100.123`).
+- `pushBody` redondea `weightKg` de sets (workout/rutina) y medidas corporales: repara filas de Drift guardadas antes del fix en su próximo push. Los cambios ya en `failed` se recuperan con "Reintentar" en la hoja de sync (la API ahora también redondea).
+- La web ya redondeaba en cada draft (`round2`); no tenía el bug.
+
+### Verificación
+- `flutter test` 302/302 ✅ · `dart analyze` core ✅.
+
 ## 2026-10-24 — Biblioteca e instrucciones de ejecución
 
 ### Hecho

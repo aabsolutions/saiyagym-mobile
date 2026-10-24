@@ -97,6 +97,55 @@ void main() {
     );
   });
 
+  test('raw lb/in conversions are rounded to what the API accepts', () {
+    final workout = pushBody(SyncCollection.workouts, {
+      'exercises': [
+        {
+          'id': 'we-1',
+          'sets': [
+            {'id': 's-1', 'weightKg': 102.05828325, 'reps': 5},
+            {'id': 's-2', 'weightKg': null, 'reps': 10},
+          ],
+        },
+      ],
+    });
+    final sets = ((workout['exercises']! as List).single as Map)['sets'];
+    expect(sets, [
+      {'id': 's-1', 'weightKg': 102.058, 'reps': 5},
+      {'id': 's-2', 'weightKg': null, 'reps': 10},
+    ]);
+
+    final routine = pushBody(SyncCollection.routines, {
+      'exercises': [
+        {
+          'id': 'slot-1',
+          'sets': [
+            {'repsMin': 5, 'repsMax': 5, 'weightKg': 72.5747792},
+          ],
+        },
+      ],
+    });
+    expect(
+      (((routine['exercises']! as List).single as Map)['sets'] as List).single,
+      {'repsMin': 5, 'repsMax': 5, 'weightKg': 72.575},
+    );
+
+    expect(
+      pushBody(SyncCollection.bodyMetrics, {
+        'measuredAt': '2026-10-18T09:00:00.000Z',
+        'weightKg': 72.5747792,
+        'waistCm': 81.534,
+        'bodyFatPercent': 18,
+      }),
+      {
+        'measuredAt': '2026-10-18T09:00:00.000Z',
+        'weightKg': 72.575,
+        'waistCm': 81.53,
+        'bodyFatPercent': 18,
+      },
+    );
+  });
+
   test('pull-only collections cannot be pushed', () {
     expect(() => pushBody(SyncCollection.programs, const {}), throwsStateError);
     expect(

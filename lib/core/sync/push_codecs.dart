@@ -1,4 +1,5 @@
 import 'package:saiyagym_mobile/core/sync/sync_collection.dart';
+import 'package:saiyagym_mobile/core/units/unit_formatter.dart';
 
 /// Builds the `doc` body of a push change from a stored document.
 ///
@@ -20,7 +21,7 @@ Map<String, Object?> pushBody(
           ..._pick(exercise, _workoutExerciseKeys),
           'sets': [
             for (final set in _list(exercise['sets']))
-              _pick(set, _workoutSetKeys),
+              _rounded(_pick(set, _workoutSetKeys), _weightDecimals),
           ],
         },
     ],
@@ -36,12 +37,15 @@ Map<String, Object?> pushBody(
             'progression': exercise['progression'],
           'sets': [
             for (final set in _list(exercise['sets']))
-              _pick(set, _targetSetKeys),
+              _rounded(_pick(set, _targetSetKeys), _weightDecimals),
           ],
         },
     ],
   },
-  SyncCollection.bodyMetrics => _pick(doc, _bodyMetricKeys),
+  SyncCollection.bodyMetrics => _rounded(
+    _pick(doc, _bodyMetricKeys),
+    _measurementDecimals,
+  ),
   SyncCollection.userExercisePrefs => _pick(doc, _prefKeys),
   SyncCollection.exercises || SyncCollection.programs => throw StateError(
     '${collection.wire} is pull-only',
@@ -96,6 +100,33 @@ const _bodyMetricKeys = [
   'notes',
 ];
 const _prefKeys = ['exerciseId', 'isFavorite', 'personalTiers'];
+
+/// The API's `maxDecimalPlaces` per field. Rows saved before the input was
+/// rounded hold raw lb/in conversions; rounding here repairs them on their
+/// next push instead of getting the whole document rejected.
+const Map<String, int> _weightDecimals = {'weightKg': UnitFormatter.kgDecimals};
+const Map<String, int> _measurementDecimals = {
+  'weightKg': UnitFormatter.kgDecimals,
+  'bodyFatPercent': 2,
+  'waistCm': UnitFormatter.cmDecimals,
+  'chestCm': UnitFormatter.cmDecimals,
+  'hipsCm': UnitFormatter.cmDecimals,
+  'armCm': UnitFormatter.cmDecimals,
+  'thighCm': UnitFormatter.cmDecimals,
+  'calfCm': UnitFormatter.cmDecimals,
+  'neckCm': UnitFormatter.cmDecimals,
+};
+
+Map<String, Object?> _rounded(
+  Map<String, Object?> body,
+  Map<String, int> decimals,
+) => {
+  for (final MapEntry(:key, :value) in body.entries)
+    key: switch ((value, decimals[key])) {
+      (final double n, final int places) => UnitFormatter.roundTo(n, places),
+      _ => value,
+    },
+};
 
 Map<String, Object?> _pick(Map<String, dynamic> source, List<String> keys) => {
   for (final key in keys)

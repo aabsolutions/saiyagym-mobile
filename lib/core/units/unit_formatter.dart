@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:intl/intl.dart';
 
 /// Mirrors `preferences.units` from the API.
@@ -18,6 +20,17 @@ class UnitFormatter {
   static const kgPerLb = 0.45359237;
   static const cmPerInch = 2.54;
 
+  /// The API's precision (`maxDecimalPlaces`): a raw `225 lb` is
+  /// 102.05828325 kg and the whole document is rejected. Weights keep 3
+  /// decimals because 2 can't round-trip lb (160 lb → 72.57 kg → 159.99 lb).
+  static const kgDecimals = 3;
+  static const cmDecimals = 2;
+
+  static double roundTo(double value, int decimals) {
+    final factor = math.pow(10, decimals);
+    return (value * factor).round() / factor;
+  }
+
   final UnitSystem system;
   final NumberFormat _number;
 
@@ -28,10 +41,12 @@ class UnitFormatter {
   String get lengthUnit => _imperial ? 'in' : 'cm';
 
   double displayWeight(double kg) => _imperial ? kg / kgPerLb : kg;
-  double weightToKg(double value) => _imperial ? value * kgPerLb : value;
+  double weightToKg(double value) =>
+      roundTo(_imperial ? value * kgPerLb : value, kgDecimals);
 
   double displayLength(double cm) => _imperial ? cm / cmPerInch : cm;
-  double lengthToCm(double value) => _imperial ? value * cmPerInch : value;
+  double lengthToCm(double value) =>
+      roundTo(_imperial ? value * cmPerInch : value, cmDecimals);
 
   /// A value already in display units, without the unit (`102,5`).
   String formatNumber(double value) => _number.format(value);
